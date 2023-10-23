@@ -1,5 +1,5 @@
 # Projecte Transversal 1 - GRUP 3
-
+Hola
 * BeSocial
 * BeSocial és aplicació que t'ajudará a trobar festa i oci de tots tipus a prop de tú.
 * Ismael Al Ghani - Joan Alexandeer Guerrero Sanchez - Biel Palomar Gonzalez - Oscar Muñoz Garcia
