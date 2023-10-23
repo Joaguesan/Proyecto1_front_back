@@ -24,7 +24,11 @@ const routes = [
   {
     path: '/gestiocomandes',
     component: () => import('@/components/GestioComandes.vue'),
+  },{
+    path: '/gestioproductes',
+    component: () => import('@/components/gestioProductos.vue'),
   },
+
 ]
 
 const router = createRouter({
