@@ -26,7 +26,7 @@
                             <v-card>
 
                                 <v-card-actions>
-                                    <v-btn color="primary" block @click="dialog1 = false">Close Dialog</v-btn>
+                                    <v-btn color="primary" block @click="dialog1 = false">Close</v-btn>
                                 </v-card-actions>
                             </v-card>
                         </v-dialog>
@@ -90,7 +90,7 @@
                                     <v-btn color="primary" @click="Deshabilitar(i)">Habilitar</v-btn>
                                 </v-card-actions>
                             </v-card>
-                            <v-card v-else-if="!variante.reveal & !variante.habilitado" class="mx-auto" max-width="344">
+                            <v-card v-else-if="variante.reveal & !variante.habilitado" class="mx-auto" max-width="344">
                                 <v-container>
                                     <v-card-item>
                                         <v-img :src="productoViejo.imagen"></v-img>

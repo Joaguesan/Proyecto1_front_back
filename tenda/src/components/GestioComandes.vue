@@ -105,7 +105,7 @@
                 <v-btn color="success" class="mt-12" @click="cambiarOverlay(comanda.idComanda)">
                   Veure Comanda
                 </v-btn>
-                <v-btn color="success" class="mt-12" @click="">
+                <v-btn color="success" class="mt-12" @click="tancar(comanda)">
                   Tancar
                 </v-btn>
 
@@ -289,6 +289,10 @@
       },
       comandaRebutjada(id) {
         console.log("S'ha rebutjat la comanda amb id: " + id)
+
+      },
+      tancar(comanda){
+        comanda.estat = "Tancades"
 
       }
     },
