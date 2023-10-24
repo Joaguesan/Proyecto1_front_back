@@ -90,6 +90,16 @@ app.put("/updateProduct/:id", async (req, res) => {
   });
 });
 
+app.put("/productStatus/:id", async (req, res) => {
+  var sql = `UPDATE Producto SET Habilitado = ${req.body.status} WHERE IDProducto = ${req.params.id}`
+
+  conn.query(sql, (err, result) => {
+    if (err) console.error(err);
+    console.log(result);
+    res.send(result);
+  });
+});
+
 // app.post("/register", async (req, res) => {
 //   var sql = `SELECT * FROM Cliente WHERE CorreoElectronico = '${req.body.email}'`;
 
