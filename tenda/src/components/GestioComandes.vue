@@ -252,7 +252,7 @@
     },
     methods: {
       cambio() {
-        this.nombre = this.nombre === 'Gestio Productes' ? 'Gestio Comandas' : 'Gestio Productes'
+        this.nombre = this.nombre === 'Gestio Comandas' ? 'Gestio Productes' : 'Gestio Comandas'
         this.$router.push(this.link)
         this.link = this.link === 'gestiocomandes' ? 'gestioproductes' : 'gestiocomandes'
       },

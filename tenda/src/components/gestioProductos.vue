@@ -24,17 +24,32 @@
                         <v-btn @click="dialog1 = true">Afegir</v-btn>
                         <v-dialog v-model="dialog1" width="auto">
                             <v-card>
-
-                                <v-card-actions>
-                                    <v-btn color="primary" block @click="dialog1 = false">Close</v-btn>
-                                </v-card-actions>
+                                <v-container>
+                                    <v-card-item>
+                                        <v-img :src="productoNuevo.imagen"></v-img>
+                                        <v-container>
+                                            <v-text-field v-model="productoNuevo.nombre" :rules="[Regla.required]"  label="Nombre del producto"
+                                                variante="outlined" required></v-text-field>
+                                            <v-text-field v-model="productoNuevo.precio_unitario" suffix="€" label="Precio"
+                                                :rules="[Regla.required]" required></v-text-field>
+                                            <v-textarea v-model="productoNuevo.descripcion" :rules="[Regla.required]" label="Descripcion"
+                                                auto-grow required></v-textarea>
+                                            <v-text-field v-model="productoNuevo.imagen" :rules="[Regla.required]" label="URL imagen"
+                                                variante="outlined" required></v-text-field>
+                                        </v-container>
+                                    </v-card-item>
+                                    <v-card-actions>
+                                        <v-btn color="primary" @click="addProducto()">Aceptar</v-btn>
+                                        <v-btn color="primary" @click="dialog1 = false">Cancelar</v-btn>
+                                    </v-card-actions>
+                                </v-container>
                             </v-card>
                         </v-dialog>
                     </v-col>
                 </v-row>
                 <v-container>
-                    <v-row justify="center">
-                        <v-col v-for="(variant, i) in productos" :key="i" cols="auto">
+                    <v-row>
+                        <v-col v-for="(variant, i) in productos" :key="i" cols="3">
                             <v-card v-if="!variant.reveal & variant.habilitado" class="mx-auto" max-width="344"
                                 min-height="400">
                                 <v-card-item>
@@ -75,9 +90,10 @@
                 </v-container>
                 <v-divider :thickness="5" class="border-opacity-70"></v-divider>
                 <v-container>
-                    <v-row justify="center">
+                    <v-row justify="left">
                         <v-col v-for="(variante, i) in productos" :key="i" cols="auto">
-                            <v-card v-if="!variante.reveal & !variante.habilitado" class="mx-auto" max-width="344" min-height="400" color="rgb(255, 0, 0, 0.2)">
+                            <v-card v-if="!variante.reveal & !variante.habilitado" class="mx-auto" max-width="344"
+                                min-height="400" color="rgb(255, 0, 0, 0.2)">
                                 <v-card-item>
                                     <v-img :src="variante.imagen"></v-img>
                                     <v-card-title>{{ variante.nombre }}</v-card-title>
@@ -88,6 +104,19 @@
                                     <v-btn color="primary" @click="editar(variante)">Editar</v-btn>
 
                                     <v-btn color="primary" @click="Deshabilitar(i)">Habilitar</v-btn>
+                                    <v-btn color="primary" @click="dialog = true">Eliminar</v-btn>
+                                    <v-dialog v-model="dialog" width="auto">
+                                        <v-card>
+                                            <v-card-title class="text-h5">
+                                               Eliminar {{ variante.nombre }} ?
+                                            </v-card-title>
+                                            <v-card-text>¿Estas seguro que quieres eliminar {{ variante.nombre }}?</v-card-text>
+                                            <v-card-actions>
+                                                <v-btn color="primary" @click="dialog = false">Aceptar</v-btn>
+                                                <v-btn color="primary" @click="dialog = false">Cancelar</v-btn>
+                                            </v-card-actions>
+                                        </v-card>
+                                    </v-dialog>
                                 </v-card-actions>
                             </v-card>
                             <v-card v-else-if="variante.reveal & !variante.habilitado" class="mx-auto" max-width="344">
@@ -125,6 +154,12 @@ export default {
         dialog: false,
         dialog1: false,
         productoViejo: {
+            nombre: "",
+            precio_unitario: "",
+            descripcion: "",
+            imagen: ""
+        },productoNuevo: {
+            id:"",
             nombre: "",
             precio_unitario: "",
             descripcion: "",
@@ -178,7 +213,7 @@ export default {
     }),
     methods: {
         cambio() {
-            this.nombre = this.nombre === 'Gestio Productes' ? 'Gestio Comandas' : 'Gestio Productes'
+            this.nombre = this.nombre === 'Gestio Comandas' ? 'Gestio Productes' : 'Gestio Comandas'
             this.$router.push(this.link)
             this.link = this.link === 'gestiocomandes' ? 'gestioproductes' : 'gestiocomandes'
         },
@@ -201,6 +236,14 @@ export default {
         },
         Deshabilitar(i) {
             this.productos[i].habilitado = this.productos[i].habilitado === false ? true : false
+        },
+        eliminar() {
+            dialog = true
+        },
+        addProducto(){
+            this.productoNuevo.id = this.productos.length+1
+            this.productos.push(this.productoNuevo)
+            this.dialog1=false
         }
     }
 }
