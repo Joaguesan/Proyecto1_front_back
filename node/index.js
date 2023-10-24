@@ -1,7 +1,7 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const session = require("express-session");
-const cookieParser = require("cookie-parser");
+// const cookieParser = require("cook0ie-parser");
 
 const app = express();
 app.use(bodyParser.json());
@@ -132,11 +132,9 @@ app.post("/login", async (req, res) => {
       } else {
         req.session.user = result[0].CorreoElectronico;
         // res.cookie("user", req.session.user, { signed: true });
-        res.send(result);
+        res.send(req.session);
       }
     });
-
-    console.log(req.session);
 }});
 
 app.listen(port, () => {
