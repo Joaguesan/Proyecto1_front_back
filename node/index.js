@@ -58,7 +58,11 @@ app.get("/getOneProduct/:id", async (req, res) => {
 
   conn.query(sql, (err, result) => {
     if (err) console.error(err);
-    res.send(result);
+    if(result.length > 0) {
+      res.send(result);
+    }else{
+      res.status(500).send("Product not found");
+    }
   });
 });
 
@@ -101,6 +105,41 @@ app.put("/productStatus/:id", async (req, res) => {
     res.send(result);
   });
 });
+
+app.get("/getOrders", async (req, res) => {
+  var sql = `SELECT * FROM Pedido`
+
+  conn.query(sql, (err, result) => {
+    if (err) console.error(err);
+    console.log(result);
+    res.send(result);
+  });
+})
+
+app.get("/details/:id", async (req, res) => {
+  var sql = `SELECT * FROM Pedido WHERE IDPedido = ${req.params.id}`
+
+  conn.query(sql, (err, result) => {
+    if (err) console.error(err);
+    console.log(result);
+    if(result.length > 0) {
+      res.send(result);
+    }else{
+      res.status(500).send("Order not found");
+    }
+  });
+})
+
+app.post("/createOrder", async (req, res) => {
+  var sql = `INSERT INTO Pedido (IDCliente,FechaPedido,Total,Estado,Comentario) VALUES ('${req.body.idClient}','${req.body.date}','${req.body.total}','Pendiente','${req.body.comentario}')`
+
+  conn.query(sql, (err, result) => {
+    if (err) console.error(err);
+    console.log(result);
+    res.send(result);
+  });
+});
+
 
 // app.post("/register", async (req, res) => {
 //   var sql = `SELECT * FROM Cliente WHERE CorreoElectronico = '${req.body.email}'`;
