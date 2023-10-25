@@ -134,7 +134,7 @@ app.post("/login", async (req, res) => {
       } else {
         req.session.user = result[0].CorreoElectronico;
         // res.cookie("user", req.session.user, { signed: true });
-        res.send(req.session);
+        res.send({cookie: req.session, userData: result[0]});
       }
     });
 }});
