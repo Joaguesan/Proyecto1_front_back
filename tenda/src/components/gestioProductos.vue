@@ -26,15 +26,15 @@
                             <v-card>
                                 <v-container>
                                     <v-card-item>
-                                        <v-img :src="productoNuevo.imagen"></v-img>
+                                        <v-img :src="productoNuevo.Imatge"></v-img>
                                         <v-container>
-                                            <v-text-field v-model="productoNuevo.nombre" :rules="[Regla.required]"  label="Nombre del producto"
+                                            <v-text-field v-model="productoNuevo.NombreProducto" :rules="[Regla.required]"  label="Nombre del producto"
                                                 variante="outlined" required></v-text-field>
-                                            <v-text-field v-model="productoNuevo.precio_unitario" suffix="€" label="Precio"
+                                            <v-text-field v-model="productoNuevo.PrecioUnitario" suffix="€" label="Precio"
                                                 :rules="[Regla.required]" required></v-text-field>
-                                            <v-textarea v-model="productoNuevo.descripcion" :rules="[Regla.required]" label="Descripcion"
+                                            <v-textarea v-model="productoNuevo.Descripcion" :rules="[Regla.required]" label="Descripcion"
                                                 auto-grow required></v-textarea>
-                                            <v-text-field v-model="productoNuevo.imagen" :rules="[Regla.required]" label="URL imagen"
+                                            <v-text-field v-model="productoNuevo.Imatge" :rules="[Regla.required]" label="URL imagen"
                                                 variante="outlined" required></v-text-field>
                                         </v-container>
                                     </v-card-item>
@@ -49,14 +49,14 @@
                 </v-row>
                 <v-container>
                     <v-row>
-                        <v-col v-for="(variant, i) in productos" :key="i" cols="3">
-                            <v-card v-if="!variant.reveal & variant.habilitado" class="mx-auto" max-width="344"
+                        <v-col v-for="(variant, i) in productos1" :key="i" cols="3">
+                            <v-card v-if="!variant.reveal & variant.Habilitado" class="mx-auto" max-width="344"
                                 min-height="400">
                                 <v-card-item>
-                                    <v-img :src="variant.imagen"></v-img>
-                                    <v-card-title>{{ variant.nombre }}</v-card-title>
-                                    <v-card-subtitle>{{ variant.precio_unitario }}€</v-card-subtitle>
-                                    <v-card-text>{{ variant.descripcion }}</v-card-text>
+                                    <v-img :src="variant.Imatge"></v-img>
+                                    <v-card-title>{{ variant.NombreProducto }}</v-card-title>
+                                    <v-card-subtitle>{{ variant.PrecioUnitario }}€</v-card-subtitle>
+                                    <v-card-text>{{ variant.Descripcion }}</v-card-text>
                                 </v-card-item>
                                 <v-card-actions>
                                     <v-btn color="primary" @click="editar(variant)">Editar</v-btn>
@@ -64,18 +64,18 @@
                                     <v-btn color="primary" @click="Deshabilitar(i)">Deshabilitar</v-btn>
                                 </v-card-actions>
                             </v-card>
-                            <v-card v-else-if="variant.reveal & variant.habilitado" class="mx-auto" max-width="344">
+                            <v-card v-else-if="variant.reveal & variant.Habilitado" class="mx-auto" max-width="344">
                                 <v-container>
                                     <v-card-item>
-                                        <v-img :src="productoViejo.imagen"></v-img>
+                                        <v-img :src="productoViejo.Imatge"></v-img>
                                         <v-container>
-                                            <v-text-field v-model="productoViejo.nombre" :rules="[Regla.required]"
+                                            <v-text-field v-model="productoViejo.NombreProducto" :rules="[Regla.required]"
                                                 variant="outlined" required></v-text-field>
-                                            <v-text-field v-model="productoViejo.precio_unitario" suffix="€"
+                                            <v-text-field v-model="productoViejo.PrecioUnitario" suffix="€"
                                                 :rules="[Regla.required]" required></v-text-field>
-                                            <v-textarea v-model="productoViejo.descripcion" :rules="[Regla.required]"
+                                            <v-textarea v-model="productoViejo.Descripcion" :rules="[Regla.required]"
                                                 auto-grow required></v-textarea>
-                                            <v-text-field v-model="productoViejo.imagen" :rules="[Regla.required]"
+                                            <v-text-field v-model="productoViejo.Imatge" :rules="[Regla.required]"
                                                 variant="outlined" required></v-text-field>
                                         </v-container>
                                     </v-card-item>
@@ -91,14 +91,14 @@
                 <v-divider :thickness="5" class="border-opacity-70"></v-divider>
                 <v-container>
                     <v-row justify="left">
-                        <v-col v-for="(variante, i) in productos" :key="i" cols="auto">
-                            <v-card v-if="!variante.reveal & !variante.habilitado" class="mx-auto" max-width="344"
+                        <v-col v-for="(variante, i) in productos1" :key="i" cols="auto">
+                            <v-card v-if="!variante.reveal & !variante.Habilitado" class="mx-auto" max-width="344"
                                 min-height="400" color="rgb(255, 0, 0, 0.2)">
                                 <v-card-item>
-                                    <v-img :src="variante.imagen"></v-img>
-                                    <v-card-title>{{ variante.nombre }}</v-card-title>
-                                    <v-card-subtitle>{{ variante.precio_unitario }}€</v-card-subtitle>
-                                    <v-card-text>{{ variante.descripcion }}</v-card-text>
+                                    <v-img :src="variante.Imatge"></v-img>
+                                    <v-card-title>{{ variante.NombreProducto }}</v-card-title>
+                                    <v-card-subtitle>{{ variante.PrecioUnitario }}€</v-card-subtitle>
+                                    <v-card-text>{{ variante.Descripcion }}</v-card-text>
                                 </v-card-item>
                                 <v-card-actions>
                                     <v-btn color="primary" @click="editar(variante)">Editar</v-btn>
@@ -108,9 +108,9 @@
                                     <v-dialog v-model="dialog" width="auto">
                                         <v-card>
                                             <v-card-title class="text-h5">
-                                               Eliminar {{ variante.nombre }} ?
+                                               Eliminar {{ variante.NombreProducto }} ?
                                             </v-card-title>
-                                            <v-card-text>¿Estas seguro que quieres eliminar {{ variante.nombre }}?</v-card-text>
+                                            <v-card-text>¿Estas seguro que quieres eliminar {{ variante.NombreProducto }}?</v-card-text>
                                             <v-card-actions>
                                                 <v-btn color="primary" @click="dialog = false">Aceptar</v-btn>
                                                 <v-btn color="primary" @click="dialog = false">Cancelar</v-btn>
@@ -119,18 +119,18 @@
                                     </v-dialog>
                                 </v-card-actions>
                             </v-card>
-                            <v-card v-else-if="variante.reveal & !variante.habilitado" class="mx-auto" max-width="344">
+                            <v-card v-else-if="variante.reveal & !variante.Habilitado" class="mx-auto" max-width="344">
                                 <v-container>
                                     <v-card-item>
-                                        <v-img :src="productoViejo.imagen"></v-img>
+                                        <v-img :src="productoViejo.Imatge"></v-img>
                                         <v-container>
-                                            <v-text-field v-model="productoViejo.nombre" :rules="[Regla.required]"
+                                            <v-text-field v-model="productoViejo.NombreProducto" :rules="[Regla.required]"
                                                 variante="outlined" required></v-text-field>
-                                            <v-text-field v-model="productoViejo.precio_unitario" suffix="€"
+                                            <v-text-field v-model="productoViejo.PrecioUnitario" suffix="€"
                                                 :rules="[Regla.required]" required></v-text-field>
-                                            <v-textarea v-model="productoViejo.descripcion" :rules="[Regla.required]"
+                                            <v-textarea v-model="productoViejo.Descripcion" :rules="[Regla.required]"
                                                 auto-grow required></v-textarea>
-                                            <v-text-field v-model="productoViejo.imagen" :rules="[Regla.required]"
+                                            <v-text-field v-model="productoViejo.Imatge" :rules="[Regla.required]"
                                                 variante="outlined" required></v-text-field>
                                         </v-container>
                                     </v-card-item>
@@ -147,6 +147,7 @@
     </v-layout>
 </template>
 <script>
+import { getProductos } from '@/manager'
 export default {
     data: () => ({
         nombre: "Gestio Productes",
@@ -154,59 +155,18 @@ export default {
         dialog: false,
         dialog1: false,
         productoViejo: {
-            nombre: "",
-            precio_unitario: "",
-            descripcion: "",
-            imagen: ""
+            NombreProducto: "",
+            PrecioUnitario: "",
+            Descripcion: "",
+            Imatge: ""
         },productoNuevo: {
             id:"",
-            nombre: "",
-            precio_unitario: "",
-            descripcion: "",
-            imagen: ""
+            NombreProducto: "",
+            PrecioUnitario: "",
+            Descripcion: "",
+            Imatge: ""
         },
-        productos: [
-            {
-                "id": 1,
-                "nombre": "Hamburguesa Clásica",
-                "descripcion": "Una deliciosa hamburguesa clásica con carne, lechuga, tomate y mayonesa.",
-                "precio_unitario": 5.99,
-                "imagen": "https://s1.abcstatics.com/media/gurme/2023/08/31/s/smash-burger.jpg-kbOC--420x236@abc.jpg",
-                "habilitado": true
-            },
-            {
-                "id": 2,
-                "nombre": "Hamburguesa de Pollo",
-                "descripcion": "Una jugosa hamburguesa de pollo con lechuga, tomate y salsa especial.",
-                "precio_unitario": 6.49,
-                "imagen": "https://s1.abcstatics.com/media/gurme/2023/08/31/s/smash-burger.jpg-kbOC--420x236@abc.jpg",
-                "habilitado": true
-            },
-            {
-                "id": 3,
-                "nombre": "Hamburguesa Doble Queso",
-                "descripcion": "Una hamburguesa doble con queso cheddar derretido, cebolla y salsa de mostaza.",
-                "precio_unitario": 7.99,
-                "imagen": "https://s1.abcstatics.com/media/gurme/2023/08/31/s/smash-burger.jpg-kbOC--420x236@abc.jpg",
-                "habilitado": true
-            },
-            {
-                "id": 4,
-                "nombre": "Hamburguesa Vegetariana",
-                "descripcion": "Una hamburguesa vegetariana con patty de garbanzos, lechuga, tomate y mayonesa vegana.",
-                "precio_unitario": 6.99,
-                "imagen": "https://s1.abcstatics.com/media/gurme/2023/08/31/s/smash-burger.jpg-kbOC--420x236@abc.jpg",
-                "habilitado": true
-            },
-            {
-                "id": 5,
-                "nombre": "Hamburguesa con Bacon",
-                "descripcion": "Una hamburguesa con crujiente bacon, queso suizo, lechuga y salsa barbacoa.",
-                "precio_unitario": 8.49,
-                "imagen": "https://s1.abcstatics.com/media/gurme/2023/08/31/s/smash-burger.jpg-kbOC--420x236@abc.jpg",
-                "habilitado": true
-            }
-        ],
+        productos1:[],
         Regla: {
             required: value => !!value || 'Es requereix'
         }
@@ -221,30 +181,32 @@ export default {
             this.dialog = this.dialog === false ? true : false
         },
         editar(producto) {
-            this.productoViejo.nombre = producto.nombre
-            this.productoViejo.precio_unitario = producto.precio_unitario
-            this.productoViejo.descripcion = producto.descripcion
-            this.productoViejo.imagen = producto.imagen
+            this.productoViejo.NombreProducto = producto.NombreProducto
+            this.productoViejo.PrecioUnitario = producto.PrecioUnitario
+            this.productoViejo.Descripcion = producto.Descripcion
+            this.productoViejo.Imatge = producto.Imatge
             producto.reveal = true
         },
         aceptar(variant) {
-            variant.nombre = this.productoViejo.nombre
-            variant.precio_unitario = this.productoViejo.precio_unitario
-            variant.descripcion = this.productoViejo.descripcion
-            variant.imagen = this.productoViejo.imagen
+            variant.NombreProducto = this.productoViejo.NombreProducto
+            variant.PrecioUnitario = this.productoViejo.PrecioUnitario
+            variant.Descripcion = this.productoViejo.Descripcion
+            variant.Imatge = this.productoViejo.Imatge
             variant.reveal = false
         },
         Deshabilitar(i) {
-            this.productos[i].habilitado = this.productos[i].habilitado === false ? true : false
+            this.productos1[i].Habilitado = this.productos1[i].Habilitado === false ? true : false
         },
         eliminar() {
             dialog = true
         },
         addProducto(){
-            this.productoNuevo.id = this.productos.length+1
-            this.productos.push(this.productoNuevo)
+            this.productoNuevo.id = this.productos1.length+1
+            this.productos1.push(this.productoNuevo)
             this.dialog1=false
         }
-    }
+    },created() {
+        getProductos().then(response => this.productos1=response)
+  }
 }
 </script>
