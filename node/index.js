@@ -67,7 +67,7 @@ app.get("/getOneProduct/:id", async (req, res) => {
 });
 
 app.post("/addProduct", async (req, res) => {
-  var sql = `INSERT INTO Producto (NombreProducto,Descripcion,PrecioUnitario, Habilitado) VALUES ('${req.body.name}','${req.body.description}','${req.body.price}','${req.body.habilitado}')`;
+  var sql = `INSERT INTO Producto (NombreProducto,Descripcion,PrecioUnitario) VALUES ('${req.body.name}','${req.body.description}','${req.body.price}')`;
 
   conn.query(sql, (err, result) => {
     if (err) console.error(err);
@@ -76,8 +76,8 @@ app.post("/addProduct", async (req, res) => {
   });
 });
 
-app.delete("/deleteProduct", async (req, res) => {
-  var sql = `DELETE FROM Producto WHERE IDProducto = ${req.body.id}`;
+app.delete("/deleteProduct/:id", async (req, res) => {
+  var sql = `DELETE FROM Producto WHERE IDProducto = ${req.params.id}`;
 
   conn.query(sql, (err, result) => {
     if (err) console.error(err);
@@ -87,7 +87,7 @@ app.delete("/deleteProduct", async (req, res) => {
 });
 
 app.put("/updateProduct/:id", async (req, res) => {
-  var sql = `UPDATE Producto SET NombreProducto = '${req.body.name}', Descripcion = '${req.body.description}', PrecioUnitario = '${req.body.price}', Habilitado = '${req.body.habilitado}' WHERE IDProducto = ${req.params.id}`;
+  var sql = `UPDATE Producto SET NombreProducto = '${req.body.name}', Descripcion = '${req.body.description}', PrecioUnitario = '${req.body.price}' WHERE IDProducto = ${req.params.id}`;
 
   conn.query(sql, (err, result) => {
     if (err) console.error(err);
