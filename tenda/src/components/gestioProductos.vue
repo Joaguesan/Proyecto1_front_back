@@ -51,8 +51,7 @@
                 <v-container>
                     <v-row>
                         <v-col v-for="(variant, i) in productos1" :key="i" cols="3">
-                            <v-card v-if="!variant.reveal & variant.Habilitado" class="mx-auto" max-width="344"
-                                min-height="400">
+                            <v-card v-if="!variant.reveal && variant.Habilitado" class="mx-auto" max-width="344" min-height="400">
                                 <v-card-item>
                                     <v-img :src="variant.Imatge"></v-img>
                                     <v-card-title>{{ variant.NombreProducto }}</v-card-title>
@@ -66,7 +65,7 @@
                                 </v-card-actions>
                             </v-card>
                 <!--Edicion Habilitados-->
-                            <v-card v-else-if="variant.reveal & variant.Habilitado" class="mx-auto" max-width="344">
+                            <v-card v-else-if="variant.reveal && variant.Habilitado" class="mx-auto" max-width="344">
                                 <v-container>
                                     <v-card-item>
                                         <v-img :src="productoNuevo.Imatge"></v-img>
@@ -94,9 +93,9 @@
                 
                 <!--Deshabilitados-->
                 <v-container>
-                    <v-row justify="left">
+                    <v-row>
                         <v-col v-for="(variante, i) in productos1" :key="i" cols="auto">
-                            <v-card v-if="!variante.reveal & !variante.Habilitado" class="mx-auto" max-width="344"
+                            <v-card v-if="!variante.reveal && !variante.Habilitado" class="mx-auto" max-width="344"
                                 min-height="400" color="rgb(255, 0, 0, 0.2)">
                                 <v-card-item>
                                     <v-img :src="variante.Imatge"></v-img>
@@ -108,7 +107,7 @@
                                     <v-btn color="primary" @click="editar(variante)">Editar</v-btn>
 
                                     <v-btn color="primary" @click="Deshabilitar(i)">Habilitar</v-btn>
-                                    <v-btn color="primary" @click="dialog = true">Eliminar</v-btn>
+                                    <v-btn color="primary" @click="dialog=true">Eliminar</v-btn>
                                     <v-dialog v-model="dialog" width="auto">
                                         <v-card>
                                             <v-card-title class="text-h5">
@@ -117,7 +116,7 @@
                                             <v-card-text>¿Estas seguro que quieres eliminar {{ variante.NombreProducto
                                             }}?</v-card-text>
                                             <v-card-actions>
-                                                <v-btn color="primary" @click="dialog = false">Aceptar</v-btn>
+                                                <v-btn color="primary" @click="eliminar(variante)">Aceptar</v-btn>
                                                 <v-btn color="primary" @click="dialog = false">Cancelar</v-btn>
                                             </v-card-actions>
                                         </v-card>
@@ -126,7 +125,7 @@
                             </v-card>
                             
                 <!--edicion deshabilitados-->
-                            <v-card v-else-if="variante.reveal & !variante.Habilitado" class="mx-auto" max-width="344">
+                            <v-card v-else-if="variante.reveal && !variante.Habilitado" class="mx-auto" max-width="344">
                                 <v-container>
                                     <v-card-item>
                                         <v-img :src="productoNuevo.Imatge"></v-img>
@@ -154,7 +153,7 @@
     </v-layout>
 </template>
 <script>
-import { getProductos, UpdateProductos, AddProductos,CambiarEstado } from '@/manager'
+import { getProductos, UpdateProductos, AddProductos,CambiarEstado,DeleteProducto } from '@/manager'
 export default {
     data: () => ({
         nombre: "Gestio Productes",
@@ -202,7 +201,11 @@ export default {
             
         },
         Deshabilitar(i) {
-            this.productos1[i].Habilitado = this.productos1[i].Habilitado === false ? true : false
+            if(this.productos1[i].Habilitado==1){
+                this.productos1[i].Habilitado = 0
+            }else{
+                this.productos1[i].Habilitado = 1
+            }
             var habil = this.productos1[i].Habilitado
             let estado={
                 "status": habil
@@ -218,8 +221,14 @@ export default {
             getProductos().then(response => this.productos1 = response)
 
         },
-        eliminar() {
-            dialog = true
+        eliminar(variant) {
+            let id = {
+                "id": variant.IDProducto
+            }
+            DeleteProducto(id).then((response) => {
+                this.dialog = false
+            })
+            getProductos().then(response => this.productos1 = response)
         },
         addProducto() {
             this.productoNuevo.id = this.productos1.length + 1
@@ -229,8 +238,8 @@ export default {
                 this.productoNuevo.name = ""
                 this.productoNuevo.price = ""
                 this.productoNuevo.description = ""
-                this.productos1  =getProductos()
             })
+            getProductos().then(response => this.productos1 = response)
         },
         recargar(){
             getProductos().then(response => this.productos1 = response)

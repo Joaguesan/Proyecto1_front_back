@@ -51,3 +51,11 @@ export async function AddProductos(dadesProducte) {
             mode: "cors"
         },);
 }
+export async function DeleteProducto(dadesProducte){
+    console.log(dadesProducte);
+    const response= await fetch(`http://localhost:3000/deleteProduct/${dadesProducte.id}`, 
+    {method: 'DELETE'});
+ 
+   console.log("quieres borrar la pregunta con id: "+JSON.stringify(dadesProducte))
+ }
+ 
