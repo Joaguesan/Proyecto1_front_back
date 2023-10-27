@@ -2,12 +2,16 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const session = require("express-session");
 const cors = require("cors");
+const htp = require("http");
 // const cookieParser = require("cook0ie-parser");
 var history = require("connect-history-api-fallback");
 
 const staticFieldMiddleware = express.static("public");
 
 const app = express();
+const server = http.createServer(app);
+const {Server} = require("socket.io");
+const io = new Server(server);
 app.use(bodyParser.json());
 app.use(cors());
 
@@ -46,6 +50,20 @@ conn.getConnection((err, connection) => {
     console.log("Connected to database!");
   }
 });
+
+app.get("/", async (req, res) => {
+  res.sendFile(__dirname + "/public/index.html");
+});
+io.on("connection", (socket) => {
+  console.log("User connected");
+  socket.on("disconnect", () => {
+    console.log("User disconnected");
+  });
+  socket.on("chat message", (msg) => {
+    io.emit("chat message", msg);
+  });
+});
+
 
 app.get("/getProducts", async (req, res) => {
   var sql = "SELECT * FROM Producto";
