@@ -11,13 +11,6 @@ const app = express();
 app.use(bodyParser.json());
 app.use(cors());
 
-app.use(staticFieldMiddleware);
-app.use(history({
-  disableDotRules: true,
-  verbose: true,
-}));
-app.use(staticFieldMiddleware);
-
 const sessionsSecret = "2hCTcL2p5QMSny6DbZtUFjVtVXZqFa";
 const sessionConfig = {
   secret: sessionsSecret,
@@ -204,3 +197,10 @@ app.post("/login", async (req, res) => {
 app.listen(port, () => {
   console.log(`listening at http://localhost:${port}`);
 });
+
+app.use(staticFieldMiddleware);
+app.use(history({
+  disableDotRules: true,
+  verbose: true,
+}));
+app.use(staticFieldMiddleware);
