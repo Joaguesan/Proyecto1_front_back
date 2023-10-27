@@ -28,11 +28,11 @@
             <v-dialog v-model="dialog" width="auto">
               <v-card>
                 <v-card-text>ID a buscar: </v-card-text>
-                <v-text-field v-model="idcomanda" :counter="10" label="ID comanda" required hide-details
+                <v-text-field v-model="IDPedido" :counter="10" label="ID comanda" required hide-details
                   @key.up.enter=""></v-text-field>
                 <v-card-actions>
                   <v-btn color="primary" class="w-50" variant="text" block
-                    @click="buscarComanda(idcomanda); dialog = false">Buscar</v-btn>
+                    @click="buscarComanda(IDPedido); dialog = false">Buscar</v-btn>
                   <v-btn color="primary" class="w-50" variant="text" block @click="dialog = false">Tancar</v-btn>
                 </v-card-actions>
               </v-card>
@@ -55,27 +55,27 @@
             <v-row v-if="this.comandesTancades" :class="[
               index % 2 === 0 ? 'bg-grey-lighten-2' : 'bg-white'
             ]" v-for="(comanda, index) in comandes" :key=index>
-              <v-col cols="2">{{ comanda.idComanda }}</v-col>
-              <v-col cols="2">{{ comanda.idClient }}</v-col>
-              <v-col cols="2">{{ comanda.data }}</v-col>
-              <v-col cols="2">{{ comanda.import }}</v-col>
-              <v-col cols="2">{{ comanda.estat }}</v-col>
+              <v-col cols="2">{{ comanda.IDPedido }}</v-col>
+              <v-col cols="2">{{ comanda.IDCliente }}</v-col>
+              <v-col cols="2">{{ comanda.FechaPedido }}</v-col>
+              <v-col cols="2">{{ comanda.Total }}</v-col>
+              <v-col cols="2">{{ comanda.Estado }}</v-col>
               <v-col cols="2">temps</v-col>
             </v-row>
             <v-row v-if="this.comandesPendents">
               <v-expansion-panels>
                 <v-expansion-panel v-for="(comanda, i) in this.comandes" :key="i">
                   <v-expansion-panel-title expand-icon="mdi-plus" collapse-icon="mdi-minus">
-                    Comanda {{ comanda.idComanda }}
+                    Comanda {{ comanda.IDPedido }}
                   </v-expansion-panel-title>
                   <v-expansion-panel-text>
                     <v-row>
-                      <v-col cols="2">Client: {{ comanda.idClient }} </v-col>
-                      <v-col cols="2">Data: {{ comanda.data }}</v-col>
+                      <v-col cols="2">Client: {{ comanda.IDCliente }} </v-col>
+                      <v-col cols="2">FechaPedido: {{ comanda.FechaPedido }}</v-col>
                       <v-col cols="2">
                         <p class="nose">
                           Descripció:
-                          febbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+                          {{ comanda.Comentario }}
                         </p>
                       </v-col>
                       <v-col cols="2">
@@ -84,8 +84,8 @@
                           febbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
                         </p>
                       </v-col>
-                      <v-col cols="2"><v-btn @click="comandaAcceptada(comanda.idComanda)">Acceptar</v-btn></v-col>
-                      <v-col cols="2"><v-btn @click="comandaRebutjada(comanda.idComanda)">Rebutjar</v-btn></v-col>
+                      <v-col cols="2"><v-btn @click="productosComanda(comanda.IDPedido)/*comandaAcceptada(comanda.IDPedido)*/">Acceptar</v-btn></v-col>
+                      <v-col cols="2"><v-btn @click="comandaRebutjada(comanda.IDPedido)">Rebutjar</v-btn></v-col>
                     </v-row>
                   </v-expansion-panel-text>
                 </v-expansion-panel>
@@ -97,19 +97,19 @@
           <v-col cols="4" v-for="(comanda, i) in this.comandes" :key="i">
             <v-card width="250">
               <v-card-title>
-                Comanda {{ comanda.idComanda }}
+                Comanda {{ comanda.IDPedido }}
               </v-card-title>
               <v-card-subtitle>
-                Client {{ comanda.idClient }}
+                Client {{ comanda.IDCliente }}
               </v-card-subtitle>
-              <v-btn color="success" class="mt-12" @click="cambiarOverlay(comanda.idComanda)">
+              <v-btn color="success" class="mt-12" @click="cambiarOverlay(comanda.IDPedido)">
                 Veure Comanda
               </v-btn>
               <v-btn color="success" class="mt-12" @click="tancar(comanda)">
                 Tancar
               </v-btn>
 
-              <v-overlay v-model="overlay" v-if="this.comandaSeleccionada === comanda.idComanda" contained
+              <v-overlay v-model="overlay" v-if="this.comandaSeleccionada === comanda.IDPedido" contained
                 class="align-center justify-center">
                 <v-card-text class="carta">
                   <ul>
@@ -158,7 +158,8 @@
 }
 </style>
 <script  >
-//import io from 'socket.io-client';
+import { getComandes,getProductesComanda } from '@/manager'
+import io from 'socket.io-client';
 export default {
   data: () => ({
     comandaSeleccionada: null,
@@ -168,97 +169,39 @@ export default {
     link: "gestioproductes",
     ultimaColumna: "Hola",
     dialog: false,
-    idcomanda: "",
+    IDPedido: "",
     overlay: false,
     comandes: [],
-    comandesGlobal: [
-      {
-        "idComanda": 1,
-        "idClient": 101,
-        "data": "2023-10-23",
-        "import": 50.99,
-        "estat": "Pendents"
-      },
-      {
-        "idComanda": 2,
-        "idClient": 102,
-        "data": "2023-10-24",
-        "import": 75.50,
-        "estat": "Pendents"
-      },
-      {
-        "idComanda": 3,
-        "idClient": 103,
-        "data": "2023-10-25",
-        "import": 30.25,
-        "estat": "Acceptades"
-      },
-      {
-        "idComanda": 4,
-        "idClient": 104,
-        "data": "2023-10-26",
-        "import": 45.75,
-        "estat": "Acceptades"
-      },
-      {
-        "idComanda": 5,
-        "idClient": 105,
-        "data": "2023-10-27",
-        "import": 60.00,
-        "estat": "Acceptades"
-      },
-      {
-        "idComanda": 6,
-        "idClient": 106,
-        "data": "2023-10-28",
-        "import": 90.99,
-        "estat": "Tancades"
-      },
-      {
-        "idComanda": 7,
-        "idClient": 107,
-        "data": "2023-10-29",
-        "import": 25.49,
-        "estat": "Tancades"
-      },
-      {
-        "idComanda": 8,
-        "idClient": 108,
-        "data": "2023-10-30",
-        "import": 55.75,
-        "estat": "Tancades"
-      },
-      {
-        "idComanda": 9,
-        "idClient": 109,
-        "data": "2023-10-31",
-        "import": 40.00,
-        "estat": "Tancades"
-      },
-      {
-        "idComanda": 10,
-        "idClient": 110,
-        "data": "2023-11-01",
-        "import": 70.25,
-        "estat": "Pendents"
-      }
-    ],
+    comandesGlobal: [],
     comandesPendents: true,
     comandesAcceptades: false,
-    comandesTancades: false
-    //socket: null
+    comandesTancades: false,
+    socket: null,
+    prova: []
 
 
   }),
   created() {
     this.buscarComandes("Pendents");
-    /*this.socket = io("127.0.0.1:3001")
+    this.socket = io("http://testprojecte.dam.inspedralbes.cat:3044")
     this.socket.on('connected', (data)=>{
       console.log("Connectat")
-    })*/
+    })
 
   },
   methods: {
+    filterById(jsonObject, id)
+     {return jsonObject.filter(function(jsonObject) {return (jsonObject['IDPedido'] == id);})[0];},
+     
+     recargar(){
+      getComandes().then(response => this.comandesGlobal = response)
+    },
+    productosComanda(idComanda){
+      //var comandaActual = this.filterById(this.comandesGlobal, idComanda);
+      console.log(this.prova);
+      getProductesComanda(idComanda).then((response) => {this.prova = response});
+      console.log(this.prova);
+    },
 
     cambio() {
       this.nombre = this.nombre === 'Gestio Comandas' ? 'Gestio Productes' : 'Gestio Comandas'
@@ -269,9 +212,10 @@ export default {
       this.comandaSeleccionada = comandaId;
       this.overlay = !this.overlay
     },
-    buscarComandes(estat) {
-      this.comandes = this.comandesGlobal.filter(comanda => comanda.estat === estat);
-      switch (estat) {
+    buscarComandes(Estado) {
+      this.recargar();
+      this.comandes = this.comandesGlobal.filter(comanda => comanda.Estado === Estado);
+      switch (Estado) {
         case 'Pendents':
           this.comandesPendents = true;
           this.comandesAcceptades = false;
@@ -289,9 +233,10 @@ export default {
           break
       }
     },
+
     buscarComanda(id) {
-      this.comandes = this.comandesGlobal.filter(comanda => comanda.idComanda == id);
-      this.idcomanda = "";
+      this.comandes = this.comandesGlobal.filter(comanda => comanda.IDPedido == id);
+      this.IDPedido = "";
     },
     comandaAcceptada(id) {
       console.log("S'ha acceptat la comanda amb id: " + id)
@@ -301,7 +246,7 @@ export default {
 
     },
     tancar(comanda) {
-      comanda.estat = "Tancades"
+      comanda.Estado = "Tancades"
 
     }
   },
@@ -315,7 +260,7 @@ export default {
 
       if (this.sortBy === 'keys') {
         // Ordenar por claves alfabéticamente
-        return this.keysToSort.filter(comanda => comanda.estat === seleccio);
+        return this.keysToSort.filter(comanda => comanda.Estado === seleccio);
       } else if (this.sortBy === 'values') {
         // Ordenar por valores (aciertos) de manera descendente
         return keysToSort.findIndex();

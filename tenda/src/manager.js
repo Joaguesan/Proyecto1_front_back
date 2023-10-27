@@ -1,3 +1,24 @@
+export async function getComandes() {
+    const response = await fetch(`http://localhost:3000/getorders`,
+        {
+            method: 'GET',
+            headers: { 'Accept': 'application/json' }
+        });
+    const comandes = await response.json();
+    return comandes;
+}
+
+export async function getProductesComanda(idComanda) {
+    var url = "http://localhost:3000/detailOrder/" + idComanda;
+    const response = await fetch(url,
+        {
+            method: 'GET',
+            headers: { 'Accept': 'application/json' }
+        });
+    const productes = await response.json();
+    return productes;
+}
+
 export async function getProductos() {
     const response = await fetch(`http://localhost:3000/getProducts`,
         {
