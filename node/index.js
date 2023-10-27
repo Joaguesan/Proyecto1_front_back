@@ -3,10 +3,20 @@ const bodyParser = require("body-parser");
 const session = require("express-session");
 const cors = require("cors");
 // const cookieParser = require("cook0ie-parser");
+var history = require("connect-history-api-fallback");
+
+const staticFieldMiddleware = express.static("public");
 
 const app = express();
 app.use(bodyParser.json());
 app.use(cors());
+
+app.use(staticFieldMiddleware);
+app.use(history({
+  disableDotRules: true,
+  verbose: true,
+}));
+app.use(staticFieldMiddleware);
 
 const sessionsSecret = "2hCTcL2p5QMSny6DbZtUFjVtVXZqFa";
 const sessionConfig = {
@@ -58,9 +68,9 @@ app.get("/getOneProduct/:id", async (req, res) => {
 
   conn.query(sql, (err, result) => {
     if (err) console.error(err);
-    if(result.length > 0) {
+    if (result.length > 0) {
       res.send(result);
-    }else{
+    } else {
       res.status(500).send("Product not found");
     }
   });
@@ -97,7 +107,7 @@ app.put("/updateProduct/:id", async (req, res) => {
 });
 
 app.put("/productStatus/:id", async (req, res) => {
-  var sql = `UPDATE Producto SET Habilitado = ${req.body.status} WHERE IDProducto = ${req.params.id}`
+  var sql = `UPDATE Producto SET Habilitado = ${req.body.status} WHERE IDProducto = ${req.params.id}`;
 
   conn.query(sql, (err, result) => {
     if (err) console.error(err);
@@ -107,31 +117,7 @@ app.put("/productStatus/:id", async (req, res) => {
 });
 
 app.get("/getOrders", async (req, res) => {
-  var sql = `SELECT * FROM Pedido`
-
-  conn.query(sql, (err, result) => {
-    if (err) console.error(err);
-    console.log(result);
-    res.send(result);
-  });
-})
-
-app.get("/details/:id", async (req, res) => {
-  var sql = `SELECT * FROM Pedido WHERE IDPedido = ${req.params.id}`
-
-  conn.query(sql, (err, result) => {
-    if (err) console.error(err);
-    console.log(result);
-    if(result.length > 0) {
-      res.send(result);
-    }else{
-      res.status(500).send("Order not found");
-    }
-  });
-})
-
-app.post("/createOrder", async (req, res) => {
-  var sql = `INSERT INTO Pedido (IDCliente,FechaPedido,Total,Estado,Comentario) VALUES ('${req.body.idClient}','${req.body.date}','${req.body.total}','Pendiente','${req.body.comentario}')`
+  var sql = `SELECT * FROM Pedido`;
 
   conn.query(sql, (err, result) => {
     if (err) console.error(err);
@@ -140,6 +126,42 @@ app.post("/createOrder", async (req, res) => {
   });
 });
 
+app.get("/detailOrder/:id", async (req, res) => {
+  var sql = `SELECT
+  Pedido.IDPedido,
+  Pedido.IDCliente,
+  Producto.NombreProducto,
+  Pedido.Comentario,
+  Producto.PrecioUnitario,
+  DetallePedido.Cantidad
+FROM
+  Producto
+JOIN
+  DetallePedido ON Producto.IDProducto = DetallePedido.IDProducto
+JOIN
+  Pedido ON DetallePedido.IDPedido = Pedido.IDPedido
+  WHERE Pedido.IDPedido = ${req.params.id}`;
+
+  conn.query(sql, (err, result) => {
+    if (err) console.error(err);
+    console.log(result);
+    if (result.length > 0) {
+      res.send(result);
+    } else {
+      res.status(500).send("Order not found");
+    }
+  });
+});
+
+app.post("/createOrder", async (req, res) => {
+  var sql = `INSERT INTO Pedido (IDCliente,FechaPedido,Total,Estado,Comentario) VALUES ('${req.body.idClient}','${req.body.date}','${req.body.total}','Pendiente','${req.body.comentario}')`;
+
+  conn.query(sql, (err, result) => {
+    if (err) console.error(err);
+    console.log(result);
+    res.send(result);
+  });
+});
 
 // app.post("/register", async (req, res) => {
 //   var sql = `SELECT * FROM Cliente WHERE CorreoElectronico = '${req.body.email}'`;
@@ -173,10 +195,11 @@ app.post("/login", async (req, res) => {
       } else {
         req.session.user = result[0].CorreoElectronico;
         // res.cookie("user", req.session.user, { signed: true });
-        res.send({cookie: req.session, userData: result[0]});
+        res.send({ cookie: req.session, userData: result[0] });
       }
     });
-}});
+  }
+});
 
 app.listen(port, () => {
   console.log(`listening at http://localhost:${port}`);
