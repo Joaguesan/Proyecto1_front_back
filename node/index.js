@@ -3,20 +3,60 @@ const bodyParser = require("body-parser");
 const session = require("express-session");
 const cors = require("cors");
 // const cookieParser = require("cook0ie-parser");
-var history = require("connect-history-api-fallback");
+//var history = require("connect-history-api-fallback");
 
-const staticFieldMiddleware = express.static("public");
+//const staticFieldMiddleware = express.static("public");
 
 const app = express();
-app.use(bodyParser.json());
-app.use(cors());
 
-app.use(staticFieldMiddleware);
+app.use(bodyParser.json());
+
+/*app.use(staticFieldMiddleware);
 app.use(history({
   disableDotRules: true,
   verbose: true,
 }));
-app.use(staticFieldMiddleware);
+
+app.use(staticFieldMiddleware);*/
+app.use(cors({
+  origin: "http://localhost:3001",
+  credentials: true
+}));
+const http = require('node:http');
+const server = http.createServer(app);
+const { Server } = require("socket.io");
+
+const io = new Server(server, {
+  cors: {
+    origin: "http://localhost:3001",
+    credentials: true
+  }
+});
+const port = 3000;
+
+server.listen(port, () => {
+  console.log(`listening at http://localhost:${port}`);
+});
+
+
+io.on('connection', (socket) => {
+  console.log('a user connected');
+  io.emit('connectat', "connectat");
+
+  socket.on('Acceptada', (id) => {
+    //Canviar estat a acceptat
+    var sql = `UPDATE Pedido SET Estado = "Acceptades" WHERE IDPedido = ${id}`;
+    conn.query(sql, (err, result) => {
+      if (err) console.error(err);
+      console.log(result);
+    });
+  })
+
+  socket.on('disconnect', () => {
+    console.log('user disconnected');
+  });
+
+});
 
 const sessionsSecret = "2hCTcL2p5QMSny6DbZtUFjVtVXZqFa";
 const sessionConfig = {
@@ -32,7 +72,6 @@ const sessionConfig = {
 // app.use(cookieParser({}));
 app.use(session(sessionConfig));
 
-const port = 3000;
 
 const mysql = require("mysql2");
 
@@ -201,6 +240,9 @@ app.post("/login", async (req, res) => {
   }
 });
 
-app.listen(port, () => {
-  console.log(`listening at http://localhost:${port}`);
-});
+
+
+/*
+app.get('/', (req, res) => {
+  res.sendFile(__dirname + '/public/index.html');
+});*/
