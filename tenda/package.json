@@ -17,7 +17,7 @@
     "vue": "^3.3.7",
     "vue-head": "^2.2.0",
     "vue-router": "^4.0.0",
-    "vue-socket.io": "^1.0.2",
+    "vue-socket.io": "^3.0.10",
     "vuetify": "^3.3.22"
   },
   "devDependencies": {

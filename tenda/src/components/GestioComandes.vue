@@ -15,7 +15,8 @@
         <v-row>
           <v-col cols="2"></v-col>
           <v-col class="d-flex justify-center align-center">
-            <h1>Gestió Comandes</h1>
+            <h1>Gestió Comandes</h1> 
+            Estat: {{ this.estat }}
           </v-col>
           <v-col cols="2"></v-col>
         </v-row>
@@ -24,7 +25,7 @@
           <v-col cols="3"><v-select v-model="seleccio" density="compact" :items="['Pendents', 'Acceptades', 'Tancades']"
               @update:menu=buscarComandes(seleccio)></v-select></v-col>
           <v-col cols="6"></v-col>
-          <v-col cols="3"><v-btn @click="dialog = true;" class="">Cercar Comandes</v-btn>
+          <v-col cols="3"><v-btn @click="dialog = true;" class="">Cercar Comandes</v-btn><v-btn @click="connectar()" class="">Socket</v-btn><v-btn @click="desconnectar()" class="">noSocket</v-btn>
             <v-dialog v-model="dialog" width="auto">
               <v-card>
                 <v-card-text>ID a buscar: </v-card-text>
@@ -84,7 +85,8 @@
                           febbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
                         </p>
                       </v-col>
-                      <v-col cols="2"><v-btn @click="productosComanda(comanda.IDPedido)/*comandaAcceptada(comanda.IDPedido)*/">Acceptar</v-btn></v-col>
+                      <v-col cols="2"><v-btn
+                          @click="comandaAcceptada(comanda.IDPedido)">Acceptar</v-btn></v-col>
                       <v-col cols="2"><v-btn @click="comandaRebutjada(comanda.IDPedido)">Rebutjar</v-btn></v-col>
                     </v-row>
                   </v-expansion-panel-text>
@@ -158,8 +160,8 @@
 }
 </style>
 <script  >
-import { getComandes,getProductesComanda } from '@/manager'
-import io from 'socket.io-client';
+import { getComandes, getProductesComanda } from '@/manager'
+import { socket, state } from "@/socket";
 export default {
   data: () => ({
     comandaSeleccionada: null,
@@ -176,30 +178,37 @@ export default {
     comandesPendents: true,
     comandesAcceptades: false,
     comandesTancades: false,
-    socket: null,
     prova: []
 
 
   }),
   created() {
     this.buscarComandes("Pendents");
-    this.socket = io("http://testprojecte.dam.inspedralbes.cat:3044")
-    this.socket.on('connected', (data)=>{
-      console.log("Connectat")
-    })
 
   },
   methods: {
-    filterById(jsonObject, id)
-     {return jsonObject.filter(function(jsonObject) {return (jsonObject['IDPedido'] == id);})[0];},
-     
-     recargar(){
+    connectar(){
+      console.log("clicat")
+      socket.connect();
+    },
+    desconnectar(){
+      console.log("clicat")
+      socket.disconnect();
+    },
+    
+    filterById(jsonObject, id) { return jsonObject.filter(function (jsonObject) { return (jsonObject['IDPedido'] == id); })[0]; },
+    
+
+    comandaAcceptada(idComanda) {
+      socket.emit('Acceptada', idComanda);
+    },
+    recargar() {
       getComandes().then(response => this.comandesGlobal = response)
     },
-    productosComanda(idComanda){
+    productosComanda(idComanda) {
       //var comandaActual = this.filterById(this.comandesGlobal, idComanda);
-      console.log(this.prova);
-      getProductesComanda(idComanda).then((response) => {this.prova = response});
+      getProductesComanda(idComanda).then((response) => { this.prova = response; console.log(response) }
+      );
       console.log(this.prova);
     },
 
@@ -238,9 +247,6 @@ export default {
       this.comandes = this.comandesGlobal.filter(comanda => comanda.IDPedido == id);
       this.IDPedido = "";
     },
-    comandaAcceptada(id) {
-      console.log("S'ha acceptat la comanda amb id: " + id)
-    },
     comandaRebutjada(id) {
       console.log("S'ha rebutjat la comanda amb id: " + id)
 
@@ -251,24 +257,9 @@ export default {
     }
   },
   computed: {
-    /*DatosFiltrados() {
-      let keysToSort = Object.keys(this.comandes);
-
-      // Filtrar la clave 'tiempo' si está presente
-      keysToSort = keysToSort.filter(key => key !== 'tiempo');
-      keysToSort = keysToSort.filter(key => key !== 'intentos');
-
-      if (this.sortBy === 'keys') {
-        // Ordenar por claves alfabéticamente
-        return this.keysToSort.filter(comanda => comanda.Estado === seleccio);
-      } else if (this.sortBy === 'values') {
-        // Ordenar por valores (aciertos) de manera descendente
-        return keysToSort.findIndex();
-      }
-
-      // Por defecto, devolver las claves ordenadas alfabéticamente
-      return this.keysToSort;
-    }*/
+    estat(){
+      return state.connected
+    }
   },
 
 }
@@ -276,4 +267,3 @@ export default {
 
 //
 </script>
-    
