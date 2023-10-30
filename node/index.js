@@ -3,6 +3,7 @@ const bodyParser = require("body-parser");
 const session = require("express-session");
 const cors = require("cors");
 const http = require("http");
+var CryptoJS = require("crypto-js");
 // const cookieParser = require("cook0ie-parser");
 //var history = require("connect-history-api-fallback");
 
@@ -244,7 +245,8 @@ app.post("/login", async (req, res) => {
 
     conn.query(sql, (err, result) => {
       if (err) console.error(err);
-      if (result == 0 || result[0].Contrasena != req.body.password) {
+      var ciphertext = CryptoJS.MD5(req.body.password).toString();
+      if (result == 0 || result[0].Contrasena != ciphertext) {
         res.status(500).send("Wrong email or password");
       } else {
         req.session.user = result[0].CorreoElectronico;
