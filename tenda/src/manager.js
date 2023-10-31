@@ -81,16 +81,7 @@ export async function DescargarImagen(url) {
             mode: "cors"
         },);
 }
-export async function RecibirImagen(nombre) {
-    const response = await fetch(`http://localhost:3000/imagen/${nombre}`,
-        {
-            method: 'GET',
-            headers: { 'Accept': 'application/json' }
-        });
-    const ImagenURL = response;
-    console.log(ImagenURL);
-    return ImagenURL.url;
-}
+
 export async function DeleteProducto(dadesProducte){
     console.log(dadesProducte);
     const response= await fetch(`http://localhost:3000/deleteProduct/${dadesProducte.id}`, 

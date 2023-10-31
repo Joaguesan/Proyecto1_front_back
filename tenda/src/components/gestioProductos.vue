@@ -54,7 +54,7 @@
                             <v-card v-if="!variant.reveal && variant.Habilitado" class="mx-auto" max-width="344"
                                 min-height="400">
                                 <v-card-item>
-                                    <v-img :src="buscarimagen(variant)"></v-img>
+                                    <v-img :src="variant.Imatge"></v-img>
                                     <v-card-title>{{ variant.NombreProducto }}</v-card-title>
                                     <v-card-subtitle>{{ variant.PrecioUnitario }}€</v-card-subtitle>
                                     <v-card-text>{{ variant.Descripcion }}</v-card-text>
@@ -154,7 +154,7 @@
     </v-layout>
 </template>
 <script>
-import { getProductos, UpdateProductos, AddProductos, CambiarEstado, DeleteProducto, DescargarImagen, RecibirImagen } from '@/manager'
+import { getProductos, UpdateProductos, AddProductos, CambiarEstado, DeleteProducto, DescargarImagen } from '@/manager'
 export default {
     data: () => ({
         nombre: "Gestio Productes",
@@ -192,17 +192,20 @@ export default {
             producto.reveal = true
         },
         aceptar(variant) {
+            var name = "producto" + this.productoNuevo.name
             let url1 = {
-                nombre: "producto" + this.productoNuevo.id,
+                nombre: name,
                 url: this.productoNuevo.Imatge
             }
             DescargarImagen(url1)
+            this.productoNuevo.Imatge = name
             UpdateProductos(this.productoNuevo, this.productoNuevo.id).then((response) => {
                 variant.reveal = false
                 this.productoNuevo.id = ""
                 this.productoNuevo.name = ""
                 this.productoNuevo.price = ""
                 this.productoNuevo.description = ""
+                this.productoNuevo.Imatge = ""
             })
             getProductos().then(response => this.productos1 = response)
 
@@ -235,32 +238,31 @@ export default {
             DeleteProducto(id).then((response) => {
                 this.dialog = false
             })
-            getProductos().then(response => this.productos1 = response)
+            getProductos().then(() => {this.productos1 = response})
         },
         addProducto() {
-            this.productoNuevo.id = this.productos1.length + 1
+            var name = "producto" + this.productoNuevo.name
+            let url1 = {
+                nombre: name,
+                url: this.productoNuevo.Imatge
+            }
+            DescargarImagen(url1)
+            this.productoNuevo.Imatge = name
             AddProductos(this.productoNuevo).then((response) => {
                 this.dialog1 = false
-                this.productoNuevo.id = ""
                 this.productoNuevo.name = ""
                 this.productoNuevo.price = ""
                 this.productoNuevo.description = ""
+                this.productoNuevo.Imatge = ""
             })
-            getProductos().then(response => this.productos1 = response)
+            getProductos().then(() => {this.productos1 = response})
         },
         recargar() {
             getProductos().then(response => this.productos1 = response)
         },
-        buscarimagen(variant) {
-            RecibirImagen(variant.Imatge).then((response) => {
-                variant.Imatge=response
-            }).catch(error => {
-                console.error('Error al obtener la imagen', error);
-            });
-        }
     }, created() {
         getProductos().then((response) => { this.productos1 = response })
-
+           
     }
 }
 </script>
