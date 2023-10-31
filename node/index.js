@@ -46,6 +46,8 @@ io.on("connection", (socket) => {
       if (err) console.error(err);
       console.log(result);
     });
+    io.emit("comandaNova");
+
   });
 
   socket.on("disconnect", () => {
@@ -90,15 +92,7 @@ conn.getConnection((err, connection) => {
 app.get("/", async (req, res) => {
   res.sendFile(__dirname + "/public/index.html");
 });
-io.on("connection", (socket) => {
-  console.log("User connected");
-  socket.on("disconnect", () => {
-    console.log("User disconnected");
-  });
-  socket.on("chat message", (msg) => {
-    io.emit("chat message", msg);
-  });
-});
+
 
 app.get("/getProducts", async (req, res) => {
   var sql = "SELECT * FROM Producto";
