@@ -51,9 +51,10 @@
                 <v-container>
                     <v-row>
                         <v-col v-for="(variant, i) in productos1" :key="i" cols="3">
-                            <v-card v-if="!variant.reveal && variant.Habilitado" class="mx-auto" max-width="344" min-height="400">
+                            <v-card v-if="!variant.reveal && variant.Habilitado" class="mx-auto" max-width="344"
+                                min-height="400">
                                 <v-card-item>
-                                    <v-img :src="variant.Imatge"></v-img>
+                                    <v-img :src="buscarimagen(variant)"></v-img>
                                     <v-card-title>{{ variant.NombreProducto }}</v-card-title>
                                     <v-card-subtitle>{{ variant.PrecioUnitario }}€</v-card-subtitle>
                                     <v-card-text>{{ variant.Descripcion }}</v-card-text>
@@ -64,7 +65,7 @@
                                     <v-btn color="primary" @click="Deshabilitar(i)">Deshabilitar</v-btn>
                                 </v-card-actions>
                             </v-card>
-                <!--Edicion Habilitados-->
+                            <!--Edicion Habilitados-->
                             <v-card v-else-if="variant.reveal && variant.Habilitado" class="mx-auto" max-width="344">
                                 <v-container>
                                     <v-card-item>
@@ -72,8 +73,8 @@
                                         <v-container>
                                             <v-text-field v-model="productoNuevo.name" :rules="[Regla.required]"
                                                 variant="outlined" required></v-text-field>
-                                            <v-text-field v-model="productoNuevo.price" suffix="€"
-                                                :rules="[Regla.required]" required></v-text-field>
+                                            <v-text-field v-model="productoNuevo.price" suffix="€" :rules="[Regla.required]"
+                                                required></v-text-field>
                                             <v-textarea v-model="productoNuevo.description" :rules="[Regla.required]"
                                                 auto-grow required></v-textarea>
                                             <v-text-field v-model="productoNuevo.Imatge" :rules="[Regla.required]"
@@ -90,7 +91,7 @@
                     </v-row>
                 </v-container>
                 <v-divider :thickness="5" class="border-opacity-70"></v-divider>
-                
+
                 <!--Deshabilitados-->
                 <v-container>
                     <v-row>
@@ -107,7 +108,7 @@
                                     <v-btn color="primary" @click="editar(variante)">Editar</v-btn>
 
                                     <v-btn color="primary" @click="Deshabilitar(i)">Habilitar</v-btn>
-                                    <v-btn color="primary" @click="dialog=true">Eliminar</v-btn>
+                                    <v-btn color="primary" @click="dialog = true">Eliminar</v-btn>
                                     <v-dialog v-model="dialog" width="auto">
                                         <v-card>
                                             <v-card-title class="text-h5">
@@ -123,8 +124,8 @@
                                     </v-dialog>
                                 </v-card-actions>
                             </v-card>
-                            
-                <!--edicion deshabilitados-->
+
+                            <!--edicion deshabilitados-->
                             <v-card v-else-if="variante.reveal && !variante.Habilitado" class="mx-auto" max-width="344">
                                 <v-container>
                                     <v-card-item>
@@ -132,8 +133,8 @@
                                         <v-container>
                                             <v-text-field v-model="productoNuevo.name" :rules="[Regla.required]"
                                                 variante="outlined" required></v-text-field>
-                                            <v-text-field v-model="productoNuevo.price" suffix="€"
-                                                :rules="[Regla.required]" required></v-text-field>
+                                            <v-text-field v-model="productoNuevo.price" suffix="€" :rules="[Regla.required]"
+                                                required></v-text-field>
                                             <v-textarea v-model="productoNuevo.description" :rules="[Regla.required]"
                                                 auto-grow required></v-textarea>
                                             <v-text-field v-model="productoNuevo.Imatge" :rules="[Regla.required]"
@@ -153,19 +154,20 @@
     </v-layout>
 </template>
 <script>
-import { getProductos, UpdateProductos, AddProductos,CambiarEstado,DeleteProducto } from '@/manager'
+import { getProductos, UpdateProductos, AddProductos, CambiarEstado, DeleteProducto, DescargarImagen, RecibirImagen } from '@/manager'
 export default {
     data: () => ({
         nombre: "Gestio Productes",
         link: "gestiocomandes",
         dialog: false,
         dialog1: false,
-         productoNuevo: {
+        ImagenURL: "",
+        productoNuevo: {
             id: "",
             name: "",
             price: "",
             description: "",
-            Imatge:""
+            Imatge: ""
         },
         productos1: [],
         Regla: {
@@ -190,6 +192,11 @@ export default {
             producto.reveal = true
         },
         aceptar(variant) {
+            let url1 = {
+                nombre: "producto" + this.productoNuevo.id,
+                url: this.productoNuevo.Imatge
+            }
+            DescargarImagen(url1)
             UpdateProductos(this.productoNuevo, this.productoNuevo.id).then((response) => {
                 variant.reveal = false
                 this.productoNuevo.id = ""
@@ -198,16 +205,16 @@ export default {
                 this.productoNuevo.description = ""
             })
             getProductos().then(response => this.productos1 = response)
-            
+
         },
         Deshabilitar(i) {
-            if(this.productos1[i].Habilitado==1){
+            if (this.productos1[i].Habilitado == 1) {
                 this.productos1[i].Habilitado = 0
-            }else{
+            } else {
                 this.productos1[i].Habilitado = 1
             }
             var habil = this.productos1[i].Habilitado
-            let estado={
+            let estado = {
                 "status": habil
             }
 
@@ -216,7 +223,7 @@ export default {
                 this.productoNuevo.name = ""
                 this.productoNuevo.price = ""
                 this.productoNuevo.description = ""
-                estado.status=""
+                estado.status = ""
             })
             getProductos().then(response => this.productos1 = response)
 
@@ -241,11 +248,19 @@ export default {
             })
             getProductos().then(response => this.productos1 = response)
         },
-        recargar(){
+        recargar() {
             getProductos().then(response => this.productos1 = response)
+        },
+        buscarimagen(variant) {
+            RecibirImagen(variant.Imatge).then((response) => {
+                variant.Imatge=response
+            }).catch(error => {
+                console.error('Error al obtener la imagen', error);
+            });
         }
     }, created() {
-        getProductos().then(response => this.productos1 = response)
+        getProductos().then((response) => { this.productos1 = response })
+
     }
 }
 </script>

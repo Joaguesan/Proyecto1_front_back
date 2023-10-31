@@ -7,7 +7,6 @@ export async function getComandes() {
     const comandes = await response.json();
     return comandes;
 }
-
 export async function getProductesComanda(idComanda) {
     var url = "http://localhost:3000/detailOrder/" + idComanda;
     const response = await fetch(url,
@@ -71,6 +70,26 @@ export async function AddProductos(dadesProducte) {
             body: JSON.stringify(dadesProducte),
             mode: "cors"
         },);
+}
+export async function DescargarImagen(url) {
+    const response = await fetch(`http://localhost:3000/imagen`,
+        {
+            method: 'POST', headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(url),
+            mode: "cors"
+        },);
+}
+export async function RecibirImagen(nombre) {
+    const response = await fetch(`http://localhost:3000/imagen/${nombre}`,
+        {
+            method: 'GET',
+            headers: { 'Accept': 'application/json' }
+        });
+    const ImagenURL = response;
+    console.log(ImagenURL);
+    return ImagenURL.url;
 }
 export async function DeleteProducto(dadesProducte){
     console.log(dadesProducte);
