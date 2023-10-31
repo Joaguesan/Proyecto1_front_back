@@ -48,6 +48,23 @@ io.on("connection", (socket) => {
     });
   });
 
+  socket.on("Rebutjada", (id) => {
+    var sql = `UPDATE Pedido SET Estado = "Rebutjada" WHERE IDPedido = ${id}`;
+  
+    conn.query(sql,(err, result) => {
+      if (err) console.error(err);
+      console.log(result);
+    });
+  });
+
+  socket.on("Completada", (id) => {
+    var sql = `UPDATE Pedido SET Estado = "Completada" WHERE IDPedido = ${id}`;
+    conn.query(sql, (err, result) => {
+      if (err) console.error(err);
+      console.log(result);
+    })
+  });
+
   socket.on("disconnect", () => {
     console.log("user disconnected");
   });
@@ -200,7 +217,7 @@ JOIN
 });
 
 app.post("/createOrder", async (req, res) => {
-  var sql = `INSERT INTO Pedido (IDCliente,TotalComentario) VALUES ('${req.body.idClient}','${req.body.total}','${req.body.comentario}')`;
+  var sql = `INSERT INTO Pedido (IDCliente,Total,Comentario) VALUES ('${req.body.idClient}','${req.body.total}','${req.body.comentario}')`;
 
   conn.query(sql, (err, result) => {
     if (err) console.error(err);
