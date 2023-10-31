@@ -46,14 +46,12 @@ io.on("connection", (socket) => {
       if (err) console.error(err);
       console.log(result);
     });
-    io.emit("comandaNova");
-
   });
 
   socket.on("Rebutjada", (id) => {
     var sql = `UPDATE Pedido SET Estado = "Rebutjada" WHERE IDPedido = ${id}`;
-  
-    conn.query(sql,(err, result) => {
+
+    conn.query(sql, (err, result) => {
       if (err) console.error(err);
       console.log(result);
     });
@@ -64,7 +62,7 @@ io.on("connection", (socket) => {
     conn.query(sql, (err, result) => {
       if (err) console.error(err);
       console.log(result);
-    })
+    });
   });
 
   socket.on("disconnect", () => {
@@ -109,7 +107,6 @@ conn.getConnection((err, connection) => {
 app.get("/", async (req, res) => {
   res.sendFile(__dirname + "/public/index.html");
 });
-
 
 app.get("/getProducts", async (req, res) => {
   var sql = "SELECT * FROM Producto";
@@ -217,6 +214,7 @@ app.post("/createOrder", async (req, res) => {
     if (err) console.error(err);
     console.log(result);
     res.send(result);
+    io.emit("comandaNova");
   });
 });
 
