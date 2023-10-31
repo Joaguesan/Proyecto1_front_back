@@ -2,18 +2,56 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const session = require("express-session");
 const cors = require("cors");
-const http = require("http");
+var CryptoJS = require("crypto-js");
 // const cookieParser = require("cook0ie-parser");
 var history = require("connect-history-api-fallback");
 
 const staticFieldMiddleware = express.static("public");
 
 const app = express();
+
+app.use(bodyParser.json());
+
+app.use(
+  cors({
+    origin: "http://localhost:3001",
+    credentials: true,
+  })
+);
+
+const http = require("node:http");
 const server = http.createServer(app);
 const { Server } = require("socket.io");
-const io = new Server(server);
-app.use(bodyParser.json());
-app.use(cors());
+
+const io = new Server(server, {
+  cors: {
+    origin: "http://localhost:3001",
+    credentials: true,
+  },
+});
+const port = 3000;
+
+server.listen(port, () => {
+  console.log(`listening at http://localhost:${port}`);
+});
+
+io.on("connection", (socket) => {
+  console.log("a user connected");
+  io.emit("connectat", "connectat");
+
+  socket.on("Acceptada", (id) => {
+    //Canviar estat a acceptat
+    var sql = `UPDATE Pedido SET Estado = "Acceptades" WHERE IDPedido = ${id}`;
+    conn.query(sql, (err, result) => {
+      if (err) console.error(err);
+      console.log(result);
+    });
+  });
+
+  socket.on("disconnect", () => {
+    console.log("user disconnected");
+  });
+});
 
 const sessionsSecret = "2hCTcL2p5QMSny6DbZtUFjVtVXZqFa";
 const sessionConfig = {
@@ -28,8 +66,6 @@ const sessionConfig = {
 
 // app.use(cookieParser({}));
 app.use(session(sessionConfig));
-
-const port = 3000;
 
 const mysql = require("mysql2");
 
@@ -54,7 +90,6 @@ conn.getConnection((err, connection) => {
 app.get("/", async (req, res) => {
   res.sendFile(__dirname + "/public/index.html");
 });
-
 io.on("connection", (socket) => {
   console.log("User connected");
   socket.on("disconnect", () => {
@@ -149,7 +184,7 @@ FROM
   Producto
 JOIN
   DetallePedido ON Producto.IDProducto = DetallePedido.IDProducto
-JOIN 
+JOIN
   Pedido ON DetallePedido.IDPedido = Pedido.IDPedido
   WHERE Pedido.IDPedido = ${req.params.id}`;
 
@@ -165,7 +200,7 @@ JOIN
 });
 
 app.post("/createOrder", async (req, res) => {
-  var sql = `INSERT INTO Pedido (IDCliente,Total,Comentario) VALUES ('${req.body.idClient}','${req.body.total}','${req.body.comentario}')`;
+  var sql = `INSERT INTO Pedido (IDCliente,TotalComentario) VALUES ('${req.body.idClient}','${req.body.total}','${req.body.comentario}')`;
 
   conn.query(sql, (err, result) => {
     if (err) console.error(err);
@@ -201,7 +236,8 @@ app.post("/login", async (req, res) => {
 
     conn.query(sql, (err, result) => {
       if (err) console.error(err);
-      if (result == 0 || result[0].Contrasena != req.body.password) {
+      var ciphertext = CryptoJS.MD5(req.body.password).toString();
+      if (result == 0 || result[0].Contrasena != ciphertext) {
         res.status(500).send("Wrong email or password");
       } else {
         req.session.user = result[0].CorreoElectronico;
@@ -212,8 +248,8 @@ app.post("/login", async (req, res) => {
   }
 });
 
-app.listen(port, () => {
-  console.log(`listening at http://localhost:${port}`);
+app.get("/", (req, res) => {
+  res.sendFile(__dirname + "/public/index.html");
 });
 
 app.use(staticFieldMiddleware);
