@@ -15,17 +15,18 @@
         <v-row>
           <v-col cols="2"></v-col>
           <v-col class="d-flex justify-center align-center">
-            <h1>Gestió Comandes</h1> 
-            Estat: {{ this.estat }}
+            <h1>Gestió Comandes</h1>
+            Recarregar: {{ this.recarregarEstat }} , {{ this.estat }}
           </v-col>
           <v-col cols="2"></v-col>
         </v-row>
 
         <v-row>
-          <v-col cols="3"><v-select v-model="seleccio" density="compact" :items="['Pendents', 'Acceptades', 'Tancades']"
+          <v-col cols="3"><v-select v-model="seleccio" density="compact"
+              :items="['Pendents', 'Acceptades', 'Tancades', 'Rebutjades']"
               @update:menu=buscarComandes(seleccio)></v-select></v-col>
           <v-col cols="6"></v-col>
-          <v-col cols="3"><v-btn @click="dialog = true;" class="">Cercar Comandes</v-btn><v-btn @click="connectar()" class="">Socket</v-btn><v-btn @click="desconnectar()" class="">noSocket</v-btn>
+          <v-col cols="3"><v-btn @click="dialog = true;" class="">Cercar Comandes</v-btn>
             <v-dialog v-model="dialog" width="auto">
               <v-card>
                 <v-card-text>ID a buscar: </v-card-text>
@@ -85,9 +86,39 @@
                           febbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
                         </p>
                       </v-col>
-                      <v-col cols="2"><v-btn
-                          @click="comandaAcceptada(comanda.IDPedido)">Acceptar</v-btn></v-col>
+                      <v-col cols="2"><v-btn @click="comandaAcceptada(comanda.IDPedido)">Acceptar</v-btn></v-col>
                       <v-col cols="2"><v-btn @click="comandaRebutjada(comanda.IDPedido)">Rebutjar</v-btn></v-col>
+                    </v-row>
+                  </v-expansion-panel-text>
+                </v-expansion-panel>
+              </v-expansion-panels>
+            </v-row>
+            <v-row v-if="this.comandesRebutjades">
+              <v-expansion-panels>
+                <v-expansion-panel v-for="(comanda, i) in this.comandes" :key="i">
+                  <v-expansion-panel-title expand-icon="mdi-plus" collapse-icon="mdi-minus">
+                    Comanda {{ comanda.IDPedido }}
+                  </v-expansion-panel-title>
+                  <v-expansion-panel-text>
+                    <v-row>
+                      <v-col cols="2">Client: {{ comanda.IDCliente }} </v-col>
+                      <v-col cols="2">FechaPedido: {{ comanda.FechaPedido }}</v-col>
+                      <v-col cols="2">
+                        <p class="nose">
+                          Descripció:
+                          {{ comanda.Comentario }}
+                        </p>
+                      </v-col>
+                      <v-col cols="2">
+                        <p class="nose">
+                          Productes:
+                          febbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+                        </p>
+                      </v-col>
+                      <v-col cols="2">
+                        Estat: {{ comanda.Estado }}
+                      </v-col>
+                      <v-col cols="2"></v-col>
                     </v-row>
                   </v-expansion-panel-text>
                 </v-expansion-panel>
@@ -159,7 +190,7 @@
   min-width: 0;
 }
 </style>
-<script  >
+<script>
 import { getComandes, getProductesComanda } from '@/manager'
 import { socket, state } from "@/socket";
 export default {
@@ -178,40 +209,41 @@ export default {
     comandesPendents: true,
     comandesAcceptades: false,
     comandesTancades: false,
-    prova: []
-
+    comandesRebutjades: false,
+    productes: []
 
   }),
   created() {
-    this.buscarComandes("Pendents");
-
+    this.buscarComandes('Pendents');
   },
   methods: {
-    connectar(){
-      console.log("clicat")
+    connectar() {
       socket.connect();
     },
-    desconnectar(){
-      console.log("clicat")
+    desconnectar() {
       socket.disconnect();
     },
-    
+
     filterById(jsonObject, id) { return jsonObject.filter(function (jsonObject) { return (jsonObject['IDPedido'] == id); })[0]; },
-    
+
 
     comandaAcceptada(idComanda) {
       socket.emit('Acceptada', idComanda);
     },
-    recargar() {
-      getComandes().then(response => this.comandesGlobal = response)
+    async recargar() {
+      console.log("Dades actualitzades")
+      await getComandes().then((response) => {this.comandesGlobal = response, console.log(this.comandesGlobal)})
+      
     },
-    productosComanda(idComanda) {
+    productosComanda() {
+      this.comandesGlobal.forEach(comanda => {
+        this.productes.push( getProductesComanda(idComanda).then((response) => { this.prova = response}))
+
+      });
       //var comandaActual = this.filterById(this.comandesGlobal, idComanda);
-      getProductesComanda(idComanda).then((response) => { this.prova = response; console.log(response) }
-      );
+      
       console.log(this.prova);
     },
-
     cambio() {
       this.nombre = this.nombre === 'Gestio Comandas' ? 'Gestio Productes' : 'Gestio Comandas'
       this.$router.push(this.link)
@@ -222,23 +254,38 @@ export default {
       this.overlay = !this.overlay
     },
     buscarComandes(Estado) {
-      this.recargar();
-      this.comandes = this.comandesGlobal.filter(comanda => comanda.Estado === Estado);
+      console.log(Estado)
+      this.recargar().then(()=> {this.comandes = this.comandesGlobal.filter(comanda => comanda.Estado === Estado), console.log(this.comandesGlobal  )})
       switch (Estado) {
         case 'Pendents':
           this.comandesPendents = true;
           this.comandesAcceptades = false;
           this.comandesTancades = false;
+          this.comandesRebutjades = false
           break
         case 'Acceptades':
           this.comandesPendents = false;
           this.comandesAcceptades = true;
           this.comandesTancades = false;
+          this.comandesRebutjades = false
           break
         case 'Tancades':
           this.comandesPendents = false;
           this.comandesAcceptades = false;
           this.comandesTancades = true;
+          this.comandesRebutjades = false
+          break
+        case 'Rebutjades':
+          this.comandesPendents = false;
+          this.comandesAcceptades = false;
+          this.comandesTancades = false;
+          this.comandesRebutjades = true;
+          break
+        default:
+          this.comandesPendents = true;
+          this.comandesAcceptades = false;
+          this.comandesTancades = false;
+          this.comandesRebutjades = false
           break
       }
     },
@@ -257,10 +304,20 @@ export default {
     }
   },
   computed: {
-    estat(){
+    estat() {
       return state.connected
-    }
+    },
+    recarregarEstat() {
+      if (state.recarregar) {
+        this.buscarComandes(this.seleccio);
+        socket.emit('recarregat');
+        state.recarregar = false;
+        console.log("OK")
+      }
+      return state.recarregar
+    },
   },
+
 
 }
 
