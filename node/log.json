@@ -1,0 +1,98 @@
+[
+  {
+    "IDPedido": 7,
+    "IDCliente": 8,
+    "FechaPedido": "2023-10-29T23:00:00.000Z",
+    "Total": "100.50",
+    "Estado": "Acceptades",
+    "Comentario": "Pedido de prueba 1"
+  },
+  {
+    "IDPedido": 8,
+    "IDCliente": 9,
+    "FechaPedido": "2023-10-29T23:00:00.000Z",
+    "Total": "75.25",
+    "Estado": "Acceptades",
+    "Comentario": "Pedido de prueba 2"
+  },
+  {
+    "IDPedido": 9,
+    "IDCliente": 8,
+    "FechaPedido": "2023-10-29T23:00:00.000Z",
+    "Total": "55.75",
+    "Estado": "Tancades",
+    "Comentario": "Pedido de prueba 3"
+  },
+  {
+    "IDPedido": 10,
+    "IDCliente": 8,
+    "FechaPedido": "2023-10-30T23:00:00.000Z",
+    "Total": "25.00",
+    "Estado": "Rebutjades",
+    "Comentario": "con lechuga"
+  },
+  {
+    "IDPedido": 11,
+    "IDCliente": 12,
+    "FechaPedido": "2023-10-31T08:20:57.000Z",
+    "Total": "24.00",
+    "Estado": "Acceptades",
+    "Comentario": null
+  },
+  {
+    "IDPedido": 13,
+    "IDCliente": 10,
+    "FechaPedido": "2023-10-31T08:31:11.000Z",
+    "Total": "24.20",
+    "Estado": "Acceptades",
+    "Comentario": "Sin pepinillos"
+  },
+  {
+    "IDPedido": 15,
+    "IDCliente": 8,
+    "FechaPedido": "2023-10-31T08:34:54.000Z",
+    "Total": "1.80",
+    "Estado": "Acceptades",
+    "Comentario": "qwer"
+  },
+  {
+    "IDPedido": 16,
+    "IDCliente": 8,
+    "FechaPedido": "2023-10-31T08:35:34.000Z",
+    "Total": "1.80",
+    "Estado": "Tancades",
+    "Comentario": "qwer"
+  },
+  {
+    "IDPedido": 17,
+    "IDCliente": 8,
+    "FechaPedido": "2023-10-31T09:03:51.000Z",
+    "Total": "2.90",
+    "Estado": "Acceptades",
+    "Comentario": "cosas"
+  },
+  {
+    "IDPedido": 18,
+    "IDCliente": 8,
+    "FechaPedido": "2023-10-31T09:52:11.000Z",
+    "Total": "23.00",
+    "Estado": "Acceptades",
+    "Comentario": "Biel se actualiza"
+  },
+  {
+    "IDPedido": 19,
+    "IDCliente": 8,
+    "FechaPedido": "2023-10-31T09:52:23.000Z",
+    "Total": "23.00",
+    "Estado": "Acceptades",
+    "Comentario": "Biel se actualiza2"
+  },
+  {
+    "IDPedido": 20,
+    "IDCliente": 8,
+    "FechaPedido": "2023-10-31T18:14:11.000Z",
+    "Total": "2.90",
+    "Estado": "Pendents",
+    "Comentario": "asdasd"
+  }
+]
