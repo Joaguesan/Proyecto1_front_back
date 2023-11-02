@@ -2,6 +2,9 @@
     <v-layout class="rounded rounded-md">
         <v-app-bar :elevation="2" title="Nombre tienda">
             <template v-slot:append>
+                <v-btn variant="plain" @click="this.$router.push('/analisidades')">
+                    Anàlisi de dades
+                </v-btn>
                 <v-btn variant="plain" @click="cambio">
                     {{ nombre }}
                 </v-btn>

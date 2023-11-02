@@ -28,8 +28,8 @@ const routes = [
     path: '/gestioproductes',
     component: () => import('@/components/gestioProductos.vue'),
   },{
-    path: '/prova',
-    component: () => import('@/components/prova.vue'),
+    path: '/analisidades',
+    component: () => import('@/components/AnalisiDades.vue'),
   },
 
 ]
