@@ -173,16 +173,19 @@ app.post("/addProduct", async (req, res) => {
     res.send(result);
   });
 });
-
 app.delete("/deleteProduct/:id", async (req, res) => {
   var sql = `DELETE FROM Producto WHERE IDProducto = ${req.params.id}`;
-  try {
-    fs.unlinkSync("file.txt");
-
-    console.log("Delete File successfully.");
-  } catch (error) {
-    console.log(error);
-  }
+  conn.query( `SELECT NombreProducto FROM Producto WHERE IDProducto = ${req.params.id}`, function (err, result, fields) {
+    if (err) throw err;
+    try {
+      fs.unlinkSync('./assets/'+"producto"+result[0].NombreProducto+'.jpg');    
+      console.log("Delete File successfully.");
+    } catch (error) {
+      console.log(error);
+    }
+  });
+    
+  
   conn.query(sql, (err, result) => {
     if (err) console.error(err);
     console.log(result);
