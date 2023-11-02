@@ -2,6 +2,9 @@
   <v-layout class="rounded rounded-md">
     <v-app-bar :elevation="2" title="Nombre tienda">
       <template v-slot:append>
+        <v-btn variant="plain" @click="this.$router.push('/#' )">
+            Anàlisi de dades
+        </v-btn>
         <v-btn variant="plain" @click="cambio">
           {{ nombre }}
         </v-btn>
@@ -46,7 +49,7 @@
           <v-container>
             <v-row v-if="this.comandesPreparades">
               <v-expansion-panels>
-                <v-expansion-panel v-for="(comanda, i) in this.comandes" :key="i"  >
+                <v-expansion-panel v-for="(comanda, i) in this.comandes" :key="i" @click="getDadesClient(comanda.IDCliente)"  >
                   <v-expansion-panel-title expand-icon="mdi-plus" collapse-icon="mdi-minus">
                     Comanda {{ comanda.IDPedido }}
                   </v-expansion-panel-title>
@@ -57,16 +60,17 @@
                       <v-col cols="2">
                         <p class="nose">
                           Direcció:
-                          hola
+                          {{ clients[comanda.IDCliente][0].Direccion }}
                         </p>
                       </v-col>
                       <v-col cols="2">
                         <p class="nose">
                           Teléfon:
+                          {{ clients[comanda.IDCliente][0].Telefono }}
                         </p>
                       </v-col>
-                      <v-col cols="2">Estat</v-col>
-                      <v-col cols="2">Import Total</v-col>
+                      <v-col cols="2">Estat: {{ comanda.Estado }}</v-col>
+                      <v-col cols="2">Import Total: {{ comanda.Total }}€</v-col>
                     </v-row>
                   </v-expansion-panel-text>
                 </v-expansion-panel>
@@ -161,8 +165,10 @@
                       <v-col cols="2">
                         <p class="nose">
                           Productes:
-                          febbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
-                        </p>
+                        <li v-for="producte in this.productes[comanda.IDPedido]">
+                            {{ producte.NombreProducto }} x {{ producte.Cantidad }}
+                          </li>
+                          </p>
                       </v-col>
                       <v-col cols="2">
                         Estat: {{ comanda.Estado }}
@@ -326,6 +332,7 @@ export default {
       );
     },
     getDadesClient(idClient){
+        console.log("DADES DEL CLIENT")
       getClient(idClient).then((response) => { this.clients[idClient] = response } )
     },
     cambio() {
