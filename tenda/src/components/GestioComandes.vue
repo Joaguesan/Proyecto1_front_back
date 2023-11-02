@@ -55,7 +55,7 @@
                   </v-expansion-panel-title>
                   <v-expansion-panel-text>
                     <v-row>
-                      <v-col cols="2">Client: {{ comanda.IDCliente }} </v-col>
+                      <v-col cols="1">Client: {{ comanda.IDCliente }} </v-col>
                       <v-col cols="2">Data Comanda: {{ comanda.FechaPedido }}</v-col>
                       <v-col cols="2">
                         <p class="nose">
@@ -71,6 +71,7 @@
                       </v-col>
                       <v-col cols="2">Estat: {{ comanda.Estado }}</v-col>
                       <v-col cols="2">Import Total: {{ comanda.Total }}€</v-col>
+                      <v-col cols="1"><v-btn @click="comandaEntregada(comanda.IDPedido)">Entregada</v-btn></v-col>
                     </v-row>
                   </v-expansion-panel-text>
                 </v-expansion-panel>
@@ -312,8 +313,10 @@ export default {
       socket.emit('Rebutjada', idComanda);
     },
     llestaPerEnviar(idComanda) {
-
       socket.emit('Llesta', idComanda)
+    },
+    comandaEntregada(idComanda){
+      socket.emit('Entregada', idComanda)
     },
     async recargar() {
       console.log("Dades actualitzades")
@@ -393,7 +396,6 @@ export default {
           this.comandesEntregades = false
           break
       }
-      console.log("A")
     },
 
     buscarComanda(id) {
