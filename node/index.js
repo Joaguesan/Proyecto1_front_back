@@ -153,6 +153,7 @@ function descargarImagen(url, carpetaDestino, nombreArchivo) {
     });
   });
 }
+}
 
 app.get("/imagen/:nombreArchivo", (req, res) => {
   const nombreArchivo = req.params.nombreArchivo;
@@ -393,4 +394,3 @@ app.use(
   })
 );
 app.use(staticFieldMiddleware);
-
