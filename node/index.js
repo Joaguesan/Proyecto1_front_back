@@ -3,6 +3,9 @@ const bodyParser = require("body-parser");
 const session = require("express-session");
 const cors = require("cors");
 var CryptoJS = require("crypto-js");
+const https = require("https")
+const fs = require("fs")
+const path = require('path');
 // const cookieParser = require("cook0ie-parser");
 var history = require("connect-history-api-fallback");
 
@@ -30,7 +33,6 @@ const io = new Server(server, {
   },
 });
 const port = 3000;
-
 server.listen(port, () => {
   console.log(`listening at http://localhost:${port}`);
 });
@@ -103,9 +105,37 @@ conn.getConnection((err, connection) => {
     console.log("Connected to database!");
   }
 });
+function descargarImagen(url, carpetaDestino, nombreArchivo) {
+  https.get(url, (response) => {
+    if (response.statusCode !== 200) {
+      console.error(`Error al descargar la imagen. Código de estado: ${response.statusCode}`);
+      return;
+    }
 
-app.get("/", async (req, res) => {
-  res.sendFile(__dirname + "/public/index.html");
+    const archivoDestino = `${carpetaDestino}/${nombreArchivo}`;
+    const escrituraStream = fs.createWriteStream(archivoDestino);
+
+    response.pipe(escrituraStream);
+
+    escrituraStream.on('finish', () => {
+      console.log(`Imagen descargada y guardada en ${archivoDestino}`);
+    });
+
+    escrituraStream.on('error', (error) => {
+      console.error(`Error al guardar la imagen: ${error}`);
+    });
+  });
+}
+
+app.get("/imagen/:nombreArchivo", (req, res) => {
+  const nombreArchivo = req.params.nombreArchivo;
+  const rutaImagen = path.join(__dirname, 'assets', nombreArchivo);
+  res.sendFile(rutaImagen);
+});
+
+app.post("/imagen", (req, res) => {
+  var url = req.body.url
+  descargarImagen(url, './assets',req.body.nombre+".jpg")
 });
 
 app.get("/getProducts", async (req, res) => {
@@ -131,7 +161,8 @@ app.get("/getOneProduct/:id", async (req, res) => {
 });
 
 app.post("/addProduct", async (req, res) => {
-  var sql = `INSERT INTO Producto (NombreProducto,Descripcion,PrecioUnitario) VALUES ('${req.body.name}','${req.body.description}','${req.body.price}')`;
+  var imagen = "http://localhost:3000/imagen/"+req.body.Imatge+".jpg"
+  var sql = `INSERT INTO Producto (NombreProducto,Descripcion,PrecioUnitario, Imatge) VALUES ('${req.body.name}','${req.body.description}','${req.body.price}','${imagen}')`;
 
   conn.query(sql, (err, result) => {
     if (err) console.error(err);
@@ -142,7 +173,13 @@ app.post("/addProduct", async (req, res) => {
 
 app.delete("/deleteProduct/:id", async (req, res) => {
   var sql = `DELETE FROM Producto WHERE IDProducto = ${req.params.id}`;
-
+  try {
+    fs.unlinkSync('file.txt');
+  
+    console.log("Delete File successfully.");
+  } catch (error) {
+    console.log(error);
+  }
   conn.query(sql, (err, result) => {
     if (err) console.error(err);
     console.log(result);
@@ -150,8 +187,9 @@ app.delete("/deleteProduct/:id", async (req, res) => {
   });
 });
 
-app.put("/updateProduct/:id", async (req, res) => {
-  var sql = `UPDATE Producto SET NombreProducto = '${req.body.name}', Descripcion = '${req.body.description}', PrecioUnitario = '${req.body.price}' WHERE IDProducto = ${req.params.id}`;
+app.put("/updateProduct/:id", async (req, res) => {  
+  var imagen = "http://localhost:3000/imagen/"+req.body.Imatge+".jpg"
+  var sql = `UPDATE Producto SET NombreProducto = '${req.body.name}', Descripcion = '${req.body.description}', PrecioUnitario = '${req.body.price}', Imatge = '${imagen}' WHERE IDProducto = ${req.params.id}`;
 
   conn.query(sql, (err, result) => {
     if (err) console.error(err);
