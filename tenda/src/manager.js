@@ -17,7 +17,16 @@ export async function getProductesComanda(idComanda) {
     const productes = await response.json();
     return productes;
 }
-
+export async function getClient(idClient) {
+    var url = "http://localhost:3000/getClient/" + idClient;
+    const response = await fetch(url,
+        {
+            method: 'GET',
+            headers: { 'Accept': 'application/json' }
+        });
+    const dades = await response.json();
+    return dades;
+}
 export async function getProductos() {
     const response = await fetch(`http://localhost:3000/getProducts`,
         {

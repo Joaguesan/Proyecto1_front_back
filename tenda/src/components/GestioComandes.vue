@@ -16,14 +16,15 @@
           <v-col cols="2"></v-col>
           <v-col class="d-flex justify-center align-center">
             <h1>Gestió Comandes</h1>
-            Recarregar: {{ this.recarregarEstat }} , {{ this.estat }}
           </v-col>
           <v-col cols="2"></v-col>
         </v-row>
-
+        <div style="display: none">
+          {{ this.recarregarEstat }}
+        </div>
         <v-row>
           <v-col cols="3"><v-select v-model="seleccio" density="compact"
-              :items="['Pendents', 'Acceptades', 'Tancades', 'Rebutjades']"
+              :items="['Pendents', 'En Preparacio', 'Preparades', 'Entregades', 'Rebutjades']"
               @update:menu=buscarComandes(seleccio)></v-select></v-col>
           <v-col cols="6"></v-col>
           <v-col cols="3"><v-btn @click="dialog = true;" class="">Cercar Comandes</v-btn>
@@ -43,26 +44,70 @@
         </v-row>
         <v-row>
           <v-container>
-            <v-row v-if="this.comandesTancades">
+            <v-row v-if="this.comandesPreparades">
+              <v-expansion-panels>
+                <v-expansion-panel v-for="(comanda, i) in this.comandes" :key="i"  >
+                  <v-expansion-panel-title expand-icon="mdi-plus" collapse-icon="mdi-minus">
+                    Comanda {{ comanda.IDPedido }}
+                  </v-expansion-panel-title>
+                  <v-expansion-panel-text>
+                    <v-row>
+                      <v-col cols="2">Client: {{ comanda.IDCliente }} </v-col>
+                      <v-col cols="2">Data Comanda: {{ comanda.FechaPedido }}</v-col>
+                      <v-col cols="2">
+                        <p class="nose">
+                          Direcció:
+                          hola
+                        </p>
+                      </v-col>
+                      <v-col cols="2">
+                        <p class="nose">
+                          Teléfon:
+                        </p>
+                      </v-col>
+                      <v-col cols="2">Estat</v-col>
+                      <v-col cols="2">Import Total</v-col>
+                    </v-row>
+                  </v-expansion-panel-text>
+                </v-expansion-panel>
+              </v-expansion-panels>
+            </v-row>
+            <!--<v-row v-if="this.comandesPreparades">
               <v-col cols="2">Id Comanda</v-col>
               <v-col cols="2">Id Client</v-col>
               <v-col cols="2">Data Creació</v-col>
               <v-col cols="2">Import total</v-col>
+              <v-col cols="2">Direcció</v-col>
               <v-col cols="2">Estat</v-col>
-              <v-col cols="2">Temps total</v-col>
-
             </v-row>
-
-
-            <v-row v-if="this.comandesTancades" :class="[
+            <v-row v-if="this.comandesPreparades" :class="[
               index % 2 === 0 ? 'bg-grey-lighten-2' : 'bg-white'
             ]" v-for="(comanda, index) in comandes" :key=index>
               <v-col cols="2">{{ comanda.IDPedido }}</v-col>
               <v-col cols="2">{{ comanda.IDCliente }}</v-col>
               <v-col cols="2">{{ comanda.FechaPedido }}</v-col>
               <v-col cols="2">{{ comanda.Total }}</v-col>
+              <v-col cols="2" class="nose">{{clients[comanda.IDCliente].Direccion}}</v-col>
               <v-col cols="2">{{ comanda.Estado }}</v-col>
+            </v-row>-->
+
+            <v-row v-if="this.comandesEntregades">
+              <v-col cols="2">Id Comanda</v-col>
+              <v-col cols="2">Id Client</v-col>
+              <v-col cols="2">Data Creació</v-col>
+              <v-col cols="2">Import total</v-col>
+              <v-col cols="2">Temps total</v-col>
+              <v-col cols="2">Estat</v-col>
+            </v-row>
+            <v-row v-if="this.comandesEntregades" :class="[
+              index % 2 === 0 ? 'bg-grey-lighten-2' : 'bg-white'
+            ]" v-for="(comanda, index) in comandes" :key=index>
+              <v-col cols="2">{{ comanda.IDPedido }}</v-col>
+              <v-col cols="2">{{ comanda.IDCliente }}</v-col>
+              <v-col cols="2">{{ comanda.FechaPedido }}</v-col>
+              <v-col cols="2">{{ comanda.Total }}</v-col>
               <v-col cols="2">temps</v-col>
+              <v-col cols="2">{{ comanda.Estado }}</v-col>
             </v-row>
             <v-row v-if="this.comandesPendents">
               <v-expansion-panels>
@@ -83,7 +128,11 @@
                       <v-col cols="2">
                         <p class="nose">
                           Productes:
-                          febbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+                        <ul>
+                          <li v-for="producte in this.productes[comanda.IDPedido]">
+                            {{ producte.NombreProducto }} x {{ producte.Cantidad }}
+                          </li>
+                        </ul>
                         </p>
                       </v-col>
                       <v-col cols="2"><v-btn @click="comandaAcceptada(comanda.IDPedido)">Acceptar</v-btn></v-col>
@@ -126,7 +175,7 @@
             </v-row>
           </v-container>
         </v-row>
-        <v-row v-if="comandesAcceptades">
+        <v-row v-if="comandesEnPreparacio">
           <v-col cols="4" v-for="(comanda, i) in this.comandes" :key="i">
             <v-card width="250">
               <v-card-title>
@@ -138,7 +187,7 @@
               <v-btn color="success" class="mt-12" @click="cambiarOverlay(comanda.IDPedido)">
                 Veure Comanda
               </v-btn>
-              <v-btn color="success" class="mt-12" @click="tancar(comanda)">
+              <v-btn color="success" class="mt-12" @click="llestSiNo = true, this.comandaSeleccionada=comanda.IDPedido">
                 Tancar
               </v-btn>
 
@@ -146,17 +195,35 @@
                 class="align-center justify-center">
                 <v-card-text class="carta">
                   <ul>
-                    <li v-for="producte in comanda">
-                      {{ producte.nom }} -- {{ producte.quantitat }}
+                    <li v-for="producte in this.productes[comanda.IDPedido]">
+                      {{ producte.NombreProducto }} x {{ producte.Cantidad }}
                     </li>
                   </ul>
                 </v-card-text>
                 <v-btn color="success" @click="overlay = false">
-                  Hide Overlay
+                  Tancar
                 </v-btn>
               </v-overlay>
               <br><br>
             </v-card>
+            <v-dialog v-model="llestSiNo" v-if="this.comandaSeleccionada === comanda.IDPedido"  persistent width="auto">
+              <v-card>
+                <v-card-title class="text-h5">
+                  Esta la comanda {{comanda.IDPedido }} llesta per a enviament?
+                </v-card-title>
+                <v-card-text> Un cop estigui enviada no es podrá recuperar. </v-card-text>
+                <v-card-actions>
+                  <v-spacer></v-spacer>
+                  <v-btn color="green-darken-1" variant="text"
+                    @click="llestSiNo = false, llestaPerEnviar(comanda.IDPedido)">
+                    Enviar
+                  </v-btn>
+                  <v-btn color="green-darken-1" variant="text" @click="llestSiNo = false">
+                    Cancelar
+                  </v-btn>
+                </v-card-actions>
+              </v-card>
+            </v-dialog>
           </v-col>
 
         </v-row>
@@ -191,10 +258,11 @@
 }
 </style>
 <script>
-import { getComandes, getProductesComanda } from '@/manager'
+import { getComandes, getProductesComanda, getClient } from '@/manager'
 import { socket, state } from "@/socket";
 export default {
   data: () => ({
+    llestSiNo: false,
     comandaSeleccionada: null,
     cercar: false,
     seleccio: 'Pendents',
@@ -207,14 +275,18 @@ export default {
     comandes: [],
     comandesGlobal: [],
     comandesPendents: true,
-    comandesAcceptades: false,
-    comandesTancades: false,
+    comandesEnPreparacio: false,
+    comandesEntregades: false,
+    comandesPreparades: false,
     comandesRebutjades: false,
-    productes: []
+    productes: new Map(),
+    clients: new Map()
+
 
   }),
   created() {
     this.buscarComandes('Pendents');
+    
   },
   methods: {
     connectar() {
@@ -230,19 +302,31 @@ export default {
     comandaAcceptada(idComanda) {
       socket.emit('Acceptada', idComanda);
     },
+    comandaRebutjada(idComanda) {
+      socket.emit('Rebutjada', idComanda);
+    },
+    llestaPerEnviar(idComanda) {
+
+      socket.emit('Llesta', idComanda)
+    },
     async recargar() {
       console.log("Dades actualitzades")
-      await getComandes().then((response) => {this.comandesGlobal = response, console.log(this.comandesGlobal)})
-      
-    },
-    productosComanda() {
-      this.comandesGlobal.forEach(comanda => {
-        this.productes.push( getProductesComanda(idComanda).then((response) => { this.prova = response}))
+      await getComandes().then((response) => { this.comandesGlobal = response })
 
-      });
-      //var comandaActual = this.filterById(this.comandesGlobal, idComanda);
-      
-      console.log(this.prova);
+    },
+    async productosComanda() {
+      this.productes.clear;
+      this.comandesGlobal.forEach(comanda => {
+        var id = comanda.IDPedido.toString();
+        console.log(id)
+        getProductesComanda(comanda.IDPedido).then((response) => {
+          this.productes[id] = response
+        })
+      }
+      );
+    },
+    getDadesClient(idClient){
+      getClient(idClient).then((response) => { this.clients[idClient] = response } )
     },
     cambio() {
       this.nombre = this.nombre === 'Gestio Comandas' ? 'Gestio Productes' : 'Gestio Comandas'
@@ -254,52 +338,63 @@ export default {
       this.overlay = !this.overlay
     },
     buscarComandes(Estado) {
-      console.log(Estado)
-      this.recargar().then(()=> {this.comandes = this.comandesGlobal.filter(comanda => comanda.Estado === Estado), console.log(this.comandesGlobal  )})
+      this.recargar().then(() => {
+        this.comandes = this.comandesGlobal.filter(comanda => comanda.Estado === Estado), this.productosComanda()
+      })
       switch (Estado) {
         case 'Pendents':
           this.comandesPendents = true;
-          this.comandesAcceptades = false;
-          this.comandesTancades = false;
+          this.comandesEnPreparacio = false;
+          this.comandesPreparades = false;
           this.comandesRebutjades = false
+          this.comandesEntregades = false
           break
-        case 'Acceptades':
+        case 'En Preparacio':
           this.comandesPendents = false;
-          this.comandesAcceptades = true;
-          this.comandesTancades = false;
+          this.comandesEnPreparacio = true;
+          this.comandesPreparades= false;
           this.comandesRebutjades = false
+          this.comandesEntregades = false
           break
-        case 'Tancades':
+        case 'Preparades':
           this.comandesPendents = false;
-          this.comandesAcceptades = false;
-          this.comandesTancades = true;
+          this.comandesEnPreparacio = false;
+          this.comandesPreparades = true;
           this.comandesRebutjades = false
+          this.comandesEntregades = false
+
           break
+        case 'Entregades':
+          this.comandesPendents = false;
+          this.comandesEnPreparacio = false;
+          this.comandesPreparades = false;
+          this.comandesEntregades = true
+          this.comandesRebutjades = false
+          break;
         case 'Rebutjades':
           this.comandesPendents = false;
-          this.comandesAcceptades = false;
-          this.comandesTancades = false;
+          this.comandesEnPreparacio = false;
+          this.comandesPreparades = false;
           this.comandesRebutjades = true;
+          this.comandesEntregades = false
           break
         default:
           this.comandesPendents = true;
-          this.comandesAcceptades = false;
-          this.comandesTancades = false;
+          this.comandesEnPreparacio = false;
+          this.comandesPreparades = false;
           this.comandesRebutjades = false
+          this.comandesEntregades = false
           break
       }
+      console.log("A")
     },
 
     buscarComanda(id) {
       this.comandes = this.comandesGlobal.filter(comanda => comanda.IDPedido == id);
       this.IDPedido = "";
     },
-    comandaRebutjada(id) {
-      console.log("S'ha rebutjat la comanda amb id: " + id)
-
-    },
     tancar(comanda) {
-      comanda.Estado = "Tancades"
+      comanda.Estado = "Preparades"
 
     }
   },
