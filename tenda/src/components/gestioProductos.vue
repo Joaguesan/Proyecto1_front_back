@@ -18,6 +18,9 @@
                     </v-col>
                     <v-col cols="2"></v-col>
                 </v-row>
+                <div style="display: none">
+                    {{ this.recarregarEstat }}
+                </div>
                 <v-row>
                     <v-col cols="10"></v-col>
                     <v-col cols="2">
@@ -155,6 +158,7 @@
 </template>
 <script>
 import { getProductos, UpdateProductos, AddProductos, CambiarEstado, DeleteProducto, DescargarImagen } from '@/manager'
+import { socket, state } from "@/socket";
 export default {
     data: () => ({
         nombre: "Gestio Productes",
@@ -175,6 +179,12 @@ export default {
         }
     }),
     methods: {
+        connectar() {
+            socket.connect();
+        },
+        desconnectar() {
+            socket.disconnect();
+        },
         cambio() {
             this.nombre = this.nombre === 'Gestio Comandas' ? 'Gestio Productes' : 'Gestio Comandas'
             this.$router.push(this.link)
@@ -238,7 +248,7 @@ export default {
             DeleteProducto(id).then((response) => {
                 this.dialog = false
             })
-            getProductos().then(() => {this.productos1 = response})
+            getProductos().then(() => { this.productos1 = response })
         },
         addProducto() {
             var name = "producto" + this.productoNuevo.name
@@ -255,14 +265,28 @@ export default {
                 this.productoNuevo.description = ""
                 this.productoNuevo.Imatge = ""
             })
-            getProductos().then(() => {this.productos1 = response})
+            getProductos().then(() => { this.productos1 = response })
         },
-        recargar() {
-            getProductos().then(response => this.productos1 = response)
+        async recargar() {
+            await getProductos().then((response) => { this.productos1 = response })
         },
     }, created() {
         getProductos().then((response) => { this.productos1 = response })
-           
+
+    },
+    computed: {
+        estat() {
+            return state.connected
+        },
+        recarregarEstat() {
+            if (state.recarregar) {
+                this.recargar();
+                socket.emit('recarregat');
+                state.recarregar = false;
+                console.log("OK")
+            }
+            return state.recarregar
+        }
     }
 }
 </script>
