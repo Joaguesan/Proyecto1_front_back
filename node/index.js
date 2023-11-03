@@ -435,8 +435,8 @@ function mostrarGraficaEstado(){
   });
 }
 
-app.get("/getClient/:id", async (req, res) => {
-  var sql = `SELECT Direccion, Telefono FROM Cliente WHERE IDCliente = ${req.params.id}`;
+app.get("/getClients", async (req, res) => {
+  var sql = `SELECT * FROM Cliente`;
   conn.query(sql, (err, result) => {
     if (err) console.error(err);
     console.log(result);
