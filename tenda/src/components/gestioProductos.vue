@@ -56,7 +56,7 @@
                 <!--Habilitados-->
                 <v-container>
                     <v-row>
-                        <v-col v-for="(variant, i) in productos1" :key="i" cols="3">
+                        <v-col v-for="(variant, i) in productosH" :key="i" cols="3">
                             <v-card v-if="!variant.reveal && variant.Habilitado" class="mx-auto" max-width="344"
                                 min-height="400">
                                 <v-card-item>
@@ -70,12 +70,7 @@
                                         <v-col cols="4">
                                             <v-btn color="primary" @click="editar(variant)">Editar</v-btn>
 
-                                        </v-col>
-                                        <v-col cols="8"> <v-btn color="primary"
-                                                @click="Deshabilitar(i)">Deshabilitar</v-btn>
-                                        </v-col>
-                                    </v-row>
-
+                                    <v-btn color="primary" @click="Deshabilitar(variant.IDProducto)">Deshabilitar</v-btn>
                                 </v-card-actions>
                             </v-card>
                             <!--Edicion Habilitados-->
@@ -104,11 +99,11 @@
                     </v-row>
                 </v-container>
                 <v-divider :thickness="5" class="border-opacity-70"></v-divider>
-
+                <v-responsive width="100%"></v-responsive>
                 <!--Deshabilitados-->
                 <v-container>
                     <v-row>
-                        <v-col v-for="(variante, i) in productos1" :key="i" cols="auto">
+                        <v-col v-for="(variante, i) in productosDh" :key="i" cols="auto">
                             <v-card v-if="!variante.reveal && !variante.Habilitado" class="mx-auto" max-width="344"
                                 min-height="400" color="rgb(255, 0, 0, 0.2)">
                                 <v-card-item>
@@ -120,7 +115,7 @@
                                 <v-card-actions>
                                     <v-btn color="primary" @click="editar(variante)">Editar</v-btn>
 
-                                    <v-btn color="primary" @click="Deshabilitar(i)">Habilitar</v-btn>
+                                    <v-btn color="primary" @click="Habilitar(variante.IDProducto)">Habilitar</v-btn>
                                     <v-btn color="primary" @click="dialog = true">Eliminar</v-btn>
                                     <v-dialog v-model="dialog" width="auto">
                                         <v-card>
@@ -167,7 +162,7 @@
     </v-layout>
 </template>
 <script>
-import { getProductos, UpdateProductos, AddProductos, CambiarEstado, DeleteProducto, DescargarImagen } from '@/manager'
+import { getProductos, UpdateProductos, AddProductos, DeleteProducto, DescargarImagen } from '@/manager'
 import { socket, state } from "@/socket";
 export default {
     data: () => ({
@@ -184,6 +179,8 @@ export default {
             Imatge: ""
         },
         productos1: [],
+        productosH: [],
+        productosDh: [],
         Regla: {
             required: value => !!value || 'Es requereix'
         }
@@ -231,25 +228,10 @@ export default {
 
         },
         Deshabilitar(i) {
-            if (this.productos1[i].Habilitado == 1) {
-                this.productos1[i].Habilitado = 0
-            } else {
-                this.productos1[i].Habilitado = 1
-            }
-            var habil = this.productos1[i].Habilitado
-            let estado = {
-                "status": habil
-            }
-            socket.emit("comandaNova")
-            CambiarEstado(estado, this.productos1[i].IDProducto).then((response) => {
-                this.productoNuevo.id = ""
-                this.productoNuevo.name = ""
-                this.productoNuevo.price = ""
-                this.productoNuevo.description = ""
-                estado.status = ""
-            })
-            getProductos().then(response => this.productos1 = response)
-
+            socket.emit('Habilitada', i)
+        },
+        Habilitar(i) {
+            socket.emit('Deshabilitada', i)
         },
         eliminar(variant) {
             let id = {
@@ -278,10 +260,15 @@ export default {
             getProductos().then(() => { this.productos1 = response })
         },
         async recargar() {
-            await getProductos().then((response) => { this.productos1 = response })
+            await getProductos().then((response) => {
+                this.productos1 = response
+                console.log("SI");
+                this.productosH = this.productos1.filter(product => product.Habilitado == 1)
+                this.productosDh = this.productos1.filter(product => product.Habilitado == 0)
+            })
         },
     }, created() {
-        getProductos().then((response) => { this.productos1 = response })
+        this.recargar()
 
     },
     computed: {
