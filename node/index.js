@@ -403,6 +403,7 @@ function mostrarGraficaHoras() {
   });
 }
 app.get("/mostrarGraficoEstados",(req, res)=>{
+  selectPedidos();
   mostrarGraficaEstado();
   res.sendFile(__dirname + "/grafico2.jpeg");
 });
