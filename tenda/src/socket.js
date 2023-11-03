@@ -29,3 +29,7 @@ socket.on("comandaNova", () => {
   console.log("COMANDA NOVA")
   state.recarregar = true;
 });
+socket.on("ProductoNuevo", () => {
+  console.log("ProductoNuevo NOVA")
+  state.recarregar = true;
+});
