@@ -107,52 +107,51 @@ conn.getConnection((err, connection) => {
 });
 
 function descargarImagen(url, carpetaDestino, nombreArchivo) {
-  try{
+  try {
     http.get(url, (response) => {
-    if (response.statusCode !== 200) {
-      console.error(
-        `Error al descargar la imagen. Código de estado: ${response.statusCode}`
-      );
-      return;
-    }
-  
+      if (response.statusCode !== 200) {
+        console.error(
+          `Error al descargar la imagen. Código de estado: ${response.statusCode}`
+        );
+        return;
+      }
 
-    const archivoDestino = `${carpetaDestino}/${nombreArchivo}`;
-    const escrituraStream = fs.createWriteStream(archivoDestino);
+      const archivoDestino = `${carpetaDestino}/${nombreArchivo}`;
+      const escrituraStream = fs.createWriteStream(archivoDestino);
 
-    response.pipe(escrituraStream);
+      response.pipe(escrituraStream);
 
-    escrituraStream.on("finish", () => {
-      console.log(`Imagen descargada y guardada en ${archivoDestino}`);
+      escrituraStream.on("finish", () => {
+        console.log(`Imagen descargada y guardada en ${archivoDestino}`);
+      });
+
+      escrituraStream.on("error", (error) => {
+        console.error(`Error al guardar la imagen: ${error}`);
+      });
     });
+  } catch (e) {
+    https.get(url, (response) => {
+      if (response.statusCode !== 200) {
+        console.error(
+          `Error al descargar la imagen. Código de estado: ${response.statusCode}`
+        );
+        return;
+      }
 
-    escrituraStream.on("error", (error) => {
-      console.error(`Error al guardar la imagen: ${error}`);
+      const archivoDestino = `${carpetaDestino}/${nombreArchivo}`;
+      const escrituraStream = fs.createWriteStream(archivoDestino);
+
+      response.pipe(escrituraStream);
+
+      escrituraStream.on("finish", () => {
+        console.log(`Imagen descargada y guardada en ${archivoDestino}`);
+      });
+
+      escrituraStream.on("error", (error) => {
+        console.error(`Error al guardar la imagen: ${error}`);
+      });
     });
-  });
-}catch(e){
-  https.get(url, (response) => {
-    if (response.statusCode !== 200) {
-      console.error(
-        `Error al descargar la imagen. Código de estado: ${response.statusCode}`
-      );
-      return;
-    }
-  
-    const archivoDestino = `${carpetaDestino}/${nombreArchivo}`;
-    const escrituraStream = fs.createWriteStream(archivoDestino);
-
-    response.pipe(escrituraStream);
-
-    escrituraStream.on("finish", () => {
-      console.log(`Imagen descargada y guardada en ${archivoDestino}`);
-    });
-
-    escrituraStream.on("error", (error) => {
-      console.error(`Error al guardar la imagen: ${error}`);
-    });
-  });
-}
+  }
 }
 
 app.get("/imagen/:nombreArchivo", (req, res) => {
@@ -200,17 +199,21 @@ app.post("/addProduct", async (req, res) => {
 });
 app.delete("/deleteProduct/:id", async (req, res) => {
   var sql = `DELETE FROM Producto WHERE IDProducto = ${req.params.id}`;
-  conn.query( `SELECT NombreProducto FROM Producto WHERE IDProducto = ${req.params.id}`, function (err, result, fields) {
-    if (err) throw err;
-    try {
-      fs.unlinkSync('./assets/'+"producto"+result[0].NombreProducto+'.jpg');    
-      console.log("Delete File successfully.");
-    } catch (error) {
-      console.log(error);
+  conn.query(
+    `SELECT NombreProducto FROM Producto WHERE IDProducto = ${req.params.id}`,
+    function (err, result, fields) {
+      if (err) throw err;
+      try {
+        fs.unlinkSync(
+          "./assets/" + "producto" + result[0].NombreProducto + ".jpg"
+        );
+        console.log("Delete File successfully.");
+      } catch (error) {
+        console.log(error);
+      }
     }
-  });
-    
-  
+  );
+
   conn.query(sql, (err, result) => {
     if (err) console.error(err);
     console.log(result);
@@ -220,8 +223,8 @@ app.delete("/deleteProduct/:id", async (req, res) => {
 
 app.put("/updateProduct/:id", async (req, res) => {
   var imagen = "http://localhost:3000/imagen/" + req.body.Imatge + ".jpg";
-    var sql = `UPDATE Producto SET NombreProducto = '${req.body.name}', Descripcion = '${req.body.description}', PrecioUnitario = '${req.body.price}', Imatge = '${imagen}' WHERE IDProducto = ${req.params.id}`;
-        
+  var sql = `UPDATE Producto SET NombreProducto = '${req.body.name}', Descripcion = '${req.body.description}', PrecioUnitario = '${req.body.price}', Imatge = '${imagen}' WHERE IDProducto = ${req.params.id}`;
+
   conn.query(sql, (err, result) => {
     if (err) console.error(err);
     console.log(result);
@@ -241,6 +244,16 @@ app.put("/productStatus/:id", async (req, res) => {
 
 app.get("/getOrders", async (req, res) => {
   var sql = `SELECT * FROM Pedido`;
+
+  conn.query(sql, (err, result) => {
+    if (err) console.error(err);
+    console.log(result);
+    res.send(result);
+  });
+});
+
+app.get("/getOrdersClient/:id", async (req, res) => {
+  var sql = `SELECT * FROM Pedido WHERE IDCliente = ${req.params.id}`;
 
   conn.query(sql, (err, result) => {
     if (err) console.error(err);
