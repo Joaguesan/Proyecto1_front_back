@@ -32,7 +32,7 @@ const io = new Server(server, {
     credentials: true,
   },
 });
-const port = 3000;
+const port = 3333;
 server.listen(port, () => {
   console.log(`listening at http://localhost:${port}`);
 });
@@ -43,7 +43,7 @@ io.on("connection", (socket) => {
 
   socket.on("Acceptada", (id) => {
     //Canviar estat a acceptat
-    var sql = `UPDATE Pedido SET Estado = "Acceptades" WHERE IDPedido = ${id}`;
+    var sql = `UPDATE Pedido SET Estado = "En Preparacio" WHERE IDPedido = ${id}`;
     conn.query(sql, (err, result) => {
       if (err) console.error(err);
       console.log(result);
@@ -60,7 +60,7 @@ io.on("connection", (socket) => {
     io.emit("comandaNova");
   });
   socket.on("Llesta", (id) => {
-    var sql = `UPDATE Pedido SET Estado = "Llestes" WHERE IDPedido = ${id}`;
+    var sql = `UPDATE Pedido SET Estado = "Preparades" WHERE IDPedido = ${id}`;
 
     conn.query(sql, (err, result) => {
       if (err) console.error(err);
@@ -210,7 +210,7 @@ app.get("/getOneProduct/:id", async (req, res) => {
 });
 
 app.post("/addProduct", async (req, res) => {
-  var imagen = "http://localhost:3000/imagen/" + req.body.Imatge + ".jpg";
+  var imagen = "http://damtr1g3.dam.inspedralbes.cat:3333/imagen/" + req.body.Imatge + ".jpg";
   var sql = `INSERT INTO Producto (NombreProducto,Descripcion,PrecioUnitario, Imatge) VALUES ('${req.body.name}','${req.body.description}','${req.body.price}','${imagen}')`;
 
   conn.query(sql, (err, result) => {
@@ -240,7 +240,7 @@ app.delete("/deleteProduct/:id", async (req, res) => {
 });
 
 app.put("/updateProduct/:id", async (req, res) => {
-  var imagen = "http://localhost:3000/imagen/" + req.body.Imatge + ".jpg";
+  var imagen = "http://damtr1g3.dam.inspedralbes.cat:3333/imagen/" + req.body.Imatge + ".jpg";
   var sql = `UPDATE Producto SET NombreProducto = '${req.body.name}', Descripcion = '${req.body.description}', PrecioUnitario = '${req.body.price}', Imatge = '${imagen}' WHERE IDProducto = ${req.params.id}`;
 
   conn.query(sql, (err, result) => {
