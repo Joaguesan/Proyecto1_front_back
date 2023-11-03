@@ -252,8 +252,8 @@ app.get("/getOrders", async (req, res) => {
   });
 });
 
-app.post("/getOrdersClient", async (req, res) => {
-  var sql = `SELECT * FROM Pedido WHERE IDCliente = ${req.body.id}`;
+app.get("/getOrdersClient/:id", async (req, res) => {
+  var sql = `SELECT * FROM Pedido WHERE IDCliente = ${req.params.id}`;
 
   conn.query(sql, (err, result) => {
     if (err) console.error(err);
