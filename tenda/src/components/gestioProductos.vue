@@ -69,7 +69,8 @@
                                     <v-row>
                                         <v-col cols="4">
                                             <v-btn color="primary" @click="editar(variant)">Editar</v-btn>
-
+                                        </v-col>
+                                    </v-row>
                                     <v-btn color="primary" @click="Deshabilitar(variant.IDProducto)">Deshabilitar</v-btn>
                                 </v-card-actions>
                             </v-card>
