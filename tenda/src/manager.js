@@ -1,5 +1,5 @@
 export async function getComandes() {
-    const response = await fetch(`http://localhost:3000/getorders`,
+    const response = await fetch(`http://damtr1g3.dam.inspedralbes.cat:3333/getorders`,
         {
             method: 'GET',
             headers: { 'Accept': 'application/json' }
@@ -8,7 +8,7 @@ export async function getComandes() {
     return comandes;
 }
 export async function getProductesComanda(idComanda) {
-    var url = "http://localhost:3000/detailOrder/" + idComanda;
+    var url = "http://damtr1g3.dam.inspedralbes.cat:3333/detailOrder/" + idComanda;
     const response = await fetch(url,
         {
             method: 'GET',
@@ -17,8 +17,8 @@ export async function getProductesComanda(idComanda) {
     const productes = await response.json();
     return productes;
 }
-export async function getClient(idClient) {
-    var url = "http://localhost:3000/getClient/" + idClient;
+export async function getClient() {
+    var url = "http://damtr1g3.dam.inspedralbes.cat:3333/getClients/";
     const response = await fetch(url,
         {
             method: 'GET',
@@ -28,7 +28,7 @@ export async function getClient(idClient) {
     return dades;
 }
 export async function getProductos() {
-    const response = await fetch(`http://localhost:3000/getProducts`,
+    const response = await fetch(`http://damtr1g3.dam.inspedralbes.cat:3333/getProducts`,
         {
             method: 'GET',
             headers: { 'Accept': 'application/json' }
@@ -37,7 +37,7 @@ export async function getProductos() {
     return productos;
 }
 export async function getUnProducto(id) {
-    const response = await fetch(`http://localhost:3000/getOneProduct/${id}`,
+    const response = await fetch(`http://damtr1g3.dam.inspedralbes.cat:3333/getOneProduct/${id}`,
         {
             method: 'GET',
             headers: { 'Accept': 'application/json' }
@@ -48,7 +48,7 @@ export async function getUnProducto(id) {
 }
 export async function UpdateProductos(dadesProducte,id) {
     console.log(dadesProducte);
-    const response = await fetch(`http://localhost:3000/updateProduct/${id}`,
+    const response = await fetch(`http://damtr1g3.dam.inspedralbes.cat:3333/updateProduct/${id}`,
         {
             method: 'PUT',
             headers: {
@@ -60,7 +60,7 @@ export async function UpdateProductos(dadesProducte,id) {
 }
 export async function CambiarEstado(dadesProducte,id) {
     console.log(dadesProducte);
-    const response = await fetch(`http://localhost:3000/productStatus/${id}`,
+    const response = await fetch(`http://damtr1g3.dam.inspedralbes.cat:3333/productStatus/${id}`,
         {
             method: 'PUT',
             headers: {
@@ -71,7 +71,7 @@ export async function CambiarEstado(dadesProducte,id) {
         },);
 }
 export async function AddProductos(dadesProducte) {
-    const response = await fetch(`http://localhost:3000/addProduct`,
+    const response = await fetch(`http://damtr1g3.dam.inspedralbes.cat:3333/addProduct`,
         {
             method: 'POST', headers: {
                 'Content-Type': 'application/json',
@@ -81,7 +81,7 @@ export async function AddProductos(dadesProducte) {
         },);
 }
 export async function DescargarImagen(url) {
-    const response = await fetch(`http://localhost:3000/imagen`,
+    const response = await fetch(`http://damtr1g3.dam.inspedralbes.cat:3333/imagen`,
         {
             method: 'POST', headers: {
                 'Content-Type': 'application/json',
@@ -93,7 +93,7 @@ export async function DescargarImagen(url) {
 
 export async function DeleteProducto(dadesProducte){
     console.log(dadesProducte);
-    const response= await fetch(`http://localhost:3000/deleteProduct/${dadesProducte.id}`, 
+    const response= await fetch(`http://damtr1g3.dam.inspedralbes.cat:3333/deleteProduct/${dadesProducte.id}`, 
     {method: 'DELETE'});
  
    console.log("quieres borrar la pregunta con id: "+JSON.stringify(dadesProducte))

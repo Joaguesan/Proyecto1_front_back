@@ -66,9 +66,16 @@
                                     <v-card-text>{{ variant.Descripcion }}</v-card-text>
                                 </v-card-item>
                                 <v-card-actions>
-                                    <v-btn color="primary" @click="editar(variant)">Editar</v-btn>
+                                    <v-row>
+                                        <v-col cols="4">
+                                            <v-btn color="primary" @click="editar(variant)">Editar</v-btn>
 
-                                    <v-btn color="primary" @click="Deshabilitar(i)">Deshabilitar</v-btn>
+                                        </v-col>
+                                        <v-col cols="8"> <v-btn color="primary"
+                                                @click="Deshabilitar(i)">Deshabilitar</v-btn>
+                                        </v-col>
+                                    </v-row>
+
                                 </v-card-actions>
                             </v-card>
                             <!--Edicion Habilitados-->
@@ -233,7 +240,7 @@ export default {
             let estado = {
                 "status": habil
             }
-
+            socket.emit("comandaNova")
             CambiarEstado(estado, this.productos1[i].IDProducto).then((response) => {
                 this.productoNuevo.id = ""
                 this.productoNuevo.name = ""

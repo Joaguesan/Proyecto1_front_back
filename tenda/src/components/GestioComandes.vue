@@ -1,9 +1,9 @@
-<template fill-height >
+<template class="h-100" fill-height >
   <v-layout class="rounded rounded-md">
-    <v-app-bar :elevation="2" title="Nombre tienda">
+    <v-app-bar :color="bg" :elevation="2" title="Pick N' Pell">
       <template v-slot:append>
-        <v-btn variant="plain" @click="this.$router.push('/analisidades' )">
-            Anàlisi de dades
+        <v-btn variant="plain" @click="this.$router.push('/analisidades')">
+          Anàlisi de dades
         </v-btn>
         <v-btn variant="plain" @click="cambio">
           {{ nombre }}
@@ -13,8 +13,8 @@
     </v-app-bar>
 
 
-    <v-main class="d-flex align-center justify-center" style="min-height: 300px;">
-      <v-container class="">
+    <v-main class="d-flex align-center h-100 justify-center background" style="min-height: 300px;">
+      <v-container>
         <v-row>
           <v-col cols="2"></v-col>
           <v-col class="d-flex justify-center align-center">
@@ -30,7 +30,10 @@
               :items="['Pendents', 'En Preparacio', 'Preparades', 'Entregades', 'Rebutjades']"
               @update:menu=buscarComandes(seleccio)></v-select></v-col>
           <v-col cols="6"></v-col>
-          <v-col cols="3"><v-btn @click="dialog = true;" class="">Cercar Comandes</v-btn>
+          <v-col cols="3"><!--
+            Botó per a cercar comanda
+            
+            <v-btn @click="dialog = true;" class="">Cercar Comandes</v-btn>
             <v-dialog v-model="dialog" width="auto">
               <v-card>
                 <v-card-text>ID a buscar: </v-card-text>
@@ -43,35 +46,37 @@
                 </v-card-actions>
               </v-card>
             </v-dialog>
-          </v-col>
+          --></v-col>
         </v-row>
         <v-row>
           <v-container>
             <v-row v-if="this.comandesPreparades">
               <v-expansion-panels>
-                <v-expansion-panel v-for="(comanda, i) in this.comandes" :key="i" @click="getDadesClient(comanda.IDCliente)"  >
+                <v-expansion-panel style="background:#4DB5D8" v-for="(comanda, i) in this.comandes" :key="i">
                   <v-expansion-panel-title expand-icon="mdi-plus" collapse-icon="mdi-minus">
                     Comanda {{ comanda.IDPedido }}
                   </v-expansion-panel-title>
-                  <v-expansion-panel-text>
+                  <v-expansion-panel-text style="background:#ffffff">
                     <v-row>
                       <v-col cols="1">Client: {{ comanda.IDCliente }} </v-col>
-                      <v-col cols="2">Data Comanda: {{ comanda.FechaPedido }}</v-col>
+                      <v-col cols="2" class="nose">Data Comanda: {{ comanda.FechaPedido }}</v-col>
                       <v-col cols="2">
                         <p class="nose">
                           Direcció:
-                          {{ clients[comanda.IDCliente][0].Direccion }}
+
+                          {{ clients[clients.indexOf(clients.find((client) => client.IDCliente ==
+                            comanda.IDCliente))].Direccion }}
                         </p>
                       </v-col>
                       <v-col cols="2">
                         <p class="nose">
                           Teléfon:
-                          {{ clients[comanda.IDCliente][0].Telefono }}
+                          {{ clients[clients.indexOf(clients.find((client) => client.IDCliente ==
+                            comanda.IDCliente))].Telefono }}
                         </p>
                       </v-col>
-                      <v-col cols="2">Estat: {{ comanda.Estado }}</v-col>
                       <v-col cols="2">Import Total: {{ comanda.Total }}€</v-col>
-                      <v-col cols="1"><v-btn @click="comandaEntregada(comanda.IDPedido)">Entregada</v-btn></v-col>
+                      <v-col cols="3"><v-btn @click="comandaEntregada(comanda.IDPedido)">Entregada</v-btn></v-col>
                     </v-row>
                   </v-expansion-panel-text>
                 </v-expansion-panel>
@@ -98,32 +103,31 @@
 
             <v-row v-if="this.comandesEntregades">
               <v-col cols="2">Id Comanda</v-col>
-              <v-col cols="2">Id Client</v-col>
-              <v-col cols="2">Data Creació</v-col>
+              <v-col cols="3">Id Client</v-col>
+              <v-col cols="3">Data Creació</v-col>
               <v-col cols="2">Import total</v-col>
               <v-col cols="2">Temps total</v-col>
-              <v-col cols="2">Estat</v-col>
             </v-row>
             <v-row v-if="this.comandesEntregades" :class="[
               index % 2 === 0 ? 'bg-grey-lighten-2' : 'bg-white'
             ]" v-for="(comanda, index) in comandes" :key=index>
               <v-col cols="2">{{ comanda.IDPedido }}</v-col>
-              <v-col cols="2">{{ comanda.IDCliente }}</v-col>
-              <v-col cols="2">{{ comanda.FechaPedido }}</v-col>
+              <v-col cols="3">{{ comanda.IDCliente }}</v-col>
+              <v-col cols="3" class="nose">{{ comanda.FechaPedido }}</v-col>
               <v-col cols="2">{{ comanda.Total }}</v-col>
               <v-col cols="2">temps</v-col>
-              <v-col cols="2">{{ comanda.Estado }}</v-col>
             </v-row>
             <v-row v-if="this.comandesPendents">
               <v-expansion-panels>
-                <v-expansion-panel v-for="(comanda, i) in this.comandes" :key="i">
+                <v-expansion-panel style="background:#4DB5D8" v-for="(comanda, i) in this.comandes" :key="i">
                   <v-expansion-panel-title expand-icon="mdi-plus" collapse-icon="mdi-minus">
                     Comanda {{ comanda.IDPedido }}
                   </v-expansion-panel-title>
-                  <v-expansion-panel-text>
-                    <v-row>
+                  <v-expansion-panel-text style="background:#ffffff">
+
+                    <v-row style="padding: 10px;">
                       <v-col cols="2">Client: {{ comanda.IDCliente }} </v-col>
-                      <v-col cols="2">FechaPedido: {{ comanda.FechaPedido }}</v-col>
+                      <v-col cols="2" class="nose">FechaPedido: {{ comanda.FechaPedido }}</v-col>
                       <v-col cols="2">
                         <p class="nose">
                           Descripció:
@@ -148,95 +152,76 @@
               </v-expansion-panels>
             </v-row>
             <v-row v-if="this.comandesRebutjades">
-              <v-expansion-panels>
-                <v-expansion-panel v-for="(comanda, i) in this.comandes" :key="i">
-                  <v-expansion-panel-title expand-icon="mdi-plus" collapse-icon="mdi-minus">
+              <v-col cols="2">Id Comanda</v-col>
+              <v-col cols="3">Id Client</v-col>
+              <v-col cols="3">Data Creació</v-col>
+              <v-col cols="2">Import total</v-col>
+              <v-col cols="2">Temps total</v-col>
+            </v-row>
+            <v-row v-if="this.comandesRebutjades" :class="[
+              index % 2 === 0 ? 'bg-grey-lighten-2' : 'bg-white'
+            ]" v-for="(comanda, index) in comandes" :key=index>
+              <v-col cols="2">{{ comanda.IDPedido }}</v-col>
+              <v-col cols="3">{{ comanda.IDCliente }}</v-col>
+              <v-col cols="3" class="nose">{{ comanda.FechaPedido }}</v-col>
+              <v-col cols="2">{{ comanda.Total }}</v-col>
+              <v-col cols="2">temps</v-col>
+            </v-row>
+            <v-row v-if="comandesEnPreparacio">
+              <v-col cols="4" v-for="(comanda, i) in this.comandes" :key="i">
+                <v-card width="250">
+                  <v-card-title>
                     Comanda {{ comanda.IDPedido }}
-                  </v-expansion-panel-title>
-                  <v-expansion-panel-text>
-                    <v-row>
-                      <v-col cols="2">Client: {{ comanda.IDCliente }} </v-col>
-                      <v-col cols="2">FechaPedido: {{ comanda.FechaPedido }}</v-col>
-                      <v-col cols="2">
-                        <p class="nose">
-                          Descripció:
-                          {{ comanda.Comentario }}
-                        </p>
-                      </v-col>
-                      <v-col cols="2">
-                        <p class="nose">
-                          Productes:
+                  </v-card-title>
+                  <v-card-subtitle>
+                    Client {{ comanda.IDCliente }}
+                  </v-card-subtitle>
+                  <v-btn color="#4DB5D8" class="mt-12" @click="cambiarOverlay(comanda.IDPedido)">
+                    Veure Comanda
+                  </v-btn>
+                  <v-btn color="#4DB5D8" class="mt-12"
+                    @click="llestSiNo = true, this.comandaSeleccionada = comanda.IDPedido">
+                    Tancar
+                  </v-btn>
+
+                  <v-overlay v-model="overlay" v-if="this.comandaSeleccionada === comanda.IDPedido" contained
+                    class="align-center justify-center">
+                    <v-card-text class="carta">
+                      <ul>
                         <li v-for="producte in this.productes[comanda.IDPedido]">
-                            {{ producte.NombreProducto }} x {{ producte.Cantidad }}
-                          </li>
-                          </p>
-                      </v-col>
-                      <v-col cols="2">
-                        Estat: {{ comanda.Estado }}
-                      </v-col>
-                      <v-col cols="2"></v-col>
-                    </v-row>
-                  </v-expansion-panel-text>
-                </v-expansion-panel>
-              </v-expansion-panels>
+                          {{ producte.NombreProducto }} x {{ producte.Cantidad }}
+                        </li>
+                      </ul>
+                    </v-card-text>
+                    <v-btn color="#4DB5D8" @click="overlay = false">
+                      Tancar
+                    </v-btn>
+                  </v-overlay>
+                  <br><br>
+                </v-card>
+                <v-dialog v-model="llestSiNo" v-if="this.comandaSeleccionada === comanda.IDPedido" persistent
+                  width="auto">
+                  <v-card>
+                    <v-card-title class="text-h5">
+                      Esta la comanda {{ comanda.IDPedido }} llesta per a enviament?
+                    </v-card-title>
+                    <v-card-text> Un cop estigui enviada no es podrá recuperar. </v-card-text>
+                    <v-card-actions>
+                      <v-spacer></v-spacer>
+                      <v-btn color="#4DB5D8" variant="text" @click="llestSiNo = false, llestaPerEnviar(comanda.IDPedido)">
+                        Enviar
+                      </v-btn>
+                      <v-btn color="#4DB5D8" variant="text" @click="llestSiNo = false">
+                        Cancelar
+                      </v-btn>
+                    </v-card-actions>
+                  </v-card>
+                </v-dialog>
+              </v-col>
             </v-row>
           </v-container>
         </v-row>
-        <v-row v-if="comandesEnPreparacio">
-          <v-col cols="4" v-for="(comanda, i) in this.comandes" :key="i">
-            <v-card width="250">
-              <v-card-title>
-                Comanda {{ comanda.IDPedido }}
-              </v-card-title>
-              <v-card-subtitle>
-                Client {{ comanda.IDCliente }}
-              </v-card-subtitle>
-              <v-btn color="success" class="mt-12" @click="cambiarOverlay(comanda.IDPedido)">
-                Veure Comanda
-              </v-btn>
-              <v-btn color="success" class="mt-12" @click="llestSiNo = true, this.comandaSeleccionada=comanda.IDPedido">
-                Tancar
-              </v-btn>
-
-              <v-overlay v-model="overlay" v-if="this.comandaSeleccionada === comanda.IDPedido" contained
-                class="align-center justify-center">
-                <v-card-text class="carta">
-                  <ul>
-                    <li v-for="producte in this.productes[comanda.IDPedido]">
-                      {{ producte.NombreProducto }} x {{ producte.Cantidad }}
-                    </li>
-                  </ul>
-                </v-card-text>
-                <v-btn color="success" @click="overlay = false">
-                  Tancar
-                </v-btn>
-              </v-overlay>
-              <br><br>
-            </v-card>
-            <v-dialog v-model="llestSiNo" v-if="this.comandaSeleccionada === comanda.IDPedido"  persistent width="auto">
-              <v-card>
-                <v-card-title class="text-h5">
-                  Esta la comanda {{comanda.IDPedido }} llesta per a enviament?
-                </v-card-title>
-                <v-card-text> Un cop estigui enviada no es podrá recuperar. </v-card-text>
-                <v-card-actions>
-                  <v-spacer></v-spacer>
-                  <v-btn color="green-darken-1" variant="text"
-                    @click="llestSiNo = false, llestaPerEnviar(comanda.IDPedido)">
-                    Enviar
-                  </v-btn>
-                  <v-btn color="green-darken-1" variant="text" @click="llestSiNo = false">
-                    Cancelar
-                  </v-btn>
-                </v-card-actions>
-              </v-card>
-            </v-dialog>
-          </v-col>
-
-        </v-row>
-
       </v-container>
-
     </v-main>
   </v-layout>
 </template>
@@ -263,12 +248,22 @@
 .v-btn {
   min-width: 0;
 }
+
+.logo {
+  height: 100%;
+  width: 30%;
+}
+
+.background {
+  background-color: rgb(255, 255, 255);
+}
 </style>
 <script>
 import { getComandes, getProductesComanda, getClient } from '@/manager'
 import { socket, state } from "@/socket";
 export default {
   data: () => ({
+    bg: "#4DB5D8",
     llestSiNo: false,
     comandaSeleccionada: null,
     cercar: false,
@@ -287,13 +282,14 @@ export default {
     comandesPreparades: false,
     comandesRebutjades: false,
     productes: new Map(),
-    clients: new Map()
+    clients: []
 
 
   }),
   created() {
     this.buscarComandes('Pendents');
-    
+
+
   },
   methods: {
     connectar() {
@@ -315,7 +311,7 @@ export default {
     llestaPerEnviar(idComanda) {
       socket.emit('Llesta', idComanda)
     },
-    comandaEntregada(idComanda){
+    comandaEntregada(idComanda) {
       socket.emit('Entregada', idComanda)
     },
     async recargar() {
@@ -334,9 +330,12 @@ export default {
       }
       );
     },
-    getDadesClient(idClient){
-        console.log("DADES DEL CLIENT")
-      getClient(idClient).then((response) => { this.clients[idClient] = response } )
+    getDadesClient() {
+      console.log("DADES DEL CLIENT")
+      getClient().then((response) => {
+        console.log("get DAdes client => ", response);
+        this.clients = response
+      })
     },
     cambio() {
       this.nombre = this.nombre === 'Gestio Comandas' ? 'Gestio Productes' : 'Gestio Comandas'
@@ -347,7 +346,9 @@ export default {
       this.comandaSeleccionada = comandaId;
       this.overlay = !this.overlay
     },
+
     buscarComandes(Estado) {
+      this.getDadesClient()
       this.recargar().then(() => {
         this.comandes = this.comandesGlobal.filter(comanda => comanda.Estado === Estado), this.productosComanda()
       })
@@ -362,7 +363,7 @@ export default {
         case 'En Preparacio':
           this.comandesPendents = false;
           this.comandesEnPreparacio = true;
-          this.comandesPreparades= false;
+          this.comandesPreparades = false;
           this.comandesRebutjades = false
           this.comandesEntregades = false
           break
