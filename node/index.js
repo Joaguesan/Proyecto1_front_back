@@ -77,7 +77,24 @@ io.on("connection", (socket) => {
     });
     io.emit("comandaNova");
   });
+  socket.on("Habilitada", (id) => {
+    var sql = `UPDATE Producto SET Habilitado = 0 WHERE IDProducto = ${id}`;
 
+    conn.query(sql, (err, result) => {
+      if (err) console.error(err);
+      console.log(result);
+    });
+    io.emit("ProductoNuevo");
+  });
+  socket.on("Deshabilitada", (id) => {
+    var sql = `UPDATE Producto SET Habilitado = 1 WHERE IDProducto = ${id}`;
+
+    conn.query(sql, (err, result) => {
+      if (err) console.error(err);
+      console.log(result);
+    });
+    io.emit("ProductoNuevo");
+  });
   /*
 
   socket.on("Completada", (id) => {
@@ -217,6 +234,7 @@ app.post("/addProduct", async (req, res) => {
     if (err) console.error(err);
     console.log(result);
     res.send(result);
+    io.emit("ProductoNuevo")
   });
 });
 app.delete("/deleteProduct/:id", async (req, res) => {
@@ -229,6 +247,7 @@ app.delete("/deleteProduct/:id", async (req, res) => {
     } catch (error) {
       console.log(error);
     }
+    io.emit("ProductoNuevo");
   });
 
 
@@ -248,6 +267,8 @@ app.put("/updateProduct/:id", async (req, res) => {
     console.log(result);
     res.send(result);
   });
+  io.emit("ProductoNuevo");
+
 });
 
 app.put("/productStatus/:id", async (req, res) => {
