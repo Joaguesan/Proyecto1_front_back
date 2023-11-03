@@ -351,9 +351,9 @@ app.get("/renovarGrafico", (req, res) => {
   selectPedidos();
 });
 
-app.get("/mostrarGrafico", (req, res) => {
+app.get("/mostrarGraficoHoras", (req, res) => {
   selectPedidos();
-  mostrarGrafica();
+  mostrarGraficaHoras();
   res.sendFile(__dirname + "/estadisticas.jpeg");
 });
 
@@ -377,7 +377,7 @@ function selectPedidos() {
   });
 }
 
-function mostrarGrafica() {
+function mostrarGraficaHoras() {
   var { spawn } = require("child_process");
   var proceso = spawn("Python", ["./graficos.py"]);
 
@@ -402,6 +402,28 @@ function mostrarGrafica() {
     }
   });
 }
+app.get("/mostrarGraficoEstados",(req, res)=>{
+  mostrarGraficaEstado();
+  res.sendFile(__dirname + "/grafico2.jpeg");
+});
+
+function mostrarGraficaEstado(){
+  var { spawn } = require('child_process');
+  var proceso = spawn("Python",["./grafico2.py"]);
+  proceso.stdout.on("data",(data)=>{
+    console.log(`Salida estándar de Python: ${data}`);
+  });
+  proceso.on("close", (code) => {
+    if (code === 0) {
+      console.log("El script de Python se ha ejecutado correctamente.");
+    } else {
+      console.error(
+        `El script de Python ha finalizado con código de salida ${code}.`
+      );
+    }
+  });
+}
+
 app.get("/getClient/:id", async (req, res) => {
   var sql = `SELECT Direccion, Telefono FROM Cliente WHERE IDCliente = ${req.params.id}`;
   conn.query(sql, (err, result) => {
