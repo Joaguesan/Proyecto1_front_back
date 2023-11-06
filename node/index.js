@@ -32,13 +32,14 @@ const io = new Server(server, {
     credentials: true,
   },
 });
+
 const port = 3333;
 server.listen(port, () => {
-  console.log(`listening at http://localhost:${port}`);
+  //console.log(`listening at http://localhost:${port}`);
 });
 
 io.on("connection", (socket) => {
-  console.log("a user connected");
+  //console.log("a user connected");
   io.emit("connectat", "connectat");
 
   socket.on("Acceptada", (id) => {
@@ -46,52 +47,57 @@ io.on("connection", (socket) => {
     var sql = `UPDATE Pedido SET Estado = "En Preparacio" WHERE IDPedido = ${id}`;
     conn.query(sql, (err, result) => {
       if (err) console.error(err);
-      console.log(result);
+      //console.log(result);
     });
     io.emit("comandaNova");
   });
+
   socket.on("Rebutjada", (id) => {
     var sql = `UPDATE Pedido SET Estado = "Rebutjades" WHERE IDPedido = ${id}`;
 
     conn.query(sql, (err, result) => {
       if (err) console.error(err);
-      console.log(result);
+      //console.log(result);
     });
     io.emit("comandaNova");
   });
+
   socket.on("Llesta", (id) => {
     var sql = `UPDATE Pedido SET Estado = "Preparades" WHERE IDPedido = ${id}`;
 
     conn.query(sql, (err, result) => {
       if (err) console.error(err);
-      console.log(result);
+      //console.log(result);
     });
     io.emit("comandaNova");
   });
+
   socket.on("Entregada", (id) => {
     var sql = `UPDATE Pedido SET Estado = "Entregades" WHERE IDPedido = ${id}`;
 
     conn.query(sql, (err, result) => {
       if (err) console.error(err);
-      console.log(result);
+      //console.log(result);
     });
     io.emit("comandaNova");
   });
+
   socket.on("Habilitada", (id) => {
     var sql = `UPDATE Producto SET Habilitado = 0 WHERE IDProducto = ${id}`;
 
     conn.query(sql, (err, result) => {
       if (err) console.error(err);
-      console.log(result);
+      //console.log(result);
     });
     io.emit("ProductoNuevo");
   });
+
   socket.on("Deshabilitada", (id) => {
     var sql = `UPDATE Producto SET Habilitado = 1 WHERE IDProducto = ${id}`;
 
     conn.query(sql, (err, result) => {
       if (err) console.error(err);
-      console.log(result);
+      //console.log(result);
     });
     io.emit("ProductoNuevo");
   });
@@ -135,11 +141,11 @@ io.on("connection", (socket) => {
 
     conn.query(sql, (err, result) => {
       if (err) console.error(err);
-      console.log(result);
+      //console.log(result);
     });
     io.emit("ProductoNuevo");
-
   });
+  
 
   /*
 
@@ -147,12 +153,12 @@ io.on("connection", (socket) => {
     var sql = `UPDATE Pedido SET Estado = "Completada" WHERE IDPedido = ${id}`;
     conn.query(sql, (err, result) => {
       if (err) console.error(err);
-      console.log(result);
+      //console.log(result);
     });
   });
 */
   socket.on("disconnect", () => {
-    console.log("user disconnected");
+    //console.log("user disconnected");
   });
 });
 
@@ -177,8 +183,8 @@ var conn = mysql.createPool({
   user: "a22joaguesan_num3",
   password: "G3proyecto1",
   database: "a22joaguesan_tienda",
-  connectionLimit: 10,
-  queueLimit: 2,
+  connectionLimit: 20,
+  queueLimit: 5,
   waitForConnections: true,
 });
 
@@ -186,7 +192,7 @@ conn.getConnection((err, connection) => {
   if (err) {
     console.error(err);
   } else {
-    console.log("Connected to database!");
+    //console.log("Connected to database!");
   }
 });
 
@@ -200,14 +206,13 @@ function descargarImagen(url, carpetaDestino, nombreArchivo) {
         return;
       }
 
-
       const archivoDestino = `${carpetaDestino}/${nombreArchivo}`;
       const escrituraStream = fs.createWriteStream(archivoDestino);
 
       response.pipe(escrituraStream);
 
       escrituraStream.on("finish", () => {
-        console.log(`Imagen descargada y guardada en ${archivoDestino}`);
+        //console.log(`Imagen descargada y guardada en ${archivoDestino}`);
       });
 
       escrituraStream.on("error", (error) => {
@@ -229,7 +234,7 @@ function descargarImagen(url, carpetaDestino, nombreArchivo) {
       response.pipe(escrituraStream);
 
       escrituraStream.on("finish", () => {
-        console.log(`Imagen descargada y guardada en ${archivoDestino}`);
+        //console.log(`Imagen descargada y guardada en ${archivoDestino}`);
       });
 
       escrituraStream.on("error", (error) => {
@@ -272,12 +277,66 @@ app.get("/getOneProduct/:id", async (req, res) => {
   });
 });
 
+app.post("/addProduct", async (req, res) => {
+  var imagen =
+    "http://damtr1g3.dam.inspedralbes.cat:3333/imagen/" +
+    req.body.Imatge.replace(/ /g, "_") +
+    ".jpg";
+  var sql = `INSERT INTO Producto (NombreProducto,Descripcion,PrecioUnitario, Imatge) VALUES ('${req.body.name}','${req.body.description}','${req.body.price}','${imagen}')`;
+
+  conn.query(sql, (err, result) => {
+    if (err) console.error(err);
+    //console.log(result);
+    res.send(result);
+    io.emit("ProductoNuevo");
+  });
+});
+app.delete("/deleteProduct/:id", async (req, res) => {
+  var sql = `DELETE FROM Producto WHERE IDProducto = ${req.params.id}`;
+  conn.query(
+    `SELECT NombreProducto FROM Producto WHERE IDProducto = ${req.params.id}`,
+    function (err, result, fields) {
+      if (err) throw err;
+      try {
+        fs.unlinkSync(
+          "./assets/" + "producto" + result[0].NombreProducto + ".jpg"
+        );
+        //console.log("Delete File successfully.");
+      } catch (error) {
+        //console.log(error);
+      }
+      io.emit("ProductoNuevo");
+    }
+  );
+
+  conn.query(sql, (err, result) => {
+    if (err) console.error(err);
+    //console.log(result);
+    res.send(result);
+  });
+});
+
+app.put("/updateProduct/:id", async (req, res) => {
+  var imagen =
+    "http://damtr1g3.dam.inspedralbes.cat:3333/imagen/" +
+    req.body.Imatge.replace(/ /g, "_") +
+    ".jpg";
+  var sql = `UPDATE Producto SET NombreProducto = '${req.body.name}', Descripcion = '${req.body.description}', PrecioUnitario = '${req.body.price}', Imatge = '${imagen}' WHERE IDProducto = ${req.params.id}`;
+
+  conn.query(sql, (err, result) => {
+    if (err) console.error(err);
+    //console.log(result);
+    res.send(result);
+  });
+  io.emit("ProductoNuevo");
+});
+
 app.put("/productStatus/:id", async (req, res) => {
   var sql = `UPDATE Producto SET Habilitado = ${req.body.status} WHERE IDProducto = ${req.params.id}`;
 
   conn.query(sql, (err, result) => {
     if (err) console.error(err);
-    console.log(result);
+    //console.log(result);
     res.send(result);
   });
 });
@@ -287,7 +346,7 @@ app.get("/getOrders", async (req, res) => {
 
   conn.query(sql, (err, result) => {
     if (err) console.error(err);
-    console.log(result);
+    //console.log(result);
     res.send(result);
   });
 });
@@ -297,10 +356,10 @@ app.get("/getOrdersClient/:id", async (req, res) => {
 
   conn.query(sql, (err, result) => {
     if (err) console.error(err);
-    console.log(result);
+    //console.log(result);
     res.send(result);
   });
-})
+});
 
 app.get("/detailOrder/:id", async (req, res) => {
   var sql = `SELECT
@@ -320,7 +379,7 @@ JOIN
 
   conn.query(sql, (err, result) => {
     if (err) console.error(err);
-    console.log(result);
+    //console.log(result);
     if (result.length > 0) {
       res.send(result);
     } else {
@@ -330,13 +389,30 @@ JOIN
 });
 
 app.post("/createOrder", async (req, res) => {
-  var sql = `INSERT INTO Pedido (IDCliente,Total,Comentario) VALUES ('${req.body.idClient}','${req.body.total}','${req.body.comentario}')`;
+  // console.log(req.body.pedido.total);
+  // console.log(req.body.productos[0].IDProducto)
+  var sql = `INSERT INTO Pedido (IDCliente,Total,Comentario) VALUES ('${req.body.pedido.idClient}','${req.body.pedido.total}','${req.body.pedido.comentario}')`;
 
   conn.query(sql, (err, result) => {
     if (err) console.error(err);
-    console.log(result);
-    res.send(result);
-    io.emit("comandaNova");
+    var sqlSelectLastOrder =
+      "SELECT `IDPedido` FROM Pedido ORDER BY `FechaPedido` DESC LIMIT 1";
+
+    conn.query(sqlSelectLastOrder, (err, result) => {
+      if (err) console.error(err);
+      var lastOrderId = result[0].IDPedido;
+
+      for (const producto of req.body.productos) {
+        var sqlInsertOrderProducts = `INSERT INTO DetallePedido (IDPedido,IDProducto,Cantidad) VALUES ('${lastOrderId}','${producto.IDProducto}','${producto.cantidad}')`;
+
+        conn.query(sqlInsertOrderProducts, (err, result) => {
+          if (err) console.error(err);
+          console.log(result);
+        });
+      }
+
+      io.emit("comandaNova");
+    });
   });
 });
 
@@ -352,7 +428,7 @@ app.post("/createOrder", async (req, res) => {
 
 //       conn.query(sql, (err, result) => {
 //         if (err) console.error(err);
-//         console.log(result);
+//         //console.log(result);
 //         res.send(result);
 //       });
 //     }
@@ -377,10 +453,6 @@ app.post("/login", async (req, res) => {
       }
     });
   }
-});
-
-app.get("/renovarGrafico", (req, res) => {
-  selectPedidos();
 });
 
 app.get("/mostrarGraficoHoras", (req, res) => {
@@ -411,7 +483,7 @@ function selectPedidos() {
             console.error("error al escribir los resultados");
             reject(err);
           } else {
-            console.log("escrito con éxito");
+            //console.log("escrito con éxito");
             resolve();
           }
         });
@@ -427,13 +499,15 @@ function mostrarGraficaHoras() {
 
     proceso.on("close", (code) => {
       if (code === 0) {
-        console.log("El script de Python se ha ejecutado correctamente.");
+        //console.log("El script de Python se ha ejecutado correctamente.");
         resolve();
       } else {
         console.error(
           `El script de Python ha finalizado con código de salida ${code}.`
         );
-        reject(`El script de Python ha finalizado con código de salida ${code}.`);
+        reject(
+          `El script de Python ha finalizado con código de salida ${code}.`
+        );
       }
     });
   });
@@ -450,10 +524,43 @@ app.get("/mostrarGraficoEstados", async (req, res) => {
   }
 });
 
+
 function mostrarGraficaEstado() {
   return new Promise((resolve, reject) => {
-    var { spawn } = require('child_process');
+    var { spawn } = require("child_process");
     var proceso = spawn("python3", ["./grafico2.py"]);
+
+    proceso.on("close", (code) => {
+      if (code === 0) {
+        //console.log("El script de Python se ha ejecutado correctamente.");
+        resolve();
+      } else {
+        console.error(
+          `El script de Python ha finalizado con código de salida ${code}.`
+        );
+        reject(
+          `El script de Python ha finalizado con código de salida ${code}.`
+        );
+      }
+    });
+  });
+}
+
+app.get("/mostrarGraficoIngresos", async (req, res) => {
+  try {
+    await selectPedidos();
+    await mostrarGraficaIngresos();
+    res.sendFile(__dirname + "/estadisticas_ingresos.jpeg");
+  } catch (error) {
+    console.error("Error al mostrar el gráfico de ingresos:", error);
+    res.status(500).send("Error al mostrar el gráfico de ingresos");
+  }
+});
+
+function mostrarGraficaIngresos() {
+  return new Promise((resolve, reject) => {
+    var { spawn } = require("child_process");
+    var proceso = spawn("Python", ["./graficos3.py"]);
 
     proceso.on("close", (code) => {
       if (code === 0) {
@@ -463,14 +570,46 @@ function mostrarGraficaEstado() {
         console.error(
           `El script de Python ha finalizado con código de salida ${code}.`
         );
-        reject(`El script de Python ha finalizado con código de salida ${code}.`);
+        reject(
+          `El script de Python ha finalizado con código de salida ${code}.`
+        );
       }
+
+      // El script de Python ha finalizado
+      proceso.on("close", (code) => {
+        if (code === 0) {
+          console.log("El script de Python se ha ejecutado correctamente.");
+        } else {
+          console.error(
+            `El script de Python ha finalizado con código de salida ${code}.`
+          );
+        }
+      });
+    });
+
+    // Maneja la salida estándar de Python (stdout)
+    proceso.stdout.on("data", (data) => {
+      console.log(`Salida estándar de Python: ${data}`);
+    });
+
+    // Maneja los errores estándar de Python (stderr)
+    proceso.stderr.on("data", (data) => {
+      console.error(`Errores estándar de Python: ${data}`);
     });
   });
 }
 
 app.get("/getClients", async (req, res) => {
   var sql = `SELECT * FROM Cliente`;
+  conn.query(sql, (err, result) => {
+    if (err) console.error(err);
+    //console.log(result);
+    res.send(result);
+  });
+});
+
+app.get("/gettemps", async (req, res) => {
+  var sql = `SELECT * FROM Tiempo`;
   conn.query(sql, (err, result) => {
     if (err) console.error(err);
     console.log(result);
