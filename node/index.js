@@ -422,7 +422,7 @@ function selectPedidos() {
 function mostrarGraficaHoras() {
   return new Promise((resolve, reject) => {
     var { spawn } = require("child_process");
-    var proceso = spawn("Python", ["./graficos.py"]);
+    var proceso = spawn("python3", ["./graficos.py"]);
 
     proceso.on("close", (code) => {
       if (code === 0) {
@@ -452,7 +452,7 @@ app.get("/mostrarGraficoEstados", async (req, res) => {
 function mostrarGraficaEstado() {
   return new Promise((resolve, reject) => {
     var { spawn } = require('child_process');
-    var proceso = spawn("Python", ["./grafico2.py"]);
+    var proceso = spawn("python3", ["./grafico2.py"]);
 
     proceso.on("close", (code) => {
       if (code === 0) {
