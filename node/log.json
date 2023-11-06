@@ -4,7 +4,7 @@
     "IDCliente": 8,
     "FechaPedido": "2023-10-29T23:00:00.000Z",
     "Total": "100.50",
-    "Estado": "Acceptades",
+    "Estado": "Entregades",
     "Comentario": "Pedido de prueba 1"
   },
   {
@@ -12,7 +12,7 @@
     "IDCliente": 9,
     "FechaPedido": "2023-10-29T23:00:00.000Z",
     "Total": "75.25",
-    "Estado": "Acceptades",
+    "Estado": "Rebutjades",
     "Comentario": "Pedido de prueba 2"
   },
   {
@@ -36,7 +36,7 @@
     "IDCliente": 12,
     "FechaPedido": "2023-10-31T08:20:57.000Z",
     "Total": "24.00",
-    "Estado": "Acceptades",
+    "Estado": "Entregades",
     "Comentario": null
   },
   {
@@ -44,7 +44,7 @@
     "IDCliente": 10,
     "FechaPedido": "2023-10-31T08:31:11.000Z",
     "Total": "24.20",
-    "Estado": "Acceptades",
+    "Estado": "Entregades",
     "Comentario": "Sin pepinillos"
   },
   {
@@ -52,7 +52,7 @@
     "IDCliente": 8,
     "FechaPedido": "2023-10-31T08:34:54.000Z",
     "Total": "1.80",
-    "Estado": "Acceptades",
+    "Estado": "Entregades",
     "Comentario": "qwer"
   },
   {
@@ -68,7 +68,7 @@
     "IDCliente": 8,
     "FechaPedido": "2023-10-31T09:03:51.000Z",
     "Total": "2.90",
-    "Estado": "Acceptades",
+    "Estado": "Entregades",
     "Comentario": "cosas"
   },
   {
@@ -76,7 +76,7 @@
     "IDCliente": 8,
     "FechaPedido": "2023-10-31T09:52:11.000Z",
     "Total": "23.00",
-    "Estado": "Acceptades",
+    "Estado": "Entregades",
     "Comentario": "Biel se actualiza"
   },
   {
@@ -84,7 +84,7 @@
     "IDCliente": 8,
     "FechaPedido": "2023-10-31T09:52:23.000Z",
     "Total": "23.00",
-    "Estado": "Acceptades",
+    "Estado": "En Preparacio",
     "Comentario": "Biel se actualiza2"
   },
   {
@@ -94,5 +94,21 @@
     "Total": "2.90",
     "Estado": "Pendents",
     "Comentario": "asdasd"
+  },
+  {
+    "IDPedido": 21,
+    "IDCliente": 9,
+    "FechaPedido": "2023-11-03T08:35:00.000Z",
+    "Total": "2.90",
+    "Estado": "Preparades",
+    "Comentario": "prueba"
+  },
+  {
+    "IDPedido": 22,
+    "IDCliente": 9,
+    "FechaPedido": "2023-11-03T08:38:41.000Z",
+    "Total": "3.60",
+    "Estado": "Preparades",
+    "Comentario": "sdfsdfsd"
   }
 ]
