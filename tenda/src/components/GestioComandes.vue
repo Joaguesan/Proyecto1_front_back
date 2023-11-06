@@ -1,6 +1,6 @@
 <template class="h-100" fill-height >
   <v-layout class="rounded rounded-md">
-    <v-app-bar :color="bg" :elevation="2" title="Pick N' Pell">
+    <v-app-bar :color="bg" style="color: #021345;" :elevation="2" title="Pick N' Pell">
       <template v-slot:append>
         <v-btn variant="plain" @click="this.$router.push('/analisidades')">
           Anàlisi de dades
@@ -8,27 +8,25 @@
         <v-btn variant="plain" @click="cambio">
           {{ nombre }}
         </v-btn>
-        <v-btn icon="	mdi-chevron-down"></v-btn>
       </template>
     </v-app-bar>
 
 
-    <v-main class="d-flex align-center h-100 justify-center background" style="min-height: 300px;">
+    <v-main class="d-flex align-center h-100 justify-center background">
       <v-container>
         <v-row>
-          <v-col cols="2"></v-col>
-          <v-col class="d-flex justify-center align-center">
-            <h1>Gestió Comandes</h1>
+          <v-col class="d-flex justify-center align-center ">
+            <h1 class="titol">Gestió Comandes</h1>
           </v-col>
-          <v-col cols="2"></v-col>
+          <v-col cols="9"></v-col>
         </v-row>
         <div style="display: none">
           {{ this.recarregarEstat }}
         </div>
         <v-row>
-          <v-col cols="3"><v-select v-model="seleccio" density="compact"
+          <v-col cols="3"><v-select  v-model="seleccio" density="compact"
               :items="['Pendents', 'En Preparacio', 'Preparades', 'Entregades', 'Rebutjades']"
-              @update:menu=buscarComandes(seleccio)></v-select></v-col>
+              @update:menu=buscarComandes(seleccio) style="background-color: rgba(249, 208, 82, 0.9); margin-top: 2%; border:black solid 1px ; border-radius: 10px;"></v-select></v-col>
           <v-col cols="6"></v-col>
           <v-col cols="3"><!--
             Botó per a cercar comanda
@@ -52,7 +50,7 @@
           <v-container>
             <v-row v-if="this.comandesPreparades">
               <v-expansion-panels>
-                <v-expansion-panel style="background:#4DB5D8" v-for="(comanda, i) in this.comandes" :key="i">
+                <v-expansion-panel style="background:#473b18" v-for="(comanda, i) in this.comandes" :key="i">
                   <v-expansion-panel-title expand-icon="mdi-plus" collapse-icon="mdi-minus">
                     Comanda {{ comanda.IDPedido }}
                   </v-expansion-panel-title>
@@ -109,7 +107,7 @@
               <v-col cols="2">Temps total</v-col>
             </v-row>
             <v-row v-if="this.comandesEntregades" :class="[
-              index % 2 === 0 ? 'bg-grey-lighten-2' : 'bg-white'
+              index % 2 === 0 ? 'orangeBackground' : 'bg-white'
             ]" v-for="(comanda, index) in comandes" :key=index>
               <v-col cols="2">{{ comanda.IDPedido }}</v-col>
               <v-col cols="3">{{ comanda.IDCliente }}</v-col>
@@ -119,9 +117,9 @@
             </v-row>
             <v-row v-if="this.comandesPendents">
               <v-expansion-panels>
-                <v-expansion-panel style="background:#4DB5D8" v-for="(comanda, i) in this.comandes" :key="i">
+                <v-expansion-panel style="background:rgb(249, 208, 82)" v-for="(comanda, i) in this.comandes" :key="i">
                   <v-expansion-panel-title expand-icon="mdi-plus" collapse-icon="mdi-minus">
-                    Comanda {{ comanda.IDPedido }}
+                   <b> Comanda {{ comanda.IDPedido }}</b>
                   </v-expansion-panel-title>
                   <v-expansion-panel-text style="background:#ffffff">
 
@@ -227,6 +225,9 @@
 </template>
 
 <style >
+.orangeBackground {
+  background-color: rgb(249, 208, 82);
+}
 .buscador {
   border: 1px solid black;
   border-radius: 10px;
@@ -255,7 +256,24 @@
 }
 
 .background {
-  background-color: rgb(255, 255, 255);
+  width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: url( '../assets/fons.png') center center;
+    background-size: 15%;
+    background-color: red;
+}
+.v-select-item{
+
+}
+.titol{
+  border: #021345 1px solid;
+  padding: 2%;
+  color: #021345;
+  background-color: rgba(249, 208, 82,1);
+  border-radius: 10px;
 }
 </style>
 <script>
@@ -263,7 +281,7 @@ import { getComandes, getProductesComanda, getClient, getTempsComanda } from '@/
 import { socket, state } from "@/socket";
 export default {
   data: () => ({
-    bg: "#4DB5D8",
+    bg:"rgb( 252,175,1)",
     llestSiNo: false,
     comandaSeleccionada: null,
     cercar: false,
