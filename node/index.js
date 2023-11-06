@@ -34,11 +34,11 @@ const io = new Server(server, {
 });
 const port = 3333;
 server.listen(port, () => {
-  console.log(`listening at http://localhost:${port}`);
+  //console.log(`listening at http://localhost:${port}`);
 });
 
 io.on("connection", (socket) => {
-  console.log("a user connected");
+  //console.log("a user connected");
   io.emit("connectat", "connectat");
 
   socket.on("Acceptada", (id) => {
@@ -46,7 +46,7 @@ io.on("connection", (socket) => {
     var sql = `UPDATE Pedido SET Estado = "En Preparacio" WHERE IDPedido = ${id}`;
     conn.query(sql, (err, result) => {
       if (err) console.error(err);
-      console.log(result);
+      //console.log(result);
     });
     io.emit("comandaNova");
   });
@@ -55,7 +55,7 @@ io.on("connection", (socket) => {
 
     conn.query(sql, (err, result) => {
       if (err) console.error(err);
-      console.log(result);
+      //console.log(result);
     });
     io.emit("comandaNova");
   });
@@ -64,7 +64,7 @@ io.on("connection", (socket) => {
 
     conn.query(sql, (err, result) => {
       if (err) console.error(err);
-      console.log(result);
+      //console.log(result);
     });
     io.emit("comandaNova");
   });
@@ -73,7 +73,7 @@ io.on("connection", (socket) => {
 
     conn.query(sql, (err, result) => {
       if (err) console.error(err);
-      console.log(result);
+      //console.log(result);
     });
     io.emit("comandaNova");
   });
@@ -82,7 +82,7 @@ io.on("connection", (socket) => {
 
     conn.query(sql, (err, result) => {
       if (err) console.error(err);
-      console.log(result);
+      //console.log(result);
     });
     io.emit("ProductoNuevo");
   });
@@ -91,7 +91,7 @@ io.on("connection", (socket) => {
 
     conn.query(sql, (err, result) => {
       if (err) console.error(err);
-      console.log(result);
+      //console.log(result);
     });
     io.emit("ProductoNuevo");
   });
@@ -101,12 +101,12 @@ io.on("connection", (socket) => {
     var sql = `UPDATE Pedido SET Estado = "Completada" WHERE IDPedido = ${id}`;
     conn.query(sql, (err, result) => {
       if (err) console.error(err);
-      console.log(result);
+      //console.log(result);
     });
   });
 */
   socket.on("disconnect", () => {
-    console.log("user disconnected");
+    //console.log("user disconnected");
   });
 });
 
@@ -131,8 +131,8 @@ var conn = mysql.createPool({
   user: "a22joaguesan_num3",
   password: "G3proyecto1",
   database: "a22joaguesan_tienda",
-  connectionLimit: 10,
-  queueLimit: 2,
+  connectionLimit: 20,
+  queueLimit: 5,
   waitForConnections: true,
 });
 
@@ -140,7 +140,7 @@ conn.getConnection((err, connection) => {
   if (err) {
     console.error(err);
   } else {
-    console.log("Connected to database!");
+    //console.log("Connected to database!");
   }
 });
 
@@ -161,7 +161,7 @@ function descargarImagen(url, carpetaDestino, nombreArchivo) {
       response.pipe(escrituraStream);
 
       escrituraStream.on("finish", () => {
-        console.log(`Imagen descargada y guardada en ${archivoDestino}`);
+        //console.log(`Imagen descargada y guardada en ${archivoDestino}`);
       });
 
       escrituraStream.on("error", (error) => {
@@ -183,7 +183,7 @@ function descargarImagen(url, carpetaDestino, nombreArchivo) {
       response.pipe(escrituraStream);
 
       escrituraStream.on("finish", () => {
-        console.log(`Imagen descargada y guardada en ${archivoDestino}`);
+        //console.log(`Imagen descargada y guardada en ${archivoDestino}`);
       });
 
       escrituraStream.on("error", (error) => {
@@ -232,7 +232,7 @@ app.post("/addProduct", async (req, res) => {
 
   conn.query(sql, (err, result) => {
     if (err) console.error(err);
-    console.log(result);
+    //console.log(result);
     res.send(result);
     io.emit("ProductoNuevo")
   });
@@ -243,9 +243,9 @@ app.delete("/deleteProduct/:id", async (req, res) => {
     if (err) throw err;
     try {
       fs.unlinkSync('./assets/' + "producto" + result[0].NombreProducto + '.jpg');
-      console.log("Delete File successfully.");
+      //console.log("Delete File successfully.");
     } catch (error) {
-      console.log(error);
+      //console.log(error);
     }
     io.emit("ProductoNuevo");
   });
@@ -253,7 +253,7 @@ app.delete("/deleteProduct/:id", async (req, res) => {
 
   conn.query(sql, (err, result) => {
     if (err) console.error(err);
-    console.log(result);
+    //console.log(result);
     res.send(result);
   });
 });
@@ -264,7 +264,7 @@ app.put("/updateProduct/:id", async (req, res) => {
 
   conn.query(sql, (err, result) => {
     if (err) console.error(err);
-    console.log(result);
+    //console.log(result);
     res.send(result);
   });
   io.emit("ProductoNuevo");
@@ -276,7 +276,7 @@ app.put("/productStatus/:id", async (req, res) => {
 
   conn.query(sql, (err, result) => {
     if (err) console.error(err);
-    console.log(result);
+    //console.log(result);
     res.send(result);
   });
 });
@@ -286,7 +286,7 @@ app.get("/getOrders", async (req, res) => {
 
   conn.query(sql, (err, result) => {
     if (err) console.error(err);
-    console.log(result);
+    //console.log(result);
     res.send(result);
   });
 });
@@ -296,7 +296,7 @@ app.get("/getOrdersClient/:id", async (req, res) => {
 
   conn.query(sql, (err, result) => {
     if (err) console.error(err);
-    console.log(result);
+    //console.log(result);
     res.send(result);
   });
 })
@@ -319,7 +319,7 @@ JOIN
 
   conn.query(sql, (err, result) => {
     if (err) console.error(err);
-    console.log(result);
+    //console.log(result);
     if (result.length > 0) {
       res.send(result);
     } else {
@@ -329,13 +329,29 @@ JOIN
 });
 
 app.post("/createOrder", async (req, res) => {
-  var sql = `INSERT INTO Pedido (IDCliente,Total,Comentario) VALUES ('${req.body.idClient}','${req.body.total}','${req.body.comentario}')`;
-
+  // console.log(req.body.pedido.total);
+  // console.log(req.body.productos[0].IDProducto)
+  var sql = `INSERT INTO Pedido (IDCliente,Total,Comentario) VALUES ('${req.body.pedido.idClient}','${req.body.pedido.total}','${req.body.pedido.comentario}')`;
+  
   conn.query(sql, (err, result) => {
     if (err) console.error(err);
-    console.log(result);
-    res.send(result);
-    io.emit("comandaNova");
+    var sqlSelectLastOrder = 'SELECT `IDPedido` FROM Pedido ORDER BY `FechaPedido` DESC LIMIT 1'
+
+    conn.query(sqlSelectLastOrder, (err, result) => {
+      if (err) console.error(err);
+      var lastOrderId = result[0].IDPedido;
+
+      for(const producto of req.body.productos){
+        var sqlInsertOrderProducts = `INSERT INTO DetallePedido (IDPedido,IDProducto,Cantidad) VALUES ('${lastOrderId}','${producto.IDProducto}','${producto.cantidad}')`;
+
+        conn.query(sqlInsertOrderProducts, (err, result) => {
+          if (err) console.error(err);
+          console.log(result);
+        });
+      };
+
+      io.emit("comandanova")
+    });
   });
 });
 
@@ -351,7 +367,7 @@ app.post("/createOrder", async (req, res) => {
 
 //       conn.query(sql, (err, result) => {
 //         if (err) console.error(err);
-//         console.log(result);
+//         //console.log(result);
 //         res.send(result);
 //       });
 //     }
@@ -410,7 +426,7 @@ function selectPedidos() {
             console.error("error al escribir los resultados");
             reject(err);
           } else {
-            console.log("escrito con éxito");
+            //console.log("escrito con éxito");
             resolve();
           }
         });
@@ -426,7 +442,7 @@ function mostrarGraficaHoras() {
 
     proceso.on("close", (code) => {
       if (code === 0) {
-        console.log("El script de Python se ha ejecutado correctamente.");
+        //console.log("El script de Python se ha ejecutado correctamente.");
         resolve();
       } else {
         console.error(
@@ -456,7 +472,7 @@ function mostrarGraficaEstado() {
 
     proceso.on("close", (code) => {
       if (code === 0) {
-        console.log("El script de Python se ha ejecutado correctamente.");
+        //console.log("El script de Python se ha ejecutado correctamente.");
         resolve();
       } else {
         console.error(
@@ -472,7 +488,7 @@ app.get("/getClients", async (req, res) => {
   var sql = `SELECT * FROM Cliente`;
   conn.query(sql, (err, result) => {
     if (err) console.error(err);
-    console.log(result);
+    //console.log(result);
     res.send(result);
   });
 });
