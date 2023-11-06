@@ -500,7 +500,7 @@ function mostrarGraficaEstado() {
   });
 }
 
-app.get("/mostrarGraficaIngresos", async (req, res) => {
+app.get("/mostrarGraficoIngresos", async (req, res) => {
   try {
     await selectPedidos();
     await mostrarGraficaIngresos();
