@@ -26,6 +26,7 @@
                 </div>
                 <v-row>
                     <v-col cols="10"></v-col>
+                    <v-col cols="10"><v-text-field v-model="Buscador" label="Producto a buscar" @keyup.enter="BuscadorProductos()"></v-text-field></v-col>
                     <v-col cols="2">
                         <v-btn @click="dialog1 = true">Afegir</v-btn>
                         <v-dialog v-model="dialog1" width="auto">
@@ -171,7 +172,7 @@ export default {
         link: "gestiocomandes",
         dialog: false,
         dialog1: false,
-        ImagenURL: "",
+        Buscador: "",
         productoNuevo: {
             id: "",
             name: "",
@@ -264,8 +265,7 @@ export default {
             await getProductos().then((response) => {
                 this.productos1 = response
                 console.log("SI");
-                this.productosH = this.productos1.filter(product => product.Habilitado == 1)
-                this.productosDh = this.productos1.filter(product => product.Habilitado == 0)
+                this.BuscadorProductos()
             })
         },
     }, created() {
@@ -284,6 +284,15 @@ export default {
                 console.log("OK")
             }
             return state.recarregar
+        },
+        BuscadorProductos(){
+            if(this.Buscador==""){
+                this.productosH = this.productos1.filter(product => product.Habilitado == 1)
+                this.productosDh = this.productos1.filter(product => product.Habilitado == 0)
+            }else{
+                this.productosH = this.productos1.filter(product => product.NombreProducto.toLowerCase().includes(this.Buscador.toLowerCase()))
+                this.productosDh = this.productos1.filter(product => product.NombreProducto.toLowerCase().includes(this.Buscador.toLowerCase()))
+            }
         }
     }
 }
