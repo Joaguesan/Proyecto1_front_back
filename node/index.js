@@ -350,7 +350,7 @@ app.post("/createOrder", async (req, res) => {
         });
       };
 
-      io.emit("comandanova")
+      io.emit("comandaNova")
     });
   });
 });
