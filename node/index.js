@@ -95,6 +95,52 @@ io.on("connection", (socket) => {
     });
     io.emit("ProductoNuevo");
   });
+
+  socket.on("NuevoProducto", (producto) => {
+    console.log(producto);
+    var imagen = "http://damtr1g3.dam.inspedralbes.cat:3333/imagen/" + producto.Imatge.replace(/ /g, "_") + ".jpg";
+    var sql = `INSERT INTO Producto (NombreProducto,Descripcion,PrecioUnitario, Imatge) VALUES ('${producto.name}','${producto.description}','${producto.price}','${imagen}')`;
+
+    conn.query(sql, (err, result) => {
+      if (err) console.error(err);
+      console.log(result);
+      res.send(result);
+    });
+    io.emit("ProductoNuevo")
+  });
+  socket.on("EliminarProducto", (id) => {
+    var sql = `DELETE FROM Producto WHERE IDProducto = ${id.id}`;
+    conn.query(`SELECT NombreProducto FROM Producto WHERE IDProducto = ${id.id}`, function (err, result, fields) {
+      if (err) throw err;
+      try {
+        fs.unlinkSync('./assets/' + "producto" + result[0].NombreProducto + '.jpg');
+        console.log("Delete File successfully.");
+      } catch (error) {
+        console.log(error);
+      }
+    });
+    conn.query(sql, (err, result) => {
+      if (err) console.error(err);
+      console.log(result);
+      res.send(result);
+    });
+    io.emit("ProductoNuevo");
+  });
+
+  socket.on("ActuProducto", (producto) => {
+    console.log("HOLA");    
+    console.log(producto);
+    var imagen = "http://damtr1g3.dam.inspedralbes.cat:3333/imagen/" + producto.Imatge.replace(/ /g, "_") + ".jpg";
+    var sql = `UPDATE Producto SET NombreProducto = '${producto.name}', Descripcion = '${producto.description}', PrecioUnitario = '${producto.price}', Imatge = '${imagen}' WHERE IDProducto = ${producto.id}`;
+
+    conn.query(sql, (err, result) => {
+      if (err) console.error(err);
+      console.log(result);
+    });
+    io.emit("ProductoNuevo");
+
+  });
+
   /*
 
   socket.on("Completada", (id) => {
@@ -224,51 +270,6 @@ app.get("/getOneProduct/:id", async (req, res) => {
       res.status(500).send("Product not found");
     }
   });
-});
-
-app.post("/addProduct", async (req, res) => {
-  var imagen = "http://damtr1g3.dam.inspedralbes.cat:3333/imagen/" + req.body.Imatge.replace(/ /g, "_") + ".jpg";
-  var sql = `INSERT INTO Producto (NombreProducto,Descripcion,PrecioUnitario, Imatge) VALUES ('${req.body.name}','${req.body.description}','${req.body.price}','${imagen}')`;
-
-  conn.query(sql, (err, result) => {
-    if (err) console.error(err);
-    console.log(result);
-    res.send(result);
-    io.emit("ProductoNuevo")
-  });
-});
-app.delete("/deleteProduct/:id", async (req, res) => {
-  var sql = `DELETE FROM Producto WHERE IDProducto = ${req.params.id}`;
-  conn.query(`SELECT NombreProducto FROM Producto WHERE IDProducto = ${req.params.id}`, function (err, result, fields) {
-    if (err) throw err;
-    try {
-      fs.unlinkSync('./assets/' + "producto" + result[0].NombreProducto + '.jpg');
-      console.log("Delete File successfully.");
-    } catch (error) {
-      console.log(error);
-    }
-    io.emit("ProductoNuevo");
-  });
-
-
-  conn.query(sql, (err, result) => {
-    if (err) console.error(err);
-    console.log(result);
-    res.send(result);
-  });
-});
-
-app.put("/updateProduct/:id", async (req, res) => {
-  var imagen = "http://damtr1g3.dam.inspedralbes.cat:3333/imagen/" + req.body.Imatge.replace(/ /g, "_") + ".jpg";
-  var sql = `UPDATE Producto SET NombreProducto = '${req.body.name}', Descripcion = '${req.body.description}', PrecioUnitario = '${req.body.price}', Imatge = '${imagen}' WHERE IDProducto = ${req.params.id}`;
-
-  conn.query(sql, (err, result) => {
-    if (err) console.error(err);
-    console.log(result);
-    res.send(result);
-  });
-  io.emit("ProductoNuevo");
-
 });
 
 app.put("/productStatus/:id", async (req, res) => {
