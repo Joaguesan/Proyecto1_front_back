@@ -131,8 +131,8 @@ var conn = mysql.createPool({
   user: "a22joaguesan_num3",
   password: "G3proyecto1",
   database: "a22joaguesan_tienda",
-  connectionLimit: 10,
-  queueLimit: 2,
+  connectionLimit: 20,
+  queueLimit: 5,
   waitForConnections: true,
 });
 
@@ -349,7 +349,7 @@ app.post("/createOrder", async (req, res) => {
           console.log(result);
         });
       };
-      
+
       io.emit("comandanova")
     });
   });
