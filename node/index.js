@@ -477,6 +477,16 @@ app.get("/getClients", async (req, res) => {
   });
 });
 
+app.get("/getTemps/:id", async (req, res) => {
+  var sql = `SELECT * FROM Cliente`;
+  conn.query(sql, (err, result) => {
+    if (err) console.error(err);
+    console.log(result);
+    res.send(result);
+  });
+});
+
+
 app.get("/", (req, res) => {
   res.sendFile(__dirname + "/public/index.html");
 });
