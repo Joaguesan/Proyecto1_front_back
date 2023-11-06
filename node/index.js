@@ -383,76 +383,88 @@ app.get("/renovarGrafico", (req, res) => {
 });
 
 app.get("/mostrarGraficoHoras", (req, res) => {
-  selectPedidos();
-  mostrarGraficaHoras();
-  res.sendFile(__dirname + "/estadisticas.jpeg");
+  selectPedidos()
+    .then(() => mostrarGraficaHoras())
+    .then(() => {
+      res.sendFile(__dirname + "/estadisticas.jpeg");
+    })
+    .catch((error) => {
+      console.error(error);
+      res.status(500).send("Error al generar la gráfica.");
+    });
 });
 
 function selectPedidos() {
-  const sql = "SELECT * FROM Pedido";
-  conn.query(sql, (err, result) => {
-    if (err) {
-      console.error("Error al cargar pregunta: ", err);
-      cerrarServidor();
-    } else {
-      const resultJson = JSON.stringify(result, null, 2);
+  return new Promise((resolve, reject) => {
+    const sql = "SELECT * FROM Pedido";
+    conn.query(sql, (err, result) => {
+      if (err) {
+        console.error("Error al cargar pregunta: ", err);
+        cerrarServidor();
+        reject(err);
+      } else {
+        const resultJson = JSON.stringify(result, null, 2);
 
-      fs.writeFile("log.json", resultJson, (err) => {
-        if (err) {
-          console.error("error al escribir los resultados");
-        } else {
-          console.log("escrito con exito");
-        }
-      });
-    }
+        fs.writeFile("log.json", resultJson, (err) => {
+          if (err) {
+            console.error("error al escribir los resultados");
+            reject(err);
+          } else {
+            console.log("escrito con éxito");
+            resolve();
+          }
+        });
+      }
+    });
   });
 }
 
 function mostrarGraficaHoras() {
-  var { spawn } = require("child_process");
-  var proceso = spawn("Python", ["./graficos.py"]);
+  return new Promise((resolve, reject) => {
+    var { spawn } = require("child_process");
+    var proceso = spawn("Python", ["./graficos.py"]);
 
-  // Maneja la salida estándar de Python (stdout)
-  proceso.stdout.on("data", (data) => {
-    console.log(`Salida estándar de Python: ${data}`);
-  });
-
-  // Maneja los errores estándar de Python (stderr)
-  proceso.stderr.on("data", (data) => {
-    console.error(`Errores estándar de Python: ${data}`);
-  });
-
-  // El script de Python ha finalizado
-  proceso.on("close", (code) => {
-    if (code === 0) {
-      console.log("El script de Python se ha ejecutado correctamente.");
-    } else {
-      console.error(
-        `El script de Python ha finalizado con código de salida ${code}.`
-      );
-    }
+    proceso.on("close", (code) => {
+      if (code === 0) {
+        console.log("El script de Python se ha ejecutado correctamente.");
+        resolve();
+      } else {
+        console.error(
+          `El script de Python ha finalizado con código de salida ${code}.`
+        );
+        reject(`El script de Python ha finalizado con código de salida ${code}.`);
+      }
+    });
   });
 }
-app.get("/mostrarGraficoEstados",(req, res)=>{
-  selectPedidos();
-  mostrarGraficaEstado();
-  res.sendFile(__dirname + "/grafico2.jpeg");
+app.get("/mostrarGraficoEstados", async (req, res) => {
+  try {
+    await selectPedidos();
+    await mostrarGraficaEstado();
+    res.sendFile(__dirname + "/grafico2.jpeg");
+  } catch (error) {
+    console.error("Error al mostrar el gráfico de estados:", error);
+    // Manejar el error, posiblemente enviar una respuesta de error al cliente
+    res.status(500).send("Error al mostrar el gráfico de estados");
+  }
 });
 
-function mostrarGraficaEstado(){
-  var { spawn } = require('child_process');
-  var proceso = spawn("Python",["./grafico2.py"]);
-  proceso.stdout.on("data",(data)=>{
-    console.log(`Salida estándar de Python: ${data}`);
-  });
-  proceso.on("close", (code) => {
-    if (code === 0) {
-      console.log("El script de Python se ha ejecutado correctamente.");
-    } else {
-      console.error(
-        `El script de Python ha finalizado con código de salida ${code}.`
-      );
-    }
+function mostrarGraficaEstado() {
+  return new Promise((resolve, reject) => {
+    var { spawn } = require('child_process');
+    var proceso = spawn("Python", ["./grafico2.py"]);
+
+    proceso.on("close", (code) => {
+      if (code === 0) {
+        console.log("El script de Python se ha ejecutado correctamente.");
+        resolve();
+      } else {
+        console.error(
+          `El script de Python ha finalizado con código de salida ${code}.`
+        );
+        reject(`El script de Python ha finalizado con código de salida ${code}.`);
+      }
+    });
   });
 }
 

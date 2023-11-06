@@ -20,7 +20,7 @@ for pedido in data:
 etiquetas = list(estado_contador.keys())
 valores = list(estado_contador.values())
 
-plt.bar(etiquetas, valores, color=["green","purple","red","yellow"])
+plt.bar(etiquetas, valores, color=["green","red","purple","yellow", "orange", "blue"])
 plt.xlabel("Estado del pedido")
 plt.ylabel("Cantidad de pedidos")
 plt.title("Contador de pedidos por estado")
