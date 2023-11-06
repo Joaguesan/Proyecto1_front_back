@@ -1,6 +1,6 @@
 <template>
     <v-layout class="rounded rounded-md">
-        <v-app-bar :elevation="2" title="Nombre tienda">
+        <v-app-bar style="background:#4DB5D8; color:white" :elevation="2" title="Pick N' Pell">
             <template v-slot:append>
                 <v-btn variant="plain" @click="this.$router.push('/analisidades')">
                     Anàlisi de dades
