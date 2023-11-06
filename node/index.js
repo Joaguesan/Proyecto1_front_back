@@ -494,7 +494,7 @@ app.get("/getClients", async (req, res) => {
 });
 
 app.get("/getTemps/:id", async (req, res) => {
-  var sql = `SELECT * FROM Cliente`;
+  var sql = `SELECT * FROM Tiempo WHERE IDPedido = ${req.params.id}`;
   conn.query(sql, (err, result) => {
     if (err) console.error(err);
     console.log(result);
