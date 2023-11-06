@@ -292,7 +292,7 @@ app.get("/getOrders", async (req, res) => {
 });
 
 app.get("/getOrdersClient/:id", async (req, res) => {
-  var sql = `SELECT * FROM Pedido WHERE IDCliente = '${req.params.id}'`;
+  var sql = `SELECT * FROM Pedido WHERE IDCliente = '${req.params.id}' ORDER BY Estado`;
 
   conn.query(sql, (err, result) => {
     if (err) console.error(err);
