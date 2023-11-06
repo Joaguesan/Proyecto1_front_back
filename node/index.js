@@ -484,6 +484,58 @@ function mostrarGraficaEstado() {
   });
 }
 
+app.get("/mostrarGraficaIngresos", async (req, res) => {
+  try {
+    await selectPedidos();
+    await mostrarGraficaIngresos();
+    res.sendFile(__dirname + "/estadisticas_ingresos.jpeg");
+  } catch (error) {
+    console.error("Error al mostrar el gráfico de ingresos:", error);
+    res.status(500).send("Error al mostrar el gráfico de ingresos");
+  }
+});
+
+function mostrarGraficaIngresos() {
+  return new Promise((resolve, reject) => {
+    var { spawn } = require("child_process");
+    var proceso = spawn("python3", ["./graficos3.py"]);
+
+    proceso.on("close", (code) => {
+      if (code === 0) {
+        console.log("El script de Python se ha ejecutado correctamente.");
+        resolve();
+      } else {
+        console.error(
+          `El script de Python ha finalizado con código de salida ${code}.`
+        );
+        reject(`El script de Python ha finalizado con código de salida ${code}.`);
+      }
+    });
+
+    // Maneja la salida estándar de Python (stdout)
+    proceso.stdout.on("data", (data) => {
+      console.log(`Salida estándar de Python: ${data}`);
+    });
+
+    // Maneja los errores estándar de Python (stderr)
+    proceso.stderr.on("data", (data) => {
+      console.error(`Errores estándar de Python: ${data}`);
+    });
+  });
+}
+
+  // El script de Python ha finalizado
+  proceso.on("close", (code) => {
+    if (code === 0) {
+      console.log("El script de Python se ha ejecutado correctamente.");
+    } else {
+      console.error(
+        `El script de Python ha finalizado con código de salida ${code}.`
+      );
+    }
+  });
+
+
 app.get("/getClients", async (req, res) => {
   var sql = `SELECT * FROM Cliente`;
   conn.query(sql, (err, result) => {
@@ -494,7 +546,7 @@ app.get("/getClients", async (req, res) => {
 });
 
 app.get("/getTemps/:id", async (req, res) => {
-  var sql = `SELECT * FROM Cliente`;
+  var sql = `SELECT * FROM Tiempo WHERE IDPedido = ${req.params.id}`;
   conn.query(sql, (err, result) => {
     if (err) console.error(err);
     console.log(result);
