@@ -394,10 +394,6 @@ app.post("/login", async (req, res) => {
   }
 });
 
-app.get("/renovarGrafico", (req, res) => {
-  selectPedidos();
-});
-
 app.get("/mostrarGraficoHoras", (req, res) => {
   selectPedidos()
     .then(() => mostrarGraficaHoras())
@@ -465,6 +461,7 @@ app.get("/mostrarGraficoEstados", async (req, res) => {
   }
 });
 
+
 function mostrarGraficaEstado() {
   return new Promise((resolve, reject) => {
     var { spawn } = require('child_process');
@@ -498,7 +495,7 @@ app.get("/mostrarGraficaIngresos", async (req, res) => {
 function mostrarGraficaIngresos() {
   return new Promise((resolve, reject) => {
     var { spawn } = require("child_process");
-    var proceso = spawn("python3", ["./graficos3.py"]);
+    var proceso = spawn("Python", ["./graficos3.py"]);
 
     proceso.on("close", (code) => {
       if (code === 0) {
@@ -510,6 +507,17 @@ function mostrarGraficaIngresos() {
         );
         reject(`El script de Python ha finalizado con código de salida ${code}.`);
       }
+
+      // El script de Python ha finalizado
+      proceso.on("close", (code) => {
+        if (code === 0) {
+          console.log("El script de Python se ha ejecutado correctamente.");
+        } else {
+          console.error(
+            `El script de Python ha finalizado con código de salida ${code}.`
+          );
+        }
+      });
     });
 
     // Maneja la salida estándar de Python (stdout)
@@ -523,18 +531,6 @@ function mostrarGraficaIngresos() {
     });
   });
 }
-
-  // El script de Python ha finalizado
-  proceso.on("close", (code) => {
-    if (code === 0) {
-      console.log("El script de Python se ha ejecutado correctamente.");
-    } else {
-      console.error(
-        `El script de Python ha finalizado con código de salida ${code}.`
-      );
-    }
-  });
-
 
 app.get("/getClients", async (req, res) => {
   var sql = `SELECT * FROM Cliente`;

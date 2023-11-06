@@ -1,29 +1,5 @@
 [
   {
-    "IDPedido": 7,
-    "IDCliente": 8,
-    "FechaPedido": "2023-10-29T23:00:00.000Z",
-    "Total": "100.50",
-    "Estado": "Entregades",
-    "Comentario": "Pedido de prueba 1"
-  },
-  {
-    "IDPedido": 8,
-    "IDCliente": 9,
-    "FechaPedido": "2023-10-29T23:00:00.000Z",
-    "Total": "75.25",
-    "Estado": "Rebutjades",
-    "Comentario": "Pedido de prueba 2"
-  },
-  {
-    "IDPedido": 9,
-    "IDCliente": 8,
-    "FechaPedido": "2023-10-29T23:00:00.000Z",
-    "Total": "55.75",
-    "Estado": "Tancades",
-    "Comentario": "Pedido de prueba 3"
-  },
-  {
     "IDPedido": 10,
     "IDCliente": 8,
     "FechaPedido": "2023-10-30T23:00:00.000Z",
@@ -92,7 +68,7 @@
     "IDCliente": 8,
     "FechaPedido": "2023-10-31T18:14:11.000Z",
     "Total": "2.90",
-    "Estado": "Pendents",
+    "Estado": "Preparades",
     "Comentario": "asdasd"
   },
   {
@@ -110,5 +86,21 @@
     "Total": "3.60",
     "Estado": "Preparades",
     "Comentario": "sdfsdfsd"
+  },
+  {
+    "IDPedido": 23,
+    "IDCliente": 9,
+    "FechaPedido": "2023-11-06T08:53:28.000Z",
+    "Total": "5.40",
+    "Estado": "Preparades",
+    "Comentario": "sudores"
+  },
+  {
+    "IDPedido": 24,
+    "IDCliente": 9,
+    "FechaPedido": "2023-11-06T09:21:15.000Z",
+    "Total": "5.40",
+    "Estado": "Entregades",
+    "Comentario": "fallitos"
   }
 ]
