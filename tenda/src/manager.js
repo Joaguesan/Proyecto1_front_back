@@ -46,7 +46,7 @@ export async function getUnProducto(id) {
     console.log(producto);
     return producto;
 }
-export async function UpdateProductos(dadesProducte,id) {
+export async function UpdateProductos(dadesProducte, id) {
     console.log(dadesProducte);
     const response = await fetch(`http://damtr1g3.dam.inspedralbes.cat:3333/updateProduct/${id}`,
         {
@@ -58,7 +58,7 @@ export async function UpdateProductos(dadesProducte,id) {
             mode: "cors"
         },);
 }
-export async function CambiarEstado(dadesProducte,id) {
+export async function CambiarEstado(dadesProducte, id) {
     console.log(dadesProducte);
     const response = await fetch(`http://damtr1g3.dam.inspedralbes.cat:3333/productStatus/${id}`,
         {
@@ -91,11 +91,23 @@ export async function DescargarImagen(url) {
         },);
 }
 
-export async function DeleteProducto(dadesProducte){
+export async function DeleteProducto(dadesProducte) {
     console.log(dadesProducte);
-    const response= await fetch(`http://damtr1g3.dam.inspedralbes.cat:3333/deleteProduct/${dadesProducte.id}`, 
-    {method: 'DELETE'});
- 
-   console.log("quieres borrar la pregunta con id: "+JSON.stringify(dadesProducte))
- }
- 
+    const response = await fetch(`http://damtr1g3.dam.inspedralbes.cat:3333/deleteProduct/${dadesProducte.id}`,
+        { method: 'DELETE' });
+
+    console.log("quieres borrar la pregunta con id: " + JSON.stringify(dadesProducte))
+}
+
+export async function getTempsComanda() {
+    var url = "http://damtr1g3.dam.inspedralbes.cat:3333/getTemps";
+    const response = await fetch(url,
+        {
+            method: 'GET', headers: {
+                'Content-Type': 'application/json',
+            },
+        },);
+    const temps = await response.json();
+    return temps;
+
+}

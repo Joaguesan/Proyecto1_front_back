@@ -115,7 +115,7 @@
               <v-col cols="3">{{ comanda.IDCliente }}</v-col>
               <v-col cols="3" class="nose">{{ comanda.FechaPedido }}</v-col>
               <v-col cols="2">{{ comanda.Total }}</v-col>
-              <v-col cols="2">temps</v-col>
+              <v-col cols="2">{{ mostrarTemps(comanda.IDPedido) }}</v-col>
             </v-row>
             <v-row v-if="this.comandesPendents">
               <v-expansion-panels>
@@ -259,7 +259,7 @@
 }
 </style>
 <script>
-import { getComandes, getProductesComanda, getClient } from '@/manager'
+import { getComandes, getProductesComanda, getClient, getTempsComanda } from '@/manager'
 import { socket, state } from "@/socket";
 export default {
   data: () => ({
@@ -282,8 +282,8 @@ export default {
     comandesPreparades: false,
     comandesRebutjades: false,
     productes: new Map(),
-    clients: []
-
+    clients: [],
+    temps: []
 
   }),
   created() {
@@ -292,6 +292,7 @@ export default {
 
   },
   methods: {
+
     connectar() {
       socket.connect();
     },
@@ -337,6 +338,24 @@ export default {
         this.clients = response
       })
     },
+    getTemps() {
+      getTempsComanda().then((response) => {
+        this.temps = response
+        console.log("GET DADES TEMPS =>", this.temps)
+      });
+    },
+    mostrarTemps(id) {
+      let index = this.temps.indexOf(this.temps.find((temp) => temp.IDPedido ==
+        id));
+      let resultat = null;
+      console.log("INDEX " + index)
+      if (index != -1){
+        resultat = this.temps[index].Tiempo
+      }else{
+        resultat = "NA"
+      }
+      return resultat;
+    },
     cambio() {
       this.nombre = this.nombre === 'Gestio Comandas' ? 'Gestio Productes' : 'Gestio Comandas'
       this.$router.push(this.link)
@@ -348,6 +367,7 @@ export default {
     },
 
     buscarComandes(Estado) {
+      this.getTemps();
       this.getDadesClient()
       this.recargar().then(() => {
         this.comandes = this.comandesGlobal.filter(comanda => comanda.Estado === Estado), this.productosComanda()

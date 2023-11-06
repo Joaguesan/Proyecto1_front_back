@@ -16,8 +16,8 @@
                 <v-list-item class="listItem" id="botoEstats" @click="this.mostrarDivsCanvi(1)" title="Gràfic Estats">
                 </v-list-item>
                 <v-list-item class="listItem" @click="this.mostrarDivsCanvi(2)" title="Gràfic Comandes/Hora"></v-list-item>
-                <v-list-item class="listItem" @click="this.mostrarDivsCanvi(3)" title="Dades 3"></v-list-item>
-        </v-list>
+                <v-list-item class="listItem" @click="this.mostrarDivsCanvi(3)" title="Gràfic Ingresos"></v-list-item>
+            </v-list>
         </v-navigation-drawer>
 
         <v-main class="d-flex align-center justify-center" style="min-height: 300px;">
@@ -25,7 +25,8 @@
             <div v-if="mostrarDivs[1]"><img src="http://dam.inspedralbes.cat:3333/mostrarGraficoEstados"
                     alt="Gràfic Estats"></div>
             <div v-if="mostrarDivs[2]"> <img src="http://dam.inspedralbes.cat:3333/mostrarGraficoHoras"
-                    alt="Gràfif Comanda/Hores"></div>
+                    alt="Gràfic Comanda/Hores"></div>
+            <div v-if="mostrarDivs[3]"> <img src="http://damtr1g3.dam.inspedralbes.cat:3333/mostrarGraficoIngresos" alt="Gràfic Ingresos Comanda/Hores"></div>
 
         </v-main>
     </v-layout>
@@ -45,7 +46,6 @@
     color: white;
     background-color: #4DB5D8;
 }
-
 </style>
 <script>
 
