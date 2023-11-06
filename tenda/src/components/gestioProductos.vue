@@ -26,9 +26,10 @@
                 </div>
                 <v-row>
                     <v-col cols="10"></v-col>
-                    <v-col cols="10"><v-text-field v-model="Buscador" label="Producto a buscar" @keyup.enter="BuscadorProductos()"></v-text-field></v-col>
+                    <v-col cols="10"><v-text-field v-model="Buscador" label="Producto a buscar"
+                            @keyup.enter="BuscadorProductos()"></v-text-field></v-col>
                     <v-col cols="2">
-                        <v-btn color="#4DB5D8" @click="dialog1 = true">Afegir</v-btn>
+                        <v-btn color="#4DB5D8" @click="abrirAgregar()">Afegir</v-btn>
                         <v-dialog v-model="dialog1" width="auto">
                             <v-card>
                                 <v-container>
@@ -43,6 +44,8 @@
                                                 label="Descripcion" auto-grow required></v-textarea>
                                             <v-text-field v-model="productoNuevo.Imatge" :rules="[Regla.required]"
                                                 label="URL imagen" variante="outlined" required></v-text-field>
+                                            <v-select v-model="select" :items="items"
+                                                :rules="[v => !!v || 'Item is required']" label="Categoria" required></v-select>
                                         </v-container>
                                     </v-card-item>
                                     <v-card-actions>
@@ -173,6 +176,13 @@ export default {
         dialog: false,
         dialog1: false,
         Buscador: "",
+
+        select: null,
+        items: [
+            'Hamburguesa',
+            'Bebida',
+            'Complemento'
+        ],
         productoNuevo: {
             id: "",
             name: "",
@@ -218,16 +228,7 @@ export default {
             }
             DescargarImagen(url1)
             this.productoNuevo.Imatge = name
-            UpdateProductos(this.productoNuevo, this.productoNuevo.id).then((response) => {
-                variant.reveal = false
-                this.productoNuevo.id = ""
-                this.productoNuevo.name = ""
-                this.productoNuevo.price = ""
-                this.productoNuevo.description = ""
-                this.productoNuevo.Imatge = ""
-            })
-            getProductos().then(response => this.productos1 = response)
-
+            socket.emit("ActuProducto", this.productoNuevo)
         },
         Deshabilitar(i) {
             socket.emit('Habilitada', i)
@@ -239,10 +240,9 @@ export default {
             let id = {
                 "id": variant.IDProducto
             }
-            DeleteProducto(id).then((response) => {
-                this.dialog = false
-            })
-            getProductos().then(() => { this.productos1 = response })
+            socket.emit("EliminarProducto", id)
+            this.dialog = false
+
         },
         addProducto() {
             var name = "producto" + this.productoNuevo.name
@@ -252,14 +252,12 @@ export default {
             }
             DescargarImagen(url1)
             this.productoNuevo.Imatge = name
-            AddProductos(this.productoNuevo).then((response) => {
-                this.dialog1 = false
-                this.productoNuevo.name = ""
-                this.productoNuevo.price = ""
-                this.productoNuevo.description = ""
-                this.productoNuevo.Imatge = ""
-            })
-            getProductos().then(() => { this.productos1 = response })
+            socket.emit("NuevoProducto", this.productoNuevo)
+            this.dialog1 = false
+            this.productoNuevo.name = ""
+            this.productoNuevo.price = ""
+            this.productoNuevo.description = ""
+            this.productoNuevo.Imatge = ""
         },
         async recargar() {
             await getProductos().then((response) => {
@@ -269,6 +267,13 @@ export default {
                 this.productosDh = this.productos1.filter(product => product.Habilitado == 0)
             })
         },
+        abrirAgregar() {
+            this.productoNuevo.name = ""
+            this.productoNuevo.price = ""
+            this.productoNuevo.description = ""
+            this.productoNuevo.Imatge = ""
+            this.dialog1 = true
+        }
     }, created() {
         this.recargar()
 
@@ -286,11 +291,11 @@ export default {
             }
             return state.recarregar
         },
-        BuscadorProductos(){
-            if(this.Buscador==""){
+        BuscadorProductos() {
+            if (this.Buscador == "") {
                 this.productosH = this.productos1.filter(product => product.Habilitado == 1)
                 this.productosDh = this.productos1.filter(product => product.Habilitado == 0)
-            }else{
+            } else {
                 this.productosH = this.productos1.filter(product => product.NombreProducto.toLowerCase().includes(this.Buscador.toLowerCase()))
                 this.productosDh = this.productos1.filter(product => product.NombreProducto.toLowerCase().includes(this.Buscador.toLowerCase()))
             }
