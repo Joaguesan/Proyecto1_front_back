@@ -28,7 +28,7 @@
                     <v-col cols="10"></v-col>
                     <v-col cols="10"><v-text-field v-model="Buscador" label="Producto a buscar" @keyup.enter="BuscadorProductos()"></v-text-field></v-col>
                     <v-col cols="2">
-                        <v-btn @click="dialog1 = true">Afegir</v-btn>
+                        <v-btn color="#4DB5D8" @click="dialog1 = true">Afegir</v-btn>
                         <v-dialog v-model="dialog1" width="auto">
                             <v-card>
                                 <v-container>
@@ -265,7 +265,8 @@ export default {
             await getProductos().then((response) => {
                 this.productos1 = response
                 console.log("SI");
-                this.BuscadorProductos()
+                this.productosH = this.productos1.filter(product => product.Habilitado == 1)
+                this.productosDh = this.productos1.filter(product => product.Habilitado == 0)
             })
         },
     }, created() {
