@@ -32,6 +32,7 @@ const io = new Server(server, {
     credentials: true,
   },
 });
+
 const port = 3333;
 server.listen(port, () => {
   //console.log(`listening at http://localhost:${port}`);
@@ -50,6 +51,7 @@ io.on("connection", (socket) => {
     });
     io.emit("comandaNova");
   });
+
   socket.on("Rebutjada", (id) => {
     var sql = `UPDATE Pedido SET Estado = "Rebutjades" WHERE IDPedido = ${id}`;
 
@@ -59,6 +61,7 @@ io.on("connection", (socket) => {
     });
     io.emit("comandaNova");
   });
+
   socket.on("Llesta", (id) => {
     var sql = `UPDATE Pedido SET Estado = "Preparades" WHERE IDPedido = ${id}`;
 
@@ -68,6 +71,7 @@ io.on("connection", (socket) => {
     });
     io.emit("comandaNova");
   });
+
   socket.on("Entregada", (id) => {
     var sql = `UPDATE Pedido SET Estado = "Entregades" WHERE IDPedido = ${id}`;
 
@@ -77,6 +81,7 @@ io.on("connection", (socket) => {
     });
     io.emit("comandaNova");
   });
+
   socket.on("Habilitada", (id) => {
     var sql = `UPDATE Producto SET Habilitado = 0 WHERE IDProducto = ${id}`;
 
@@ -86,6 +91,7 @@ io.on("connection", (socket) => {
     });
     io.emit("ProductoNuevo");
   });
+
   socket.on("Deshabilitada", (id) => {
     var sql = `UPDATE Producto SET Habilitado = 1 WHERE IDProducto = ${id}`;
 
@@ -153,7 +159,6 @@ function descargarImagen(url, carpetaDestino, nombreArchivo) {
         );
         return;
       }
-
 
       const archivoDestino = `${carpetaDestino}/${nombreArchivo}`;
       const escrituraStream = fs.createWriteStream(archivoDestino);
@@ -227,29 +232,36 @@ app.get("/getOneProduct/:id", async (req, res) => {
 });
 
 app.post("/addProduct", async (req, res) => {
-  var imagen = "http://damtr1g3.dam.inspedralbes.cat:3333/imagen/" + req.body.Imatge.replace(/ /g, "_") + ".jpg";
+  var imagen =
+    "http://damtr1g3.dam.inspedralbes.cat:3333/imagen/" +
+    req.body.Imatge.replace(/ /g, "_") +
+    ".jpg";
   var sql = `INSERT INTO Producto (NombreProducto,Descripcion,PrecioUnitario, Imatge) VALUES ('${req.body.name}','${req.body.description}','${req.body.price}','${imagen}')`;
 
   conn.query(sql, (err, result) => {
     if (err) console.error(err);
     //console.log(result);
     res.send(result);
-    io.emit("ProductoNuevo")
+    io.emit("ProductoNuevo");
   });
 });
 app.delete("/deleteProduct/:id", async (req, res) => {
   var sql = `DELETE FROM Producto WHERE IDProducto = ${req.params.id}`;
-  conn.query(`SELECT NombreProducto FROM Producto WHERE IDProducto = ${req.params.id}`, function (err, result, fields) {
-    if (err) throw err;
-    try {
-      fs.unlinkSync('./assets/' + "producto" + result[0].NombreProducto + '.jpg');
-      //console.log("Delete File successfully.");
-    } catch (error) {
-      //console.log(error);
+  conn.query(
+    `SELECT NombreProducto FROM Producto WHERE IDProducto = ${req.params.id}`,
+    function (err, result, fields) {
+      if (err) throw err;
+      try {
+        fs.unlinkSync(
+          "./assets/" + "producto" + result[0].NombreProducto + ".jpg"
+        );
+        //console.log("Delete File successfully.");
+      } catch (error) {
+        //console.log(error);
+      }
+      io.emit("ProductoNuevo");
     }
-    io.emit("ProductoNuevo");
-  });
-
+  );
 
   conn.query(sql, (err, result) => {
     if (err) console.error(err);
@@ -259,7 +271,10 @@ app.delete("/deleteProduct/:id", async (req, res) => {
 });
 
 app.put("/updateProduct/:id", async (req, res) => {
-  var imagen = "http://damtr1g3.dam.inspedralbes.cat:3333/imagen/" + req.body.Imatge.replace(/ /g, "_") + ".jpg";
+  var imagen =
+    "http://damtr1g3.dam.inspedralbes.cat:3333/imagen/" +
+    req.body.Imatge.replace(/ /g, "_") +
+    ".jpg";
   var sql = `UPDATE Producto SET NombreProducto = '${req.body.name}', Descripcion = '${req.body.description}', PrecioUnitario = '${req.body.price}', Imatge = '${imagen}' WHERE IDProducto = ${req.params.id}`;
 
   conn.query(sql, (err, result) => {
@@ -268,7 +283,6 @@ app.put("/updateProduct/:id", async (req, res) => {
     res.send(result);
   });
   io.emit("ProductoNuevo");
-
 });
 
 app.put("/productStatus/:id", async (req, res) => {
@@ -299,7 +313,7 @@ app.get("/getOrdersClient/:id", async (req, res) => {
     //console.log(result);
     res.send(result);
   });
-})
+});
 
 app.get("/detailOrder/:id", async (req, res) => {
   var sql = `SELECT
@@ -332,25 +346,26 @@ app.post("/createOrder", async (req, res) => {
   // console.log(req.body.pedido.total);
   // console.log(req.body.productos[0].IDProducto)
   var sql = `INSERT INTO Pedido (IDCliente,Total,Comentario) VALUES ('${req.body.pedido.idClient}','${req.body.pedido.total}','${req.body.pedido.comentario}')`;
-  
+
   conn.query(sql, (err, result) => {
     if (err) console.error(err);
-    var sqlSelectLastOrder = 'SELECT `IDPedido` FROM Pedido ORDER BY `FechaPedido` DESC LIMIT 1'
+    var sqlSelectLastOrder =
+      "SELECT `IDPedido` FROM Pedido ORDER BY `FechaPedido` DESC LIMIT 1";
 
     conn.query(sqlSelectLastOrder, (err, result) => {
       if (err) console.error(err);
       var lastOrderId = result[0].IDPedido;
 
-      for(const producto of req.body.productos){
+      for (const producto of req.body.productos) {
         var sqlInsertOrderProducts = `INSERT INTO DetallePedido (IDPedido,IDProducto,Cantidad) VALUES ('${lastOrderId}','${producto.IDProducto}','${producto.cantidad}')`;
 
         conn.query(sqlInsertOrderProducts, (err, result) => {
           if (err) console.error(err);
           console.log(result);
         });
-      };
+      }
 
-      io.emit("comandanova")
+      io.emit("comandaNova");
     });
   });
 });
@@ -444,7 +459,9 @@ function mostrarGraficaHoras() {
         console.error(
           `El script de Python ha finalizado con código de salida ${code}.`
         );
-        reject(`El script de Python ha finalizado con código de salida ${code}.`);
+        reject(
+          `El script de Python ha finalizado con código de salida ${code}.`
+        );
       }
     });
   });
@@ -464,7 +481,7 @@ app.get("/mostrarGraficoEstados", async (req, res) => {
 
 function mostrarGraficaEstado() {
   return new Promise((resolve, reject) => {
-    var { spawn } = require('child_process');
+    var { spawn } = require("child_process");
     var proceso = spawn("python3", ["./grafico2.py"]);
 
     proceso.on("close", (code) => {
@@ -475,7 +492,9 @@ function mostrarGraficaEstado() {
         console.error(
           `El script de Python ha finalizado con código de salida ${code}.`
         );
-        reject(`El script de Python ha finalizado con código de salida ${code}.`);
+        reject(
+          `El script de Python ha finalizado con código de salida ${code}.`
+        );
       }
     });
   });
@@ -505,7 +524,9 @@ function mostrarGraficaIngresos() {
         console.error(
           `El script de Python ha finalizado con código de salida ${code}.`
         );
-        reject(`El script de Python ha finalizado con código de salida ${code}.`);
+        reject(
+          `El script de Python ha finalizado con código de salida ${code}.`
+        );
       }
 
       // El script de Python ha finalizado
@@ -549,7 +570,6 @@ app.get("/getTemps/:id", async (req, res) => {
     res.send(result);
   });
 });
-
 
 app.get("/", (req, res) => {
   res.sendFile(__dirname + "/public/index.html");
