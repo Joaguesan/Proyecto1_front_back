@@ -24,9 +24,10 @@
           {{ this.recarregarEstat }}
         </div>
         <v-row>
-          <v-col cols="3"><v-select  v-model="seleccio" density="compact"
+          <v-col cols="3"><v-select v-model="seleccio" density="compact"
               :items="['Pendents', 'En Preparacio', 'Preparades', 'Entregades', 'Rebutjades']"
-              @update:menu=buscarComandes(seleccio) style="background-color: rgba(249, 208, 82, 0.9); margin-top: 2%; border:black solid 1px ; border-radius: 10px;"></v-select></v-col>
+              @update:menu=buscarComandes(seleccio)
+              style="background-color: rgba(249, 208, 82, 0.9); margin-top: 2%; border:black solid 1px ; border-radius: 10px;"></v-select></v-col>
           <v-col cols="6"></v-col>
           <v-col cols="3"><!--
             Botó per a cercar comanda
@@ -119,7 +120,7 @@
               <v-expansion-panels>
                 <v-expansion-panel style="background:rgb(249, 208, 82)" v-for="(comanda, i) in this.comandes" :key="i">
                   <v-expansion-panel-title expand-icon="mdi-plus" collapse-icon="mdi-minus">
-                   <b> Comanda {{ comanda.IDPedido }}</b>
+                    <b> Comanda {{ comanda.IDPedido }}</b>
                   </v-expansion-panel-title>
                   <v-expansion-panel-text style="background:#ffffff">
 
@@ -167,21 +168,23 @@
             </v-row>
             <v-row v-if="comandesEnPreparacio">
               <v-col cols="4" v-for="(comanda, i) in this.comandes" :key="i">
-                <v-card width="250">
+                <v-card style="background-color: rgb(249, 208, 82); border: #021345 solid 1px;" width="250">
                   <v-card-title>
                     Comanda {{ comanda.IDPedido }}
                   </v-card-title>
                   <v-card-subtitle>
-                    Client {{ comanda.IDCliente }}
-                  </v-card-subtitle>
-                  <v-btn color="#4DB5D8" class="mt-12" @click="cambiarOverlay(comanda.IDPedido)">
-                    Veure Comanda
-                  </v-btn>
-                  <v-btn color="#4DB5D8" class="mt-12"
-                    @click="llestSiNo = true, this.comandaSeleccionada = comanda.IDPedido">
-                    Tancar
-                  </v-btn>
+                    Client {{ comanda.IDCliente }}, {{ this.tempsOberta[this.tempsOberta.indexOf(this.tempsOberta.find((element) => element.id == comanda.IDPedido))].temps }} Minuts
 
+                  </v-card-subtitle>
+                  <v-container class="btncenter">
+                    <v-btn color="#4DB5D8" @click="cambiarOverlay(comanda.IDPedido)">
+                      Veure Comanda
+                    </v-btn>
+                    <v-btn color="#4DB5D8" class="mt-12"
+                      @click="llestSiNo = true, this.comandaSeleccionada = comanda.IDPedido">
+                      Tancar
+                    </v-btn>
+                  </v-container>
                   <v-overlay v-model="overlay" v-if="this.comandaSeleccionada === comanda.IDPedido" contained
                     class="align-center justify-center">
                     <v-card-text class="carta">
@@ -228,11 +231,17 @@
 .orangeBackground {
   background-color: rgb(249, 208, 82);
 }
+
 .buscador {
   border: 1px solid black;
   border-radius: 10px;
   width: 100%;
   height: 60%;
+}
+
+.btncenter {
+  align-items: center;
+  text-align: center;
 }
 
 .carta {
@@ -257,22 +266,21 @@
 
 .background {
   width: 100%;
-    height: 100%;
-    position: absolute;
-    top: 0;
-    left: 0;
-    background: url( '../assets/fons.png') center center;
-    background-size: 15%;
-    background-color: red;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background: url('../assets/fons.png') center center;
+  background-size: 100%;
+  background-color: red;
+  
 }
-.v-select-item{
 
-}
-.titol{
+.titol {
   border: #021345 1px solid;
   padding: 2%;
   color: #021345;
-  background-color: rgba(249, 208, 82,1);
+  background-color: rgba(249, 208, 82, 1);
   border-radius: 10px;
 }
 </style>
@@ -281,7 +289,7 @@ import { getComandes, getProductesComanda, getClient, getTempsComanda } from '@/
 import { socket, state } from "@/socket";
 export default {
   data: () => ({
-    bg:"rgb( 252,175,1)",
+    bg: "rgb( 252,175,1)",
     llestSiNo: false,
     comandaSeleccionada: null,
     cercar: false,
@@ -301,7 +309,8 @@ export default {
     comandesRebutjades: false,
     productes: new Map(),
     clients: [],
-    temps: []
+    temps: [],
+    tempsOberta: []
 
   }),
   created() {
@@ -336,7 +345,7 @@ export default {
     async recargar() {
       console.log("Dades actualitzades")
       await getComandes().then((response) => { this.comandesGlobal = response })
-
+      this.calcularTemps();
     },
     async productosComanda() {
       this.productes.clear;
@@ -367,9 +376,9 @@ export default {
         id));
       let resultat = null;
       console.log("INDEX " + index)
-      if (index != -1){
+      if (index != -1) {
         resultat = this.temps[index].Tiempo
-      }else{
+      } else {
         resultat = "NA"
       }
       return resultat;
@@ -382,6 +391,17 @@ export default {
     cambiarOverlay(comandaId) {
       this.comandaSeleccionada = comandaId;
       this.overlay = !this.overlay
+    },
+    calcularTemps() {
+      const fechaActual = new Date();
+      this.comandesGlobal.forEach(comanda => {
+        var fecha = new Date(comanda.FechaPedido);
+        var diferenciaEnMilisegundos = fecha - fechaActual;
+        var segundos = Math.floor(diferenciaEnMilisegundos / 1000);
+        var minutos = Math.floor(segundos / 60);
+        var minutos = minutos*-1; 
+        this.tempsOberta.push({id: comanda.IDPedido, temps: minutos})
+      });
     },
 
     buscarComandes(Estado) {
