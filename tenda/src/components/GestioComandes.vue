@@ -12,7 +12,7 @@
     </v-app-bar>
 
 
-    <v-main class="d-flex align-center h-100 justify-center background">
+    <v-main class="align-center h-100 justify-center background">
       <v-container>
         <v-row>
           <v-col class="d-flex justify-center align-center ">
@@ -51,9 +51,9 @@
           <v-container>
             <v-row v-if="this.comandesPreparades">
               <v-expansion-panels>
-                <v-expansion-panel style="background:#473b18" v-for="(comanda, i) in this.comandes" :key="i">
+                <v-expansion-panel style="background:rgb(249, 208, 82)" v-for="(comanda, i) in this.comandes" :key="i">
                   <v-expansion-panel-title expand-icon="mdi-plus" collapse-icon="mdi-minus">
-                    Comanda {{ comanda.IDPedido }}
+                    <b>Comanda {{ comanda.IDPedido }}</b>
                   </v-expansion-panel-title>
                   <v-expansion-panel-text style="background:#ffffff">
                     <v-row>
@@ -100,7 +100,7 @@
               <v-col cols="2">{{ comanda.Estado }}</v-col>
             </v-row>-->
 
-            <v-row v-if="this.comandesEntregades">
+            <v-row style="background-color: rgb( 252,175,1); color: black ;" v-if="this.comandesEntregades">
               <v-col cols="2">Id Comanda</v-col>
               <v-col cols="3">Id Client</v-col>
               <v-col cols="3">Data Creació</v-col>
@@ -150,7 +150,7 @@
                 </v-expansion-panel>
               </v-expansion-panels>
             </v-row>
-            <v-row v-if="this.comandesRebutjades">
+            <v-row style="background-color: rgb( 252,175,1); color: black ;" v-if="this.comandesRebutjades">
               <v-col cols="2">Id Comanda</v-col>
               <v-col cols="3">Id Client</v-col>
               <v-col cols="3">Data Creació</v-col>
@@ -158,7 +158,7 @@
               <v-col cols="2">Temps total</v-col>
             </v-row>
             <v-row v-if="this.comandesRebutjades" :class="[
-              index % 2 === 0 ? 'bg-grey-lighten-2' : 'bg-white'
+              index % 2 === 0 ? 'orangeBackground' : 'bg-white'
             ]" v-for="(comanda, index) in comandes" :key=index>
               <v-col cols="2">{{ comanda.IDPedido }}</v-col>
               <v-col cols="3">{{ comanda.IDCliente }}</v-col>
@@ -168,7 +168,7 @@
             </v-row>
             <v-row v-if="comandesEnPreparacio">
               <v-col cols="4" v-for="(comanda, i) in this.comandes" :key="i">
-                <v-card style="background-color: rgb(249, 208, 82); border: #021345 solid 1px;" width="250">
+                <v-card :style="{'background-color':  this.tempsOberta[this.tempsOberta.indexOf(this.tempsOberta.find((element) => element.id == comanda.IDPedido))].temps  > 5 ? 'red' :  this.tempsOberta[this.tempsOberta.indexOf(this.tempsOberta.find((element) => element.id == comanda.IDPedido))].temps > 2 ? 'rgb(249, 208, 82)' : '#6cbf28',  'border': '#021345 solid 1px'}" width="250">
                   <v-card-title>
                     Comanda {{ comanda.IDPedido }}
                   </v-card-title>
@@ -265,15 +265,16 @@
 }
 
 .background {
+  overflow-y: auto;
   width: 100%;
   height: 100%;
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   background: url('../assets/fons.png') center center;
   background-size: 100%;
   background-color: red;
-  
+  background-attachment: fixed;
 }
 
 .titol {
@@ -317,6 +318,13 @@ export default {
     this.buscarComandes('Pendents');
 
 
+  },
+  mounted() {
+    // Establece un intervalo de 30 segundos (30000 milisegundos) para ejecutar la función repetidamente
+    this.intervalo = setInterval(() => {
+      this.calcularTemps();
+      console.log("ACTUALITZAT AMB INTERVAL")
+    }, 30000);
   },
   methods: {
 
@@ -393,6 +401,7 @@ export default {
       this.overlay = !this.overlay
     },
     calcularTemps() {
+      this.tempsOberta = []
       const fechaActual = new Date();
       this.comandesGlobal.forEach(comanda => {
         var fecha = new Date(comanda.FechaPedido);
@@ -401,6 +410,7 @@ export default {
         var minutos = Math.floor(segundos / 60);
         var minutos = minutos*-1; 
         this.tempsOberta.push({id: comanda.IDPedido, temps: minutos})
+        console.log("SI S'ha FET")
       });
     },
 
@@ -480,6 +490,10 @@ export default {
       return state.recarregar
     },
   },
+  beforeDestroy() {
+    // Limpia el intervalo cuando el componente se destruye para evitar fugas de memoria
+    clearInterval(this.intervalo);
+  }
 
 
 }
