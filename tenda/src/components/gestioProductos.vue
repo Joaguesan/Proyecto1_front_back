@@ -8,7 +8,6 @@
                 <v-btn variant="plain" @click="cambio">
                     {{ nombre }}
                 </v-btn>
-                <v-btn icon="mdi-cached" @click="recargar()"></v-btn>
             </template>
         </v-app-bar>
 
@@ -61,10 +60,10 @@
                 <v-container>
                     <v-row>
                         <v-col v-for="(variant, i) in productosH" :key="i" cols="3">
-                            <v-card v-if="!variant.reveal && variant.Habilitado" class="mx-auto" max-width="344"
+                            <v-card v-if="!variant.reveal && variant.Habilitado" class="mx-auto carta" max-width="344"
                                 min-height="400">
                                 <v-card-item>
-                                    <v-img :src="variant.Imatge"></v-img>
+                                    <v-img  class="imgCard" :src="variant.Imatge"></v-img>
                                     <v-card-title>{{ variant.NombreProducto }}</v-card-title>
                                     <v-card-subtitle>{{ variant.PrecioUnitario }}€</v-card-subtitle>
                                     <v-card-text>{{ variant.Descripcion }}</v-card-text>
@@ -79,7 +78,7 @@
                                 </v-card-actions>
                             </v-card>
                             <!--Edicion Habilitados-->
-                            <v-card v-else-if="variant.reveal && variant.Habilitado" class="mx-auto" max-width="344">
+                            <v-card v-else-if="variant.reveal && variant.Habilitado" class="mx-auto carta" max-width="344">
                                 <v-container>
                                     <v-card-item>
                                         <v-img :src="productoNuevo.Imatge"></v-img>
@@ -95,7 +94,7 @@
                                         </v-container>
                                     </v-card-item>
                                     <v-card-actions>
-                                        <v-btn color="primary" @click="aceptar(variant)">Acceptar</v-btn>
+                                        <v-btn color="primary" @click="aceptar(variant); variant.reveal = false">Acceptar</v-btn>
                                         <v-btn color="primary" @click="variant.reveal = false">Cancelar</v-btn>
                                     </v-card-actions>
                                 </v-container>
@@ -112,7 +111,7 @@
                             <v-card v-if="!variante.reveal && !variante.Habilitado" class="mx-auto" max-width="344"
                                 min-height="400" color="rgb(255, 0, 0, 0.2)">
                                 <v-card-item>
-                                    <v-img :src="variante.Imatge"></v-img>
+                                    <v-img :src="variante.Imatge" class="imgCard"></v-img>
                                     <v-card-title>{{ variante.NombreProducto }}</v-card-title>
                                     <v-card-subtitle>{{ variante.PrecioUnitario }}€</v-card-subtitle>
                                     <v-card-text>{{ variante.Descripcion }}</v-card-text>
@@ -172,6 +171,17 @@
   color: #021345;
   background-color: rgba(249, 208, 82, 1);
   border-radius: 10px;
+  padding: 2%;
+  padding-left: 4%;
+  padding-right: 4%;
+}
+.imgCard{
+    max-width: 300px !important;
+    max-height: 200px !important;
+}
+.carta{
+    background-color: rgba(249, 208, 82, 1) !important;
+
 }
 .background {
   overflow-y: auto;
