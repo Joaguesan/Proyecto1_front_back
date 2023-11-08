@@ -514,7 +514,7 @@ app.get("/mostrarGraficoIngresos", async (req, res) => {
 function mostrarGraficaIngresos() {
   return new Promise((resolve, reject) => {
     var { spawn } = require("child_process");
-    var proceso = spawn("Python", ["./graficos3.py"]);
+    var proceso = spawn("python3", ["./graficos3.py"]);
 
     proceso.on("close", (code) => {
       if (code === 0) {
