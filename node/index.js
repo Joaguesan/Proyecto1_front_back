@@ -101,6 +101,50 @@ io.on("connection", (socket) => {
     });
     io.emit("ProductoNuevo");
   });
+
+  socket.on("NuevoProducto", (producto) => {
+    console.log(producto);
+    var imagen = "http://damtr1g3.dam.inspedralbes.cat:3333/imagen/" + producto.Imatge.replace(/ /g, "_") + ".jpg";
+    var sql = `INSERT INTO Producto (NombreProducto,Descripcion,PrecioUnitario, Imatge, Categoria) VALUES ('${producto.name}','${producto.description}','${producto.price}','${imagen}','${producto.categoria}')`;
+
+    conn.query(sql, (err, result) => {
+      if (err) console.error(err);
+      console.log(result);
+    });
+    io.emit("ProductoNuevo")
+  });
+  socket.on("EliminarProducto", (id) => {
+    var sql = `DELETE FROM Producto WHERE IDProducto = ${id.id}`;
+    conn.query(`SELECT NombreProducto FROM Producto WHERE IDProducto = ${id.id}`, function (err, result, fields) {
+      if (err) throw err;
+      try {
+        fs.unlinkSync('./assets/' + "producto" + result[0].NombreProducto + '.jpg');
+        console.log("Delete File successfully.");
+      } catch (error) {
+        console.log(error);
+      }
+    });
+    conn.query(sql, (err, result) => {
+      if (err) console.error(err);
+      console.log(result);
+    });
+    io.emit("ProductoNuevo");
+  });
+
+  socket.on("ActuProducto", (producto) => {
+    console.log("HOLA");    
+    console.log(producto);
+    var imagen = "http://damtr1g3.dam.inspedralbes.cat:3333/imagen/" + producto.Imatge.replace(/ /g, "_") + ".jpg";
+    var sql = `UPDATE Producto SET NombreProducto = '${producto.name}', Descripcion = '${producto.description}', PrecioUnitario = '${producto.price}', Imatge = '${imagen}' WHERE IDProducto = ${producto.id}`;
+
+    conn.query(sql, (err, result) => {
+      if (err) console.error(err);
+      //console.log(result);
+    });
+    io.emit("ProductoNuevo");
+  });
+  
+
   /*
 
   socket.on("Completada", (id) => {
@@ -146,7 +190,7 @@ conn.getConnection((err, connection) => {
   if (err) {
     console.error(err);
   } else {
-    //console.log("Connected to database!");
+    //console.log("Connected to database!");/imagen
   }
 });
 
@@ -161,6 +205,9 @@ function descargarImagen(url, carpetaDestino, nombreArchivo) {
       }
 
       const archivoDestino = `${carpetaDestino}/${nombreArchivo}`;
+      if(fs.existsSync(archivoDestino)){
+        fs.unlink(archivoDestino)
+      }
       const escrituraStream = fs.createWriteStream(archivoDestino);
 
       response.pipe(escrituraStream);
