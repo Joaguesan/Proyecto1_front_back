@@ -105,12 +105,11 @@ io.on("connection", (socket) => {
   socket.on("NuevoProducto", (producto) => {
     console.log(producto);
     var imagen = "http://damtr1g3.dam.inspedralbes.cat:3333/imagen/" + producto.Imatge.replace(/ /g, "_") + ".jpg";
-    var sql = `INSERT INTO Producto (NombreProducto,Descripcion,PrecioUnitario, Imatge) VALUES ('${producto.name}','${producto.description}','${producto.price}','${imagen}')`;
+    var sql = `INSERT INTO Producto (NombreProducto,Descripcion,PrecioUnitario, Imatge, Categoria) VALUES ('${producto.name}','${producto.description}','${producto.price}','${imagen}','${producto.categoria}')`;
 
     conn.query(sql, (err, result) => {
       if (err) console.error(err);
       console.log(result);
-      res.send(result);
     });
     io.emit("ProductoNuevo")
   });
@@ -128,7 +127,6 @@ io.on("connection", (socket) => {
     conn.query(sql, (err, result) => {
       if (err) console.error(err);
       console.log(result);
-      res.send(result);
     });
     io.emit("ProductoNuevo");
   });
