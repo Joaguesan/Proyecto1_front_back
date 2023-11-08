@@ -1,6 +1,6 @@
 <template>
     <v-layout class="rounded rounded-md">
-        <v-app-bar style="background:#4DB5D8; color:white" :elevation="2" title="Pick N' Pell">
+        <v-app-bar :color="bg" style="color: #021345;" :elevation="2" title="Pick N' Pell">
             <template v-slot:append>
                 <v-btn variant="plain" @click="this.$router.push('/analisidades')">
                     Anàlisi de dades
@@ -12,12 +12,12 @@
             </template>
         </v-app-bar>
 
-        <v-main class="d-flex align-center justify-center" style="min-height: 300px;">
+        <v-main class=" align-center justify-center background" style="min-height: 300px;">
             <v-container>
                 <v-row>
                     <v-col cols="2"></v-col>
                     <v-col cols="8" class="d-flex align-center justify-center">
-                        <h1>Productes</h1>
+                        <h1 class=" titol">Productes</h1>
                     </v-col>
                     <v-col cols="2"></v-col>
                 </v-row>
@@ -26,10 +26,10 @@
                 </div>
                 <v-row>
                     <v-col cols="10"></v-col>
-                    <v-col cols="10"><v-text-field v-model="Buscador" label="Producto a buscar"
+                    <v-col cols="10"><v-text-field v-model="Buscador" label="Producte a buscar"
                             @keyup.enter="BuscadorProductos()"></v-text-field></v-col>
                     <v-col cols="2">
-                        <v-btn color="#4DB5D8" @click="abrirAgregar()">Afegir</v-btn>
+                        <v-btn color="rgba(249, 208, 82, 1)" @click="abrirAgregar()">Afegir</v-btn>
                         <v-dialog v-model="dialog1" width="auto">
                             <v-card>
                                 <v-container>
@@ -44,12 +44,12 @@
                                                 label="Descripcion" auto-grow required></v-textarea>
                                             <v-text-field v-model="productoNuevo.Imatge" :rules="[Regla.required]"
                                                 label="URL imagen" variante="outlined" required></v-text-field>
-                                            <v-select v-model="select" :items="items"
+                                            <v-select v-model="productoNuevo.categoria" :items="items"
                                                 :rules="[v => !!v || 'Item is required']" label="Categoria" required></v-select>
                                         </v-container>
                                     </v-card-item>
                                     <v-card-actions>
-                                        <v-btn color="primary" @click="addProducto()">Aceptar</v-btn>
+                                        <v-btn color="primary" @click="addProducto()">Acceptar</v-btn>
                                         <v-btn color="primary" @click="dialog1 = false">Cancelar</v-btn>
                                     </v-card-actions>
                                 </v-container>
@@ -95,7 +95,7 @@
                                         </v-container>
                                     </v-card-item>
                                     <v-card-actions>
-                                        <v-btn color="primary" @click="aceptar(variant)">Aceptar</v-btn>
+                                        <v-btn color="primary" @click="aceptar(variant)">Acceptar</v-btn>
                                         <v-btn color="primary" @click="variant.reveal = false">Cancelar</v-btn>
                                     </v-card-actions>
                                 </v-container>
@@ -127,10 +127,10 @@
                                             <v-card-title class="text-h5">
                                                 Eliminar {{ variante.NombreProducto }} ?
                                             </v-card-title>
-                                            <v-card-text>¿Estas seguro que quieres eliminar {{ variante.NombreProducto
+                                            <v-card-text>¿Estas segur que vols eliminar {{ variante.NombreProducto
                                             }}?</v-card-text>
                                             <v-card-actions>
-                                                <v-btn color="primary" @click="eliminar(variante)">Aceptar</v-btn>
+                                                <v-btn color="primary" @click="eliminar(variante)">Acceptar</v-btn>
                                                 <v-btn color="primary" @click="dialog = false">Cancelar</v-btn>
                                             </v-card-actions>
                                         </v-card>
@@ -155,7 +155,7 @@
                                         </v-container>
                                     </v-card-item>
                                     <v-card-actions>
-                                        <v-btn color="primary" @click="aceptar(variante)">Aceptar</v-btn>
+                                        <v-btn color="primary" @click="aceptar(variante)">Acceptar</v-btn>
                                         <v-btn color="primary" @click="variante.reveal = false">Cancelar</v-btn>
                                     </v-card-actions>
                                 </v-container>
@@ -166,11 +166,32 @@
         </v-main>
     </v-layout>
 </template>
+<style>
+.titol {
+  border: #021345 1px solid;
+  color: #021345;
+  background-color: rgba(249, 208, 82, 1);
+  border-radius: 10px;
+}
+.background {
+  overflow-y: auto;
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background: url('../assets/fons.png') center center;
+  background-size: 100%;
+  background-color: #52b9d8;
+  background-attachment: fixed;
+}
+</style>
 <script>
 import { getProductos, UpdateProductos, AddProductos, DeleteProducto, DescargarImagen } from '@/manager'
 import { socket, state } from "@/socket";
 export default {
     data: () => ({
+        bg: "rgb( 252,175,1)",
         nombre: "Gestio Productes",
         link: "gestiocomandes",
         dialog: false,
@@ -180,15 +201,16 @@ export default {
         select: null,
         items: [
             'Hamburguesa',
-            'Bebida',
-            'Complemento'
+            'Beguda',
+            'Complement'
         ],
         productoNuevo: {
             id: "",
             name: "",
             price: "",
             description: "",
-            Imatge: ""
+            Imatge: "",
+            categoria: ""
         },
         productos1: [],
         productosH: [],
@@ -218,6 +240,7 @@ export default {
             this.productoNuevo.price = producto.PrecioUnitario
             this.productoNuevo.description = producto.Descripcion
             this.productoNuevo.Imatge = producto.Imatge
+            this.productoNuevo.categoria = producto.categoria
             producto.reveal = true
         },
         aceptar(variant) {
@@ -258,6 +281,7 @@ export default {
             this.productoNuevo.price = ""
             this.productoNuevo.description = ""
             this.productoNuevo.Imatge = ""
+            this.productoNuevo.categoria = ""
         },
         async recargar() {
             await getProductos().then((response) => {

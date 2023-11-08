@@ -273,7 +273,7 @@
   left: 0;
   background: url('../assets/fons.png') center center;
   background-size: 100%;
-  background-color: red;
+  background-color: #52b9d8;
   background-attachment: fixed;
 }
 
@@ -295,7 +295,7 @@ export default {
     comandaSeleccionada: null,
     cercar: false,
     seleccio: 'Pendents',
-    nombre: "Gestio Comandas",
+    nombre: "Gestio Productes",
     link: "gestioproductes",
     ultimaColumna: "Hola",
     dialog: false,

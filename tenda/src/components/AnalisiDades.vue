@@ -10,7 +10,7 @@
                 </v-btn>
             </template>
         </v-app-bar>
-        <v-navigation-drawer>
+        <v-navigation-drawer class="navbar">
             <v-list>
                 <v-list-item class="listItem" id="botoEstats" @click="this.mostrarDivsCanvi(1)" title="Gràfic Estats">
                 </v-list-item>
@@ -19,39 +19,86 @@
             </v-list>
         </v-navigation-drawer>
 
-        <v-main class="d-flex align-center justify-center" style="min-height: 300px;">
-            <div id="divEstats" v-if="mostrarDivs[0]">Selecciona unes dades per visualitzar</div>
-            <div v-if="carregant"><img src="../assets/carregant.gif" alt="carregant..."></div>
-            <div v-else>
-                <img v-if="mostrarDivs[1]" transition="fade-transition"
-                    src="http://dam.inspedralbes.cat:3333/mostrarGraficoEstados" alt="Gràfic Estats">
-                <img v-if="mostrarDivs[2]" transition="fade-transition"
-                    src="http://dam.inspedralbes.cat:3333/mostrarGraficoHoras" alt="Gràfic Comanda/Hores">
-                <img v-if="mostrarDivs[3]" transition="fade-transition"
-                    src="http://damtr1g3.dam.inspedralbes.cat:3333/mostrarGraficoIngresos"
-                    alt="Gràfic Ingresos Comanda/Hores">
-            </div>
+        <v-main class="d-flex align-center justify-center background" style="min-height: 300px;">
+            <div id="divEstats" class="elevation-24 hithere" v-if="mostrarDivs[0]"><h2>Selecciona unes dades per visualitzar</h2></div>
+            <template v-if="mostrarDivs[1]">
+                <v-img class="elevation-24 imatge" alt="Gràfic Estats" lazy-src="../assets/imatgeCarregant.jpg" max-width="900"
+                    src="http://dam.inspedralbes.cat:3333/mostrarGraficoEstados">
+                    <template v-slot:placeholder>
+                        <div class="d-flex align-center justify-center fill-height">
+                            <v-progress-circular color="grey-lighten-4" indeterminate></v-progress-circular>
+                        </div>
+                    </template>
+                </v-img>
+            </template>
+            <template v-if="mostrarDivs[2]">
+                <v-img class="elevation-24" alt="Gràfic Horas" lazy-src="../assets/imatgeCarregant.jpg" max-width="900"
+                    src="http://dam.inspedralbes.cat:3333/mostrarGraficoHoras">
+                    <template v-slot:placeholder>
+                        <div class="d-flex align-center justify-center fill-height">
+                            <v-progress-circular color="grey-lighten-4" indeterminate></v-progress-circular>
+                        </div>
+                    </template>
+                </v-img>
+            </template>
+            <template v-if="mostrarDivs[3]">
+                <v-img class="elevation-24" alt="Gràfic Ingresos" lazy-src="../assets/imatgeCarregant.jpg" max-width="900"
+                    src="http://dam.inspedralbes.cat:3333/mostrarGraficoIngresos">
+                    <template v-slot:placeholder>
+                        <div class="d-flex align-center justify-center fill-height">
+                            <v-progress-circular color="grey-lighten-4" indeterminate></v-progress-circular>
+                        </div>
+                    </template>
+                </v-img>
+            </template>
         </v-main>
     </v-layout>
 </template>
 <style>
-.fade-leave-active {
-    transition: all 0.5s ease;
+/* .imatge{
+    height: 50%;
+    width: 50%;
+} */
+
+
+.hithere {
+  animation: hithere 3s ease infinite;
+}
+@keyframes hithere {
+  30% { transform: scale(1.2); }
+  40%, 60% { transform: rotate(-10deg) scale(1.2); }
+  50% { transform: rotate(10deg) scale(1.2); }
+  70% { transform: rotate(0deg) scale(1.2); }
+  100% { transform: scale(1); }
 }
 
-.fade-enter-active {
-    transition: all 5s ease;
+
+#divEstats{
+    background-color: #ffffff;
+    color: 021345;
+    padding: 5px;
+    border: #021345 1px solid;
+    border-radius: 20px;
 
 }
 
-.fade-enter,
-.fade-leave-to
+.navbar {
+    background-color: #52b9d8 !important;
 
-/* .fade-leave-active in <2.1.8 */
-    {
-    opacity: 0;
 }
 
+.background {
+    overflow-y: auto;
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background: url('../assets/fons.png') center center;
+    background-size: 100%;
+    background-color: #52b9d8;
+    background-attachment: fixed;
+}
 
 .listItem {
     padding: 5%;
@@ -60,7 +107,12 @@
 .listItem:hover {
     transition: 0.5s;
     color: white;
-    background-color: #4DB5D8;
+    background-color: rgb(252, 175, 1);
+}
+
+.listItem:focus{
+    color: white;
+    background-color: rgb(252, 175, 1);
 }
 
 .prova {
