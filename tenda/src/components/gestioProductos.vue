@@ -60,17 +60,11 @@
                 <!--Habilitados-->
                 <v-container>
                     <v-row>
-                        <v-col v-for="(variant, i) in productosH" :key="i" cols="3">
+                        <v-col v-for="(variant, i) in productosH" :key="i" cols="4">
                             <v-card v-if="!variant.reveal && variant.Habilitado" class="mx-auto carta" max-width="344"
                                 min-height="400">
                                 <v-card-item>
-                                    <v-img class="imgCard" :src="variant.Imatge" lazy-src="../assets/imatgeCarregant.jpg">
-                                        <template v-slot:placeholder>
-                                            <div class="d-flex align-center justify-center fill-height">
-                                                <v-progress-circular color="grey-lighten-4"
-                                                    indeterminate></v-progress-circular>
-                                            </div>
-                                        </template>
+                                    <v-img class="imgCard" :src="variant.Imatge">
                                     </v-img>
                                     <v-card-title>{{ variant.NombreProducto }}</v-card-title>
                                     <v-card-subtitle>{{ variant.PrecioUnitario }}€</v-card-subtitle>
@@ -119,7 +113,7 @@
                     <v-row>
                         <v-col v-for="(variante, i) in productosDh" :key="i" cols="auto">
                             <v-card v-if="!variante.reveal && !variante.Habilitado" class="mx-auto" max-width="344"
-                                min-height="400" color="rgb(255, 0, 0, 0.2)">
+                                min-height="400" color="rgb(255, 50, 0, 0.8)">
                                 <v-card-item>
                                     <v-img :src="variante.Imatge" class="imgCard"></v-img>
                                     <v-card-title>{{ variante.NombreProducto }}</v-card-title>
@@ -196,6 +190,7 @@
 .imgCard {
     max-width: 300px !important;
     max-height: 200px !important;
+
 }
 .carta {
     background-color: rgba(249, 208, 82, 1) !important;
@@ -230,7 +225,7 @@ import { socket, state } from "@/socket";
 export default {
     data: () => ({
         bg: "rgb( 252,175,1)",
-        nombre: "Gestio Productes",
+        nombre: "Gestio Comandes",
         link: "gestiocomandes",
         dialog: false,
         dialog1: false,
