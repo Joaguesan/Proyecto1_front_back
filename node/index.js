@@ -205,9 +205,7 @@ function descargarImagen(url, carpetaDestino, nombreArchivo) {
       }
 
       const archivoDestino = `${carpetaDestino}/${nombreArchivo.replace(/ /g, "_")}`;
-      if(fs.existsSync(archivoDestino)){
-        fs.unlink(archivoDestino)
-      }
+
       const escrituraStream = fs.createWriteStream(archivoDestino);
 
       response.pipe(escrituraStream);
