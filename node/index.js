@@ -104,7 +104,7 @@ io.on("connection", (socket) => {
 
   socket.on("NuevoProducto", (producto) => {
     console.log(producto);
-    var imagen = `http://damtr1g3.dam.inspedralbes.cat:3333/imagen/${req.body.Imatge.replace(/ /g, "_")}.jpg`;
+    var imagen = `http://damtr1g3.dam.inspedralbes.cat:3333/imagen/${producto.Imatge.replace(/ /g, "_")}.jpg`;
     var sql = `INSERT INTO Producto (NombreProducto,Descripcion,PrecioUnitario, Imatge, Categoria) VALUES ('${producto.name}','${producto.description}','${producto.price}','${imagen}','${producto.categoria}')`;
 
     conn.query(sql, (err, result) => {
@@ -134,7 +134,7 @@ io.on("connection", (socket) => {
   socket.on("ActuProducto", (producto) => {
     console.log("HOLA");    
     console.log(producto);
-    var imagen = `http://damtr1g3.dam.inspedralbes.cat:3333/imagen/${req.body.Imatge.replace(/ /g, "_")}.jpg`;
+    var imagen = `http://damtr1g3.dam.inspedralbes.cat:3333/imagen/${producto.Imatge.replace(/ /g, "_")}.jpg`;
     var sql = `UPDATE Producto SET NombreProducto = '${producto.name}', Descripcion = '${producto.description}', PrecioUnitario = '${producto.price}', Imatge = '${imagen}' WHERE IDProducto = ${producto.id}`;
 
     conn.query(sql, (err, result) => {
@@ -143,7 +143,9 @@ io.on("connection", (socket) => {
     });
     io.emit("ProductoNuevo");
   });
-  
+  function LlamadaSocket(){
+    io.emit("ProductoNuevo");
+  }
 
   /*
 
@@ -205,9 +207,6 @@ function descargarImagen(url, carpetaDestino, nombreArchivo) {
       }
 
       const archivoDestino = `${carpetaDestino}/${nombreArchivo.replace(/ /g, "_")}`;
-      if(fs.existsSync(archivoDestino)){
-        fs.unlink(archivoDestino)
-      }
       const escrituraStream = fs.createWriteStream(archivoDestino);
 
       response.pipe(escrituraStream);
@@ -243,6 +242,7 @@ function descargarImagen(url, carpetaDestino, nombreArchivo) {
       });
     });
   }
+  
 }
 
 app.get("/imagen/:nombreArchivo", (req, res) => {
@@ -254,6 +254,7 @@ app.get("/imagen/:nombreArchivo", (req, res) => {
 app.post("/imagen", (req, res) => {
   var url = req.body.url;
   descargarImagen(url, "./assets", req.body.nombre + ".jpg");
+  LlamadaSocket()
 });
 
 app.get("/getProducts", async (req, res) => {
