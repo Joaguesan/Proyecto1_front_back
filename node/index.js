@@ -132,7 +132,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("ActuProducto", (producto) => {
-    console.log("HOLA");    
+    console.log("HOLA");
     console.log(producto);
     var imagen = `http://damtr1g3.dam.inspedralbes.cat:3333/imagen/${producto.Imatge.replace(/ /g, "_")}.jpg`;
     var sql = `UPDATE Producto SET NombreProducto = '${producto.name}', Descripcion = '${producto.description}', PrecioUnitario = '${producto.price}', Imatge = '${imagen}' WHERE IDProducto = ${producto.id}`;
@@ -143,7 +143,7 @@ io.on("connection", (socket) => {
     });
     io.emit("ProductoNuevo");
   });
-  function LlamadaSocket(){
+  function LlamadaSocket() {
     io.emit("ProductoNuevo");
   }
 
@@ -242,7 +242,7 @@ function descargarImagen(url, carpetaDestino, nombreArchivo) {
       });
     });
   }
-  
+
 }
 
 app.get("/imagen/:nombreArchivo", (req, res) => {
@@ -254,7 +254,6 @@ app.get("/imagen/:nombreArchivo", (req, res) => {
 app.post("/imagen", (req, res) => {
   var url = req.body.url;
   descargarImagen(url, "./assets", req.body.nombre + ".jpg");
-  LlamadaSocket()
 });
 
 app.get("/getProducts", async (req, res) => {
@@ -403,7 +402,7 @@ app.post("/createOrder", async (req, res) => {
 
         conn.query(sqlInsertOrderProducts, (err, result) => {
           if (err) console.error(err);
-          console.log(result);
+          //console.log(result);
         });
       }
 
@@ -487,6 +486,52 @@ function selectPedidos() {
     });
   });
 }
+function selectProductosPedidos() {
+  return new Promise((resolve, reject) => {
+    const sql = "SELECT * FROM DetallePedido";
+    conn.query(sql, (err, result) => {
+      if (err) {
+        console.error("Error al cargar pregunta: ", err);
+        reject(err);
+      } else {
+        const resultJson = JSON.stringify(result, null, 2);
+
+        fs.writeFile("log2.json", resultJson, (err) => {
+          if (err) {
+            console.error("error al escribir los resultados");
+            reject(err);
+          } else {
+            //console.log("escrito con éxito");
+            resolve();
+          }
+        });
+      }
+    });
+  });
+}
+function selectProductos() {
+  return new Promise((resolve, reject) => {
+    const sql = "SELECT * FROM Producto";
+    conn.query(sql, (err, result) => {
+      if (err) {
+        console.error("Error al cargar pregunta: ", err);
+        reject(err);
+      } else {
+        const resultJson = JSON.stringify(result, null, 2);
+
+        fs.writeFile("productes.json", resultJson, (err) => {
+          if (err) {
+            console.error("error al escribir los resultados");
+            reject(err);
+          } else {
+            //console.log("escrito con éxito");
+            resolve();
+          }
+        });
+      }
+    });
+  });
+}
 
 function mostrarGraficaHoras() {
   return new Promise((resolve, reject) => {
@@ -520,6 +565,40 @@ app.get("/mostrarGraficoEstados", async (req, res) => {
   }
 });
 
+app.get("/mostrarDatosProductos", async (req,res) => {
+  try {
+    await selectProductos();
+    await selectProductosPedidos();
+    await mostrarProductosPedidos();
+    res.sendFile(__dirname + "/estadisticas_productos.jpeg");
+  } catch (error) {
+    console.error("Error al mostrar el gráfico de estados:", error);
+    // Manejar el error, posiblemente enviar una respuesta de error al cliente
+    res.status(500).send("Error al mostrar el gráfico de estados");
+  }
+})
+
+function mostrarProductosPedidos() {
+  return new Promise((resolve, reject) => {
+    var { spawn } = require("child_process");
+    var proceso = spawn("python3", ["./graficos4.py"]);
+
+    proceso.on("close", (code) => {
+      if (code === 0) {
+        //console.log("El script de Python se ha ejecutado correctamente.");
+        resolve();
+      } else {
+        console.error(
+          `El script de Python ha finalizado con código de salida ${code}.`
+        );
+        reject(
+          `El script de Python ha finalizado con código de salida ${code}.`
+        );
+      }
+    });
+  });
+}
+
 
 function mostrarGraficaEstado() {
   return new Promise((resolve, reject) => {
@@ -552,15 +631,24 @@ app.get("/mostrarGraficoIngresos", async (req, res) => {
     res.status(500).send("Error al mostrar el gráfico de ingresos");
   }
 });
-
-function mostrarGraficaIngresos() {
+app.get("/mostrarGraficoIngresosMensuales", async (req, res) => {
+  try {
+    await selectPedidos();
+    await mostrarGraficaIngresosMensuales();
+    res.sendFile(__dirname + "/estadisticas_mensuales.jpeg");
+  } catch (error) {
+    console.error("Error al mostrar el gráfico de ingresos:", error);
+    res.status(500).send("Error al mostrar el gráfico de ingresos");
+  }
+});
+function mostrarGraficaIngresosMensuales() {
   return new Promise((resolve, reject) => {
     var { spawn } = require("child_process");
-    var proceso = spawn("python3", ["./graficos3.py"]);
+    var proceso = spawn("python3", ["./graficos5.py"]);
 
     proceso.on("close", (code) => {
       if (code === 0) {
-        console.log("El script de Python se ha ejecutado correctamente.");
+        //console.log("El script de Python se ha ejecutado correctamente.");
         resolve();
       } else {
         console.error(
@@ -571,16 +659,38 @@ function mostrarGraficaIngresos() {
         );
       }
 
-      // El script de Python ha finalizado
-      proceso.on("close", (code) => {
-        if (code === 0) {
-          console.log("El script de Python se ha ejecutado correctamente.");
-        } else {
-          console.error(
-            `El script de Python ha finalizado con código de salida ${code}.`
-          );
-        }
-      });
+    });
+
+    // Maneja la salida estándar de Python (stdout)
+    proceso.stdout.on("data", (data) => {
+      console.log(`Salida estándar de Python: ${data}`);
+    });
+
+    // Maneja los errores estándar de Python (stderr)
+    proceso.stderr.on("data", (data) => {
+      console.error(`Errores estándar de Python: ${data}`);
+    });
+  });
+}
+
+function mostrarGraficaIngresos() {
+  return new Promise((resolve, reject) => {
+    var { spawn } = require("child_process");
+    var proceso = spawn("python3", ["./graficos3.py"]);
+
+    proceso.on("close", (code) => {
+      if (code === 0) {
+        //console.log("El script de Python se ha ejecutado correctamente.");
+        resolve();
+      } else {
+        console.error(
+          `El script de Python ha finalizado con código de salida ${code}.`
+        );
+        reject(
+          `El script de Python ha finalizado con código de salida ${code}.`
+        );
+      }
+
     });
 
     // Maneja la salida estándar de Python (stdout)
