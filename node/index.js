@@ -143,7 +143,9 @@ io.on("connection", (socket) => {
     });
     io.emit("ProductoNuevo");
   });
-  
+  function LlamadaSocket(){
+    io.emit("ProductoNuevo");
+  }
 
   /*
 
@@ -205,7 +207,6 @@ function descargarImagen(url, carpetaDestino, nombreArchivo) {
       }
 
       const archivoDestino = `${carpetaDestino}/${nombreArchivo.replace(/ /g, "_")}`;
-
       const escrituraStream = fs.createWriteStream(archivoDestino);
 
       response.pipe(escrituraStream);
@@ -241,6 +242,7 @@ function descargarImagen(url, carpetaDestino, nombreArchivo) {
       });
     });
   }
+  
 }
 
 app.get("/imagen/:nombreArchivo", (req, res) => {
@@ -252,6 +254,7 @@ app.get("/imagen/:nombreArchivo", (req, res) => {
 app.post("/imagen", (req, res) => {
   var url = req.body.url;
   descargarImagen(url, "./assets", req.body.nombre + ".jpg");
+  LlamadaSocket()
 });
 
 app.get("/getProducts", async (req, res) => {
