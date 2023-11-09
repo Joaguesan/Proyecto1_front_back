@@ -17,6 +17,8 @@
                 <v-list-item class="listItem" @click="this.mostrarDivsCanvi(2)" title="Gràfic Comandes/Hora"></v-list-item>
                 <v-list-item class="listItem" @click="this.mostrarDivsCanvi(3)" title="Gràfic Ingresos"></v-list-item>
                 <v-list-item class="listItem" @click="this.mostrarDivsCanvi(4)" title="Ventes de producte"></v-list-item>
+                <v-list-item class="listItem" @click="this.mostrarDivsCanvi(5)" title="Ingresos Mensuals"></v-list-item>
+
 
             </v-list>
         </v-navigation-drawer>
@@ -56,6 +58,16 @@
             <template v-if="mostrarDivs[4]">
                 <v-img class="elevation-24" alt="Dades Productes" lazy-src="../assets/imatgeCarregant.jpg" max-width="900"
                     src="http://dam.inspedralbes.cat:3333/mostrarDatosProductos">
+                    <template v-slot:placeholder>
+                        <div class="d-flex align-center justify-center fill-height">
+                            <v-progress-circular color="grey-lighten-4" indeterminate></v-progress-circular>
+                        </div>
+                    </template>
+                </v-img>
+            </template>
+            <template v-if="mostrarDivs[5]">
+                <v-img class="elevation-24" alt="Dades Productes" lazy-src="../assets/imatgeCarregant.jpg" max-width="900"
+                    src="http://dam.inspedralbes.cat:3333/mostrarGraficoIngresosMensuales">
                     <template v-slot:placeholder>
                         <div class="d-flex align-center justify-center fill-height">
                             <v-progress-circular color="grey-lighten-4" indeterminate></v-progress-circular>
@@ -139,7 +151,7 @@ export default {
         bg: "rgb( 252,175,1)",
         model: 1,
         nombre: "Gestio Comandas",
-        mostrarDivs: [true, false, false, false, false],
+        mostrarDivs: [true, false, false, false, false, false],
         link: 'gestiocomandes',
         carregant: false
 
