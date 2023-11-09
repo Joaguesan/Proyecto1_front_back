@@ -36,15 +36,16 @@
                                         <v-img :src="productoNuevo.Imatge"></v-img>
                                         <v-container>
                                             <v-text-field v-model="productoNuevo.name" :rules="[Regla.required]"
-                                                label="Nombre del producto" variante="outlined" required></v-text-field>
-                                            <v-text-field v-model="productoNuevo.price" suffix="€" label="Precio"
+                                                label="Nom del producte" variante="outlined" required></v-text-field>
+                                            <v-text-field v-model="productoNuevo.price" suffix="€" label="Preu"
                                                 :rules="[Regla.required]" required></v-text-field>
                                             <v-textarea v-model="productoNuevo.description" :rules="[Regla.required]"
-                                                label="Descripcion" auto-grow required></v-textarea>
+                                                label="Descripció" auto-grow required></v-textarea>
                                             <v-text-field v-model="productoNuevo.Imatge" :rules="[Regla.required]"
-                                                label="URL imagen" variante="outlined" required></v-text-field>
+                                                label="URL imatge" variante="outlined" required></v-text-field>
                                             <v-select v-model="productoNuevo.categoria" :items="items"
-                                                :rules="[v => !!v || 'Item is required']" label="Categoria" required></v-select>
+                                                :rules="[v => !!v || 'Item is required']" label="Categoria"
+                                                required></v-select>
                                         </v-container>
                                     </v-card-item>
                                     <v-card-actions>
@@ -63,7 +64,7 @@
                             <v-card v-if="!variant.reveal && variant.Habilitado" class="mx-auto carta" max-width="344"
                                 min-height="400">
                                 <v-card-item>
-                                    <v-img  class="imgCard" :src="variant.Imatge"></v-img>
+                                    <v-img class="imgCard" :src="variant.Imatge"></v-img>
                                     <v-card-title>{{ variant.NombreProducto }}</v-card-title>
                                     <v-card-subtitle>{{ variant.PrecioUnitario }}€</v-card-subtitle>
                                     <v-card-text>{{ variant.Descripcion }}</v-card-text>
@@ -71,34 +72,36 @@
                                 <v-card-actions>
                                     <v-row>
                                         <v-col cols="4">
-                                            <v-btn color="primary" @click="editar(variant)">Editar</v-btn>
+                                            <v-btn color="primary" @click="editar(variant); variant.dialog=true">Editar</v-btn>
                                         </v-col>
                                     </v-row>
                                     <v-btn color="primary" @click="Deshabilitar(variant.IDProducto)">Deshabilitar</v-btn>
                                 </v-card-actions>
                             </v-card>
                             <!--Edicion Habilitados-->
-                            <v-card v-else-if="variant.reveal && variant.Habilitado" class="mx-auto carta" max-width="344">
-                                <v-container>
-                                    <v-card-item>
-                                        <v-img :src="productoNuevo.Imatge"></v-img>
-                                        <v-container>
-                                            <v-text-field v-model="productoNuevo.name" :rules="[Regla.required]"
-                                                variant="outlined" required></v-text-field>
-                                            <v-text-field v-model="productoNuevo.price" suffix="€" :rules="[Regla.required]"
-                                                required></v-text-field>
-                                            <v-textarea v-model="productoNuevo.description" :rules="[Regla.required]"
-                                                auto-grow required></v-textarea>
-                                            <v-text-field v-model="productoNuevo.Imatge" :rules="[Regla.required]"
-                                                variant="outlined" required></v-text-field>
-                                        </v-container>
-                                    </v-card-item>
-                                    <v-card-actions>
-                                        <v-btn color="primary" @click="aceptar(variant); variant.reveal = false">Acceptar</v-btn>
-                                        <v-btn color="primary" @click="variant.reveal = false">Cancelar</v-btn>
-                                    </v-card-actions>
-                                </v-container>
-                            </v-card>
+                            <v-dialog v-model="variant.dialog" width="auto" >
+                                <v-card class="mx-auto carta" max-width="344">
+                                    <v-container>
+                                        <v-card-item>
+                                            <v-img :src="productoNuevo.Imatge"></v-img>
+                                            <v-container>
+                                                <v-text-field v-model="productoNuevo.name" :rules="[Regla.required]"
+                                                    variant="outlined" required></v-text-field>
+                                                <v-text-field v-model="productoNuevo.price" suffix="€"
+                                                    :rules="[Regla.required]" required></v-text-field>
+                                                <v-textarea v-model="productoNuevo.description" :rules="[Regla.required]"
+                                                    auto-grow required></v-textarea>
+                                                <v-text-field v-model="productoNuevo.Imatge" :rules="[Regla.required]"
+                                                    variant="outlined" required></v-text-field>
+                                            </v-container>
+                                        </v-card-item>
+                                        <v-card-actions>
+                                            <v-btn color="primary" @click="aceptar(); variant.dialog = false">Acceptar</v-btn>
+                                            <v-btn color="primary" @click="variant.dialog = false">Cancelar</v-btn>
+                                        </v-card-actions>
+                                    </v-container>
+                                </v-card>
+                            </v-dialog>
                         </v-col>
                     </v-row>
                 </v-container>
@@ -117,7 +120,7 @@
                                     <v-card-text>{{ variante.Descripcion }}</v-card-text>
                                 </v-card-item>
                                 <v-card-actions>
-                                    <v-btn color="primary" @click="editar(variante)">Editar</v-btn>
+                                    <v-btn color="primary" @click="editar(variante);variante.dialog=true">Editar</v-btn>
 
                                     <v-btn color="primary" @click="Habilitar(variante.IDProducto)">Habilitar</v-btn>
                                     <v-btn color="primary" @click="dialog = true">Eliminar</v-btn>
@@ -138,7 +141,8 @@
                             </v-card>
 
                             <!--edicion deshabilitados-->
-                            <v-card v-else-if="variante.reveal && !variante.Habilitado" class="mx-auto" max-width="344">
+                            <v-dialog v-model="variante.dialog" width="auto">
+                            <v-card  class="mx-auto carta" max-width="344">
                                 <v-container>
                                     <v-card-item>
                                         <v-img :src="productoNuevo.Imatge"></v-img>
@@ -154,11 +158,11 @@
                                         </v-container>
                                     </v-card-item>
                                     <v-card-actions>
-                                        <v-btn color="primary" @click="aceptar(variante)">Acceptar</v-btn>
-                                        <v-btn color="primary" @click="variante.reveal = false">Cancelar</v-btn>
+                                        <v-btn color="primary" @click="aceptar();variante.dialog = false">Acceptar</v-btn>
+                                        <v-btn color="primary" @click="variante.dialog = false">Cancelar</v-btn>
                                     </v-card-actions>
                                 </v-container>
-                            </v-card></v-col>
+                            </v-card></v-dialog></v-col>
                     </v-row>
                 </v-container>
             </v-container>
@@ -167,33 +171,36 @@
 </template>
 <style>
 .titol {
-  border: #021345 1px solid;
-  color: #021345;
-  background-color: rgba(249, 208, 82, 1);
-  border-radius: 10px;
-  padding: 2%;
-  padding-left: 4%;
-  padding-right: 4%;
+    border: #021345 1px solid;
+    color: #021345;
+    background-color: rgba(249, 208, 82, 1);
+    border-radius: 10px;
+    padding: 2%;
+    padding-left: 4%;
+    padding-right: 4%;
 }
-.imgCard{
+
+.imgCard {
     max-width: 300px !important;
     max-height: 200px !important;
 }
-.carta{
+
+.carta {
     background-color: rgba(249, 208, 82, 1) !important;
 
 }
+
 .background {
-  overflow-y: auto;
-  width: 100%;
-  height: 100%;
-  position: fixed;
-  top: 0;
-  left: 0;
-  background: url('../assets/fons.png') center center;
-  background-size: 100%;
-  background-color: #52b9d8;
-  background-attachment: fixed;
+    overflow-y: auto;
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background: url('../assets/fons.png') center center;
+    background-size: 100%;
+    background-color: #52b9d8;
+    background-attachment: fixed;
 }
 </style>
 <script>
@@ -206,8 +213,9 @@ export default {
         link: "gestiocomandes",
         dialog: false,
         dialog1: false,
+        dialog2: false,
+        dialog3: false,
         Buscador: "",
-
         select: null,
         items: [
             'Hamburguesa',
@@ -222,6 +230,7 @@ export default {
             Imatge: "",
             categoria: ""
         },
+        productoCambio: [],
         productos1: [],
         productosH: [],
         productosDh: [],
@@ -251,9 +260,8 @@ export default {
             this.productoNuevo.description = producto.Descripcion
             this.productoNuevo.Imatge = producto.Imatge
             this.productoNuevo.categoria = producto.categoria
-            producto.reveal = true
         },
-        aceptar(variant) {
+        aceptar() {
             var name = "producto" + this.productoNuevo.name
             let url1 = {
                 nombre: name,
