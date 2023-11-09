@@ -164,7 +164,7 @@
               <v-col cols="3">{{ comanda.IDCliente }}</v-col>
               <v-col cols="3" class="nose">{{ comanda.FechaPedido }}</v-col>
               <v-col cols="2">{{ comanda.Total }}</v-col>
-              <v-col cols="2">temps</v-col>
+              <v-col cols="2">{{ mostrarTemps(comanda.IDPedido) }}</v-col>
             </v-row>
             <v-row v-if="comandesEnPreparacio">
               <v-col cols="4" v-for="(comanda, i) in this.comandes" :key="i">
@@ -323,7 +323,7 @@ export default {
     // Establece un intervalo de 30 segundos (30000 milisegundos) para ejecutar la función repetidamente
     this.intervalo = setInterval(() => {
       this.calcularTemps();
-      console.log("ACTUALITZAT AMB INTERVAL")
+      //console.log("ACTUALITZAT AMB INTERVAL")
     }, 30000);
   },
   methods: {
@@ -351,7 +351,7 @@ export default {
       socket.emit('Entregada', idComanda)
     },
     async recargar() {
-      console.log("Dades actualitzades")
+      //console.log("Dades actualitzades")
       await getComandes().then((response) => { this.comandesGlobal = response })
       this.calcularTemps();
     },
@@ -359,7 +359,7 @@ export default {
       this.productes.clear;
       this.comandesGlobal.forEach(comanda => {
         var id = comanda.IDPedido.toString();
-        console.log(id)
+        //console.log(id)
         getProductesComanda(comanda.IDPedido).then((response) => {
           this.productes[id] = response
         })
@@ -367,23 +367,23 @@ export default {
       );
     },
     getDadesClient() {
-      console.log("DADES DEL CLIENT")
+      //console.log("DADES DEL CLIENT")
       getClient().then((response) => {
-        console.log("get DAdes client => ", response);
+        //console.log("get DAdes client => ", response);
         this.clients = response
       })
     },
     getTemps() {
       getTempsComanda().then((response) => {
         this.temps = response
-        console.log("GET DADES TEMPS =>", this.temps)
+        //console.log("GET DADES TEMPS =>", this.temps)
       });
     },
     mostrarTemps(id) {
       let index = this.temps.indexOf(this.temps.find((temp) => temp.IDPedido ==
         id));
       let resultat = null;
-      console.log("INDEX " + index)
+      //console.log("INDEX " + index)
       if (index != -1) {
         resultat = this.temps[index].Tiempo
       } else {
@@ -410,7 +410,7 @@ export default {
         var minutos = Math.floor(segundos / 60);
         var minutos = minutos*-1; 
         this.tempsOberta.push({id: comanda.IDPedido, temps: minutos})
-        console.log("SI S'ha FET")
+        //console.log("SI S'ha FET")
       });
     },
 
@@ -485,7 +485,7 @@ export default {
         this.buscarComandes(this.seleccio);
         socket.emit('recarregat');
         state.recarregar = false;
-        console.log("OK")
+        //console.log("OK")
       }
       return state.recarregar
     },

@@ -44,7 +44,8 @@
                                             <v-text-field v-model="productoNuevo.Imatge" :rules="[Regla.required]"
                                                 label="URL imagen" variante="outlined" required></v-text-field>
                                             <v-select v-model="productoNuevo.categoria" :items="items"
-                                                :rules="[v => !!v || 'Item is required']" label="Categoria" required></v-select>
+                                                :rules="[v => !!v || 'Item is required']" label="Categoria"
+                                                required></v-select>
                                         </v-container>
                                     </v-card-item>
                                     <v-card-actions>
@@ -63,7 +64,14 @@
                             <v-card v-if="!variant.reveal && variant.Habilitado" class="mx-auto carta" max-width="344"
                                 min-height="400">
                                 <v-card-item>
-                                    <v-img  class="imgCard" :src="variant.Imatge"></v-img>
+                                    <v-img class="imgCard" :src="variant.Imatge" lazy-src="../assets/imatgeCarregant.jpg">
+                                        <template v-slot:placeholder>
+                                            <div class="d-flex align-center justify-center fill-height">
+                                                <v-progress-circular color="grey-lighten-4"
+                                                    indeterminate></v-progress-circular>
+                                            </div>
+                                        </template>
+                                    </v-img>
                                     <v-card-title>{{ variant.NombreProducto }}</v-card-title>
                                     <v-card-subtitle>{{ variant.PrecioUnitario }}€</v-card-subtitle>
                                     <v-card-text>{{ variant.Descripcion }}</v-card-text>
@@ -94,7 +102,8 @@
                                         </v-container>
                                     </v-card-item>
                                     <v-card-actions>
-                                        <v-btn color="primary" @click="aceptar(variant); variant.reveal = false">Acceptar</v-btn>
+                                        <v-btn color="primary"
+                                            @click="aceptar(variant); variant.reveal = false">Acceptar</v-btn>
                                         <v-btn color="primary" @click="variant.reveal = false">Cancelar</v-btn>
                                     </v-card-actions>
                                 </v-container>
@@ -167,33 +176,36 @@
 </template>
 <style>
 .titol {
-  border: #021345 1px solid;
-  color: #021345;
-  background-color: rgba(249, 208, 82, 1);
-  border-radius: 10px;
-  padding: 2%;
-  padding-left: 4%;
-  padding-right: 4%;
+    border: #021345 1px solid;
+    color: #021345;
+    background-color: rgba(249, 208, 82, 1);
+    border-radius: 10px;
+    padding: 2%;
+    padding-left: 4%;
+    padding-right: 4%;
 }
-.imgCard{
+
+.imgCard {
     max-width: 300px !important;
     max-height: 200px !important;
 }
-.carta{
+
+.carta {
     background-color: rgba(249, 208, 82, 1) !important;
 
 }
+
 .background {
-  overflow-y: auto;
-  width: 100%;
-  height: 100%;
-  position: fixed;
-  top: 0;
-  left: 0;
-  background: url('../assets/fons.png') center center;
-  background-size: 100%;
-  background-color: #52b9d8;
-  background-attachment: fixed;
+    overflow-y: auto;
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background: url('../assets/fons.png') center center;
+    background-size: 100%;
+    background-color: #52b9d8;
+    background-attachment: fixed;
 }
 </style>
 <script>

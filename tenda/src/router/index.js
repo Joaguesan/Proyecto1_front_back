@@ -19,7 +19,7 @@ const routes = [
   */
   {
     path: '/',
-    component: () => import('@/components/Login.vue'),
+    component: () => import('@/components/GestioComandes.vue'),
   },
   {
     path: '/gestiocomandes',

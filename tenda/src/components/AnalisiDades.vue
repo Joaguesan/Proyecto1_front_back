@@ -2,8 +2,8 @@
     <v-layout class="rounded rounded-md">
         <v-app-bar :color="bg" style="color: #021345;" :elevation="2" title="Pick N' Pell">
             <template v-slot:append>
-                <v-btn variant="plain" @click="this.$router.push('/analisidades')">
-                    Anàlisi de dades
+                <v-btn variant="plain" @click="this.$router.push('/gestioproductes')">
+                    Gestio Productes
                 </v-btn>
                 <v-btn variant="plain" @click="cambio">
                     {{ nombre }}
@@ -16,6 +16,8 @@
                 </v-list-item>
                 <v-list-item class="listItem" @click="this.mostrarDivsCanvi(2)" title="Gràfic Comandes/Hora"></v-list-item>
                 <v-list-item class="listItem" @click="this.mostrarDivsCanvi(3)" title="Gràfic Ingresos"></v-list-item>
+                <v-list-item class="listItem" @click="this.mostrarDivsCanvi(4)" title="Ventes de producte"></v-list-item>
+
             </v-list>
         </v-navigation-drawer>
 
@@ -44,6 +46,16 @@
             <template v-if="mostrarDivs[3]">
                 <v-img class="elevation-24" alt="Gràfic Ingresos" lazy-src="../assets/imatgeCarregant.jpg" max-width="900"
                     src="http://dam.inspedralbes.cat:3333/mostrarGraficoIngresos">
+                    <template v-slot:placeholder>
+                        <div class="d-flex align-center justify-center fill-height">
+                            <v-progress-circular color="grey-lighten-4" indeterminate></v-progress-circular>
+                        </div>
+                    </template>
+                </v-img>
+            </template>
+            <template v-if="mostrarDivs[4]">
+                <v-img class="elevation-24" alt="Dades Productes" lazy-src="../assets/imatgeCarregant.jpg" max-width="900"
+                    src="http://dam.inspedralbes.cat:3333/mostrarDatosProductos">
                     <template v-slot:placeholder>
                         <div class="d-flex align-center justify-center fill-height">
                             <v-progress-circular color="grey-lighten-4" indeterminate></v-progress-circular>
@@ -127,7 +139,7 @@ export default {
         bg: "rgb( 252,175,1)",
         model: 1,
         nombre: "Gestio Comandas",
-        mostrarDivs: [true, false, false, false],
+        mostrarDivs: [true, false, false, false, false],
         link: 'gestiocomandes',
         carregant: false
 
@@ -144,7 +156,7 @@ export default {
         mostrarDivsCanvi(num) {
             this.carregant = true;
             for (let i = 0; i < this.mostrarDivs.length; i++) {
-                console.log("A")
+                //console.log("A")
                 this.mostrarDivs[i] = false;
             }
             this.mostrarDivs[num] = true
