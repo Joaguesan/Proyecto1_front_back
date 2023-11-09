@@ -204,7 +204,7 @@
 }
 </style>
 <script>
-import { getProductos, UpdateProductos, AddProductos, DeleteProducto, DescargarImagen } from '@/manager'
+import { getProductos, DescargarImagen } from '@/manager'
 import { socket, state } from "@/socket";
 export default {
     data: () => ({
@@ -213,8 +213,6 @@ export default {
         link: "gestiocomandes",
         dialog: false,
         dialog1: false,
-        dialog2: false,
-        dialog3: false,
         Buscador: "",
         select: null,
         items: [
@@ -230,7 +228,6 @@ export default {
             Imatge: "",
             categoria: ""
         },
-        productoCambio: [],
         productos1: [],
         productosH: [],
         productosDh: [],
