@@ -204,7 +204,7 @@ function descargarImagen(url, carpetaDestino, nombreArchivo) {
         return;
       }
 
-      const archivoDestino = `${carpetaDestino}/${nombreArchivo}`;
+      const archivoDestino = `${carpetaDestino}/${nombreArchivo.replace(/ /g, "_")}`;
       if(fs.existsSync(archivoDestino)){
         fs.unlink(archivoDestino)
       }
@@ -229,7 +229,7 @@ function descargarImagen(url, carpetaDestino, nombreArchivo) {
         return;
       }
 
-      const archivoDestino = `${carpetaDestino}/${nombreArchivo}`;
+      const archivoDestino = `${carpetaDestino}/${nombreArchivo.replace(/ /g, "_")}`;
       const escrituraStream = fs.createWriteStream(archivoDestino);
 
       response.pipe(escrituraStream);
