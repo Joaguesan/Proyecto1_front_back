@@ -1,0 +1,37 @@
+{
+  "name": "tenda",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "lint": "eslint . --fix --ignore-path .gitignore"
+  },
+  "dependencies": {
+    "@mdi/font": "7.0.96",
+    "axios": "^1.6.0",
+    "core-js": "^3.29.0",
+    "fs": "^0.0.1-security",
+    "https": "^1.0.0",
+    "node-fetch": "^3.3.2",
+    "roboto-fontface": "*",
+    "socket.io": "^4.7.2",
+    "socket.io-client": "^4.7.2",
+    "tailwind": "^4.0.0",
+    "vue": "^3.3.7",
+    "vue-head": "^2.2.0",
+    "vue-router": "^4.0.0",
+    "vue-socket.io": "^3.0.10",
+    "vuetify": "^3.3.22"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^4.0.0",
+    "eslint": "^8.37.0",
+    "eslint-plugin-vue": "^9.3.0",
+    "sass": "^1.60.0",
+    "unplugin-fonts": "^1.0.3",
+    "vite": "^4.2.0",
+    "vite-plugin-vuetify": "^1.0.0"
+  }
+}
