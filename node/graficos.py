@@ -36,7 +36,7 @@ time_slots = {
 }
 
 for pedido in data:
-    fecha_pedido = datetime.fromisoformat(pedido['FechaPedido'])
+    fecha_pedido = datetime.fromisoformat(pedido['FechaPedido'][:-1])
     hora = fecha_pedido.strftime('%H:%M')
     franja_horaria = get_time_slot(hora)
     time_slots[franja_horaria] += 1

@@ -19,6 +19,9 @@ for comanda in dataComandes:
         elif(comanda['Estado'] != "Rebutjades"):
             comandes["obertes"] = comandes["obertes"] + float(comanda['Total'])
 
+comandes["obertes"] = round(comandes["obertes"], 2)
+comandes["tancades"] = round(comandes["tancades"], 2)
+
 json_object = json.dumps(comandes, indent = 4) 
 print(json_object)
 # print("PENDENT " + str(comandes['obertes']))
