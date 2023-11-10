@@ -16,13 +16,9 @@
                 </v-list-item>
                 <v-list-item class="listItem" @click="this.mostrarDivsCanvi(2)" title="Gràfic Comandes/Hora"></v-list-item>
                 <v-list-item class="listItem" @click="this.mostrarDivsCanvi(4)" title="Ventes de producte"></v-list-item>
-                <v-list-item class="listItem" @click="this.mostrarDivsCanvi(3)" title="Gràfic Ingresos/Hora"></v-list-item>
+                <v-list-item class="listItem" @click="this.mostrarDivsCanvi(3)" title="Gràfic Ingressos/Hora"></v-list-item>
                 <v-list-item class="listItem" @click="this.mostrarDivsCanvi(5)" title="Ingressos Mensuals"></v-list-item>
-                <v-list-item class="listItem" @click="this.mostrarDivsCanvi(6); diners()"
-                    title="Caixa Diaria"></v-list-item>
-
-
-
+                <v-list-item class="listItem" @click="this.mostrarDivsCanvi(6); diners()" title="Caixa Diaria"></v-list-item>
             </v-list>
         </v-navigation-drawer>
 
