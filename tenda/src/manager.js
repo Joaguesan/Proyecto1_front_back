@@ -7,6 +7,15 @@ export async function getComandes() {
     const comandes = await response.json();
     return comandes;
 }
+export async function getCaixa() {
+    const response = await fetch(`http://damtr1g3.dam.inspedralbes.cat:3333/caixadiaria`,
+        {
+            method: 'GET',
+            headers: { 'Accept': 'application/json' }
+        });
+    const comandes = await response.json();
+    return comandes;
+}
 export async function getProductesComanda(idComanda) {
     var url = "http://damtr1g3.dam.inspedralbes.cat:3333/detailOrder/" + idComanda;
     const response = await fetch(url,
