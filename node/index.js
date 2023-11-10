@@ -177,6 +177,7 @@ const sessionConfig = {
 app.use(session(sessionConfig));
 
 const mysql = require("mysql2");
+const { error } = require("console");
 
 var conn = mysql.createPool({
   host: "dam.inspedralbes.cat",
@@ -641,6 +642,58 @@ app.get("/mostrarGraficoIngresosMensuales", async (req, res) => {
     res.status(500).send("Error al mostrar el gráfico de ingresos");
   }
 });
+
+app.get("/caixaDiaria", async (req, res) => {
+  try {
+    await selectPedidos();
+    await calcularCaixaDiaria().then((value) => {resultat = value});
+    JSON.parse(resultat)
+    res.send(resultat)
+  } catch (error) {
+    console.error("Error al mostrar el gráfico de ingresos:", error);
+    res.status(500).send("Error al mostrar el gráfico de ingresos");
+  }
+});
+
+
+function calcularCaixaDiaria() {
+  return new Promise((resolve, reject) => {
+    var { spawn } = require("child_process");
+    var proceso = spawn("python3", ["./graficos6.py"]);
+
+    resultat = ""; 
+    // Maneja la salida estándar de Python (stdout)
+    proceso.stdout.on("data", (data) => {
+      resultat = data.toString()
+      //console.log(`Salida estándar de Python: ${data}`);
+    });
+
+    //console.log(resultat)
+
+    proceso.on("close", (code) => {
+      if (code === 0) {
+        //console.log("El script de Python se ha ejecutado correctamente.");
+        resolve(resultat);
+      } else {
+        console.error(
+          `El script de Python ha finalizado con código de salida ${code}.`
+        );
+        reject(
+          `El script de Python ha finalizado con código de salida ${code}.`
+        );
+      }
+
+    });
+    
+    // Maneja los errores estándar de Python (stderr)
+    proceso.stderr.on("data", (data) => {
+      console.error(`Errores estándar de Python: ${data}`);
+    });
+  });
+}
+
+
+
 function mostrarGraficaIngresosMensuales() {
   return new Promise((resolve, reject) => {
     var { spawn } = require("child_process");

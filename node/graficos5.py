@@ -30,7 +30,7 @@ fig, ax = plt.subplots()
 ax.plot(nomDies, diners)
 
 ax.set(xlabel='Dies', ylabel='Diners (€)',
-       title='Ingresos Mensuals')
+       title='Ingressos Mensuals')
 ax.grid()
 plt.xticks(rotation=90)
 plt.tight_layout()

@@ -47,8 +47,8 @@ franjas_horarias, frecuencias = zip(*time_slots.items())
 # Crear el gráfico de barras
 plt.bar(franjas_horarias, frecuencias)
 plt.xlabel('Franja horaria')
-plt.ylabel('Cantidad de pedidos')
-plt.title('Estadísticas de pedidos por franja horaria')
+plt.ylabel('Quantitat de comandes')
+plt.title('Estadístiques de comandes per franja horaria')
 
 plt.xticks(rotation=45)
 plt.tight_layout()

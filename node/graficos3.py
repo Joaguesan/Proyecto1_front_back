@@ -47,8 +47,8 @@ franjas_horarias, montos = zip(*time_slots.items())
 # Crear el gráfico de barras
 plt.bar(franjas_horarias, montos)
 plt.xlabel('Franja horaria')
-plt.ylabel('Ingresos acumulados €')
-plt.title('Estadísticas de ingresos por franja horaria')
+plt.ylabel('Ingressos acumulats €')
+plt.title('Estadístiques d\'ingressos per franja horaria')
 
 plt.xticks(rotation=45)
 plt.tight_layout()
