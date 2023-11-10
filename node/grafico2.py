@@ -21,8 +21,8 @@ etiquetas = list(estado_contador.keys())
 valores = list(estado_contador.values())
 
 plt.bar(etiquetas, valores, color=["green","red","purple","yellow", "orange", "blue"])
-plt.xlabel("Estado del pedido")
-plt.ylabel("Cantidad de pedidos")
-plt.title("Contador de pedidos por estado")
+plt.xlabel("Estat de la comanda")
+plt.ylabel("Quantitat de comandes")
+plt.title("Comptador de comandes per estat")
 
 plt.savefig('./grafico2.jpeg')
