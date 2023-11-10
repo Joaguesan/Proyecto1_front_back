@@ -317,7 +317,7 @@ export default {
         async recargar() {
             await getProductos().then((response) => {
                 this.productos1 = response
-                console.log("SI");
+                //console.log("SI");
                 this.productosH = this.productos1.filter(product => product.Habilitado == 1)
                 this.productosDh = this.productos1.filter(product => product.Habilitado == 0)
             })
@@ -342,7 +342,7 @@ export default {
                 this.recargar();
                 socket.emit('recarregat');
                 state.recarregar = false;
-                console.log("OK")
+                //("OK")
             }
             return state.recarregar
         },
