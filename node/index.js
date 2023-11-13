@@ -2,12 +2,12 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const session = require("express-session");
 const cors = require("cors");
-var CryptoJS = require("crypto-js");
+let CryptoJS = require("crypto-js");
 const https = require("https");
 const fs = require("fs");
 const path = require("path");
 // const cookieParser = require("cook0ie-parser");
-var history = require("connect-history-api-fallback");
+let history = require("connect-history-api-fallback");
 
 const staticFieldMiddleware = express.static("public");
 
@@ -44,7 +44,7 @@ io.on("connection", (socket) => {
 
   socket.on("Acceptada", (id) => {
     //Canviar estat a acceptat
-    var sql = `UPDATE Pedido SET Estado = "En Preparacio" WHERE IDPedido = ${id}`;
+    let sql = `UPDATE Pedido SET Estado = "En Preparacio" WHERE IDPedido = ${id}`;
     conn.query(sql, (err, result) => {
       if (err) console.error(err);
       //console.log(result);
@@ -53,7 +53,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("Rebutjada", (id) => {
-    var sql = `UPDATE Pedido SET Estado = "Rebutjades" WHERE IDPedido = ${id}`;
+    let sql = `UPDATE Pedido SET Estado = "Rebutjades" WHERE IDPedido = ${id}`;
 
     conn.query(sql, (err, result) => {
       if (err) console.error(err);
@@ -63,7 +63,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("Llesta", (id) => {
-    var sql = `UPDATE Pedido SET Estado = "Preparades" WHERE IDPedido = ${id}`;
+    let sql = `UPDATE Pedido SET Estado = "Preparades" WHERE IDPedido = ${id}`;
 
     conn.query(sql, (err, result) => {
       if (err) console.error(err);
@@ -73,7 +73,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("Entregada", (id) => {
-    var sql = `UPDATE Pedido SET Estado = "Entregades" WHERE IDPedido = ${id}`;
+    let sql = `UPDATE Pedido SET Estado = "Entregades" WHERE IDPedido = ${id}`;
 
     conn.query(sql, (err, result) => {
       if (err) console.error(err);
@@ -83,7 +83,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("Habilitada", (id) => {
-    var sql = `UPDATE Producto SET Habilitado = 0 WHERE IDProducto = ${id}`;
+    let sql = `UPDATE Producto SET Habilitado = 0 WHERE IDProducto = ${id}`;
 
     conn.query(sql, (err, result) => {
       if (err) console.error(err);
@@ -93,7 +93,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("Deshabilitada", (id) => {
-    var sql = `UPDATE Producto SET Habilitado = 1 WHERE IDProducto = ${id}`;
+    let sql = `UPDATE Producto SET Habilitado = 1 WHERE IDProducto = ${id}`;
 
     conn.query(sql, (err, result) => {
       if (err) console.error(err);
@@ -104,8 +104,8 @@ io.on("connection", (socket) => {
 
   socket.on("NuevoProducto", (producto) => {
     console.log(producto);
-    var imagen = `http://damtr1g3.dam.inspedralbes.cat:3333/imagen/${producto.Imatge.replace(/ /g, "_")}.jpg`;
-    var sql = `INSERT INTO Producto (NombreProducto,Descripcion,PrecioUnitario, Imatge, Categoria) VALUES ('${producto.name}','${producto.description}','${producto.price}','${imagen}','${producto.categoria}')`;
+    let imagen = `http://damtr1g3.dam.inspedralbes.cat:3333/imagen/${producto.Imatge.replace(/ /g, "_")}.jpg`;
+    let sql = `INSERT INTO Producto (NombreProducto,Descripcion,PrecioUnitario, Imatge, Categoria) VALUES ('${producto.name}','${producto.description}','${producto.price}','${imagen}','${producto.categoria}')`;
 
     conn.query(sql, (err, result) => {
       if (err) console.error(err);
@@ -114,7 +114,7 @@ io.on("connection", (socket) => {
     io.emit("ProductoNuevo")
   });
   socket.on("EliminarProducto", (id) => {
-    var sql = `DELETE FROM Producto WHERE IDProducto = ${id.id}`;
+    let sql = `DELETE FROM Producto WHERE IDProducto = ${id.id}`;
     conn.query(`SELECT NombreProducto FROM Producto WHERE IDProducto = ${id.id}`, function (err, result, fields) {
       if (err) throw err;
       try {
@@ -134,8 +134,8 @@ io.on("connection", (socket) => {
   socket.on("ActuProducto", (producto) => {
     console.log("HOLA");
     console.log(producto);
-    var imagen = `http://damtr1g3.dam.inspedralbes.cat:3333/imagen/${producto.Imatge.replace(/ /g, "_")}.jpg`;
-    var sql = `UPDATE Producto SET NombreProducto = '${producto.name}', Descripcion = '${producto.description}', PrecioUnitario = '${producto.price}', Imatge = '${imagen}' WHERE IDProducto = ${producto.id}`;
+    let imagen = `http://damtr1g3.dam.inspedralbes.cat:3333/imagen/${producto.Imatge.replace(/ /g, "_")}.jpg`;
+    let sql = `UPDATE Producto SET NombreProducto = '${producto.name}', Descripcion = '${producto.description}', PrecioUnitario = '${producto.price}', Imatge = '${imagen}' WHERE IDProducto = ${producto.id}`;
 
     conn.query(sql, (err, result) => {
       if (err) console.error(err);
@@ -150,7 +150,7 @@ io.on("connection", (socket) => {
   /*
 
   socket.on("Completada", (id) => {
-    var sql = `UPDATE Pedido SET Estado = "Completada" WHERE IDPedido = ${id}`;
+    let sql = `UPDATE Pedido SET Estado = "Completada" WHERE IDPedido = ${id}`;
     conn.query(sql, (err, result) => {
       if (err) console.error(err);
       //console.log(result);
@@ -179,7 +179,7 @@ app.use(session(sessionConfig));
 const mysql = require("mysql2");
 const { error } = require("console");
 
-var conn = mysql.createPool({
+let conn = mysql.createPool({
   host: "dam.inspedralbes.cat",
   user: "a22joaguesan_num3",
   password: "G3proyecto1",
@@ -253,12 +253,12 @@ app.get("/imagen/:nombreArchivo", (req, res) => {
 });
 
 app.post("/imagen", (req, res) => {
-  var url = req.body.url;
+  let url = req.body.url;
   descargarImagen(url, "./assets", req.body.nombre + ".jpg");
 });
 
 app.get("/getProducts", async (req, res) => {
-  var sql = "SELECT * FROM Producto";
+  let sql = "SELECT * FROM Producto";
 
   conn.query(sql, (err, result) => {
     if (err) console.error(err);
@@ -267,7 +267,7 @@ app.get("/getProducts", async (req, res) => {
 });
 
 app.get("/getOneProduct/:id", async (req, res) => {
-  var sql = `SELECT * FROM Producto WHERE IDProducto = ${req.params.id}`;
+  let sql = `SELECT * FROM Producto WHERE IDProducto = ${req.params.id}`;
 
   conn.query(sql, (err, result) => {
     if (err) console.error(err);
@@ -280,8 +280,8 @@ app.get("/getOneProduct/:id", async (req, res) => {
 });
 
 app.post("/addProduct", async (req, res) => {
-  var imagen = `http://damtr1g3.dam.inspedralbes.cat:3333/imagen/${req.body.Imatge.replace(/ /g, "_")}.jpg`;
-  var sql = `INSERT INTO Producto (NombreProducto,Descripcion,PrecioUnitario, Imatge) VALUES ('${req.body.name}','${req.body.description}','${req.body.price}','${imagen}')`;
+  let imagen = `http://damtr1g3.dam.inspedralbes.cat:3333/imagen/${req.body.Imatge.replace(/ /g, "_")}.jpg`;
+  let sql = `INSERT INTO Producto (NombreProducto,Descripcion,PrecioUnitario, Imatge) VALUES ('${req.body.name}','${req.body.description}','${req.body.price}','${imagen}')`;
 
   conn.query(sql, (err, result) => {
     if (err) console.error(err);
@@ -291,7 +291,7 @@ app.post("/addProduct", async (req, res) => {
   });
 });
 app.delete("/deleteProduct/:id", async (req, res) => {
-  var sql = `DELETE FROM Producto WHERE IDProducto = ${req.params.id}`;
+  let sql = `DELETE FROM Producto WHERE IDProducto = ${req.params.id}`;
   conn.query(
     `SELECT NombreProducto FROM Producto WHERE IDProducto = ${req.params.id}`,
     function (err, result, fields) {
@@ -316,8 +316,8 @@ app.delete("/deleteProduct/:id", async (req, res) => {
 });
 
 app.put("/updateProduct/:id", async (req, res) => {
-  var imagen = `http://damtr1g3.dam.inspedralbes.cat:3333/imagen/${req.body.Imatge.replace(/ /g, "_")}.jpg`;
-  var sql = `UPDATE Producto SET NombreProducto = '${req.body.name}', Descripcion = '${req.body.description}', PrecioUnitario = '${req.body.price}', Imatge = '${imagen}' WHERE IDProducto = ${req.params.id}`;
+  let imagen = `http://damtr1g3.dam.inspedralbes.cat:3333/imagen/${req.body.Imatge.replace(/ /g, "_")}.jpg`;
+  let sql = `UPDATE Producto SET NombreProducto = '${req.body.name}', Descripcion = '${req.body.description}', PrecioUnitario = '${req.body.price}', Imatge = '${imagen}' WHERE IDProducto = ${req.params.id}`;
 
   conn.query(sql, (err, result) => {
     if (err) console.error(err);
@@ -328,7 +328,7 @@ app.put("/updateProduct/:id", async (req, res) => {
 });
 
 app.put("/productStatus/:id", async (req, res) => {
-  var sql = `UPDATE Producto SET Habilitado = ${req.body.status} WHERE IDProducto = ${req.params.id}`;
+  let sql = `UPDATE Producto SET Habilitado = ${req.body.status} WHERE IDProducto = ${req.params.id}`;
 
   conn.query(sql, (err, result) => {
     if (err) console.error(err);
@@ -338,7 +338,7 @@ app.put("/productStatus/:id", async (req, res) => {
 });
 
 app.get("/getOrders", async (req, res) => {
-  var sql = `SELECT * FROM Pedido`;
+  let sql = `SELECT * FROM Pedido`;
 
   conn.query(sql, (err, result) => {
     if (err) console.error(err);
@@ -348,7 +348,7 @@ app.get("/getOrders", async (req, res) => {
 });
 
 app.get("/getOrdersClient/:id", async (req, res) => {
-  var sql = `SELECT * FROM Pedido WHERE IDCliente = '${req.params.id}' ORDER BY Estado`;
+  let sql = `SELECT * FROM Pedido WHERE IDCliente = '${req.params.id}' ORDER BY Estado`;
 
   conn.query(sql, (err, result) => {
     if (err) console.error(err);
@@ -358,7 +358,7 @@ app.get("/getOrdersClient/:id", async (req, res) => {
 });
 
 app.get("/detailOrder/:id", async (req, res) => {
-  var sql = `SELECT
+  let sql = `SELECT
   Pedido.IDPedido,
   Pedido.IDCliente,
   Producto.NombreProducto,
@@ -387,19 +387,19 @@ JOIN
 app.post("/createOrder", async (req, res) => {
   // console.log(req.body.pedido.total);
   // console.log(req.body.productos[0].IDProducto)
-  var sql = `INSERT INTO Pedido (IDCliente,Total,Comentario) VALUES ('${req.body.pedido.idClient}','${req.body.pedido.total}','${req.body.pedido.comentario}')`;
+  let sql = `INSERT INTO Pedido (IDCliente,Total,Comentario) VALUES ('${req.body.pedido.idClient}','${req.body.pedido.total}','${req.body.pedido.comentario}')`;
 
   conn.query(sql, (err, result) => {
     if (err) console.error(err);
-    var sqlSelectLastOrder =
+    let sqlSelectLastOrder =
       "SELECT `IDPedido` FROM Pedido ORDER BY `FechaPedido` DESC LIMIT 1";
 
     conn.query(sqlSelectLastOrder, (err, result) => {
       if (err) console.error(err);
-      var lastOrderId = result[0].IDPedido;
+      let lastOrderId = result[0].IDPedido;
 
       for (const producto of req.body.productos) {
-        var sqlInsertOrderProducts = `INSERT INTO DetallePedido (IDPedido,IDProducto,Cantidad) VALUES ('${lastOrderId}','${producto.IDProducto}','${producto.cantidad}')`;
+        let sqlInsertOrderProducts = `INSERT INTO DetallePedido (IDPedido,IDProducto,Cantidad) VALUES ('${lastOrderId}','${producto.IDProducto}','${producto.cantidad}')`;
 
         conn.query(sqlInsertOrderProducts, (err, result) => {
           if (err) console.error(err);
@@ -413,14 +413,14 @@ app.post("/createOrder", async (req, res) => {
 });
 
 // app.post("/register", async (req, res) => {
-//   var sql = `SELECT * FROM Cliente WHERE CorreoElectronico = '${req.body.email}'`;
+//   let sql = `SELECT * FROM Cliente WHERE CorreoElectronico = '${req.body.email}'`;
 
 //   conn.query(sql, (err, result) => {
 //     if (err) console.error(err);
 //     if (result.length > 0) {
 //       res.status(500).send("User already exists");
 //     } else {
-//       var sql = `INSERT INTO Cliente (CorreoElectronico,Contrasena) VALUES ('${req.body.email}','${req.body.password}')`;
+//       let sql = `INSERT INTO Cliente (CorreoElectronico,Contrasena) VALUES ('${req.body.email}','${req.body.password}')`;
 
 //       conn.query(sql, (err, result) => {
 //         if (err) console.error(err);
@@ -435,11 +435,11 @@ app.post("/login", async (req, res) => {
   if (!req.body.email || !req.body.password) {
     res.status(500).send("Both email and password are required");
   } else {
-    var sql = `SELECT * FROM Cliente WHERE CorreoElectronico = '${req.body.email}'`;
+    let sql = `SELECT * FROM Cliente WHERE CorreoElectronico = '${req.body.email}'`;
 
     conn.query(sql, (err, result) => {
       if (err) console.error(err);
-      var ciphertext = CryptoJS.MD5(req.body.password).toString();
+      let ciphertext = CryptoJS.MD5(req.body.password).toString();
       if (result == 0 || result[0].Contrasena != ciphertext) {
         res.status(500).send("Wrong email or password");
       } else {
@@ -536,8 +536,8 @@ function selectProductos() {
 
 function mostrarGraficaHoras() {
   return new Promise((resolve, reject) => {
-    var { spawn } = require("child_process");
-    var proceso = spawn("python3", ["./graficos.py"]);
+    let { spawn } = require("child_process");
+    let proceso = spawn("python3", ["./graficos.py"]);
 
     proceso.on("close", (code) => {
       if (code === 0) {
@@ -581,8 +581,8 @@ app.get("/mostrarDatosProductos", async (req,res) => {
 
 function mostrarProductosPedidos() {
   return new Promise((resolve, reject) => {
-    var { spawn } = require("child_process");
-    var proceso = spawn("python3", ["./graficos4.py"]);
+    let { spawn } = require("child_process");
+    let proceso = spawn("python3", ["./graficos4.py"]);
 
     proceso.on("close", (code) => {
       if (code === 0) {
@@ -603,8 +603,8 @@ function mostrarProductosPedidos() {
 
 function mostrarGraficaEstado() {
   return new Promise((resolve, reject) => {
-    var { spawn } = require("child_process");
-    var proceso = spawn("python3", ["./grafico2.py"]);
+    let { spawn } = require("child_process");
+    let proceso = spawn("python3", ["./grafico2.py"]);
 
     proceso.on("close", (code) => {
       if (code === 0) {
@@ -658,8 +658,8 @@ app.get("/caixaDiaria", async (req, res) => {
 
 function calcularCaixaDiaria() {
   return new Promise((resolve, reject) => {
-    var { spawn } = require("child_process");
-    var proceso = spawn("python3", ["./graficos6.py"]);
+    let { spawn } = require("child_process");
+    let proceso = spawn("python3", ["./graficos6.py"]);
 
     resultat = ""; 
     // Maneja la salida estándar de Python (stdout)
@@ -696,8 +696,8 @@ function calcularCaixaDiaria() {
 
 function mostrarGraficaIngresosMensuales() {
   return new Promise((resolve, reject) => {
-    var { spawn } = require("child_process");
-    var proceso = spawn("python3", ["./graficos5.py"]);
+    let { spawn } = require("child_process");
+    let proceso = spawn("python3", ["./graficos5.py"]);
 
     proceso.on("close", (code) => {
       if (code === 0) {
@@ -728,8 +728,8 @@ function mostrarGraficaIngresosMensuales() {
 
 function mostrarGraficaIngresos() {
   return new Promise((resolve, reject) => {
-    var { spawn } = require("child_process");
-    var proceso = spawn("python3", ["./graficos3.py"]);
+    let { spawn } = require("child_process");
+    let proceso = spawn("python3", ["./graficos3.py"]);
 
     proceso.on("close", (code) => {
       if (code === 0) {
@@ -759,7 +759,7 @@ function mostrarGraficaIngresos() {
 }
 
 app.get("/getClients", async (req, res) => {
-  var sql = `SELECT * FROM Cliente`;
+  let sql = `SELECT * FROM Cliente`;
   conn.query(sql, (err, result) => {
     if (err) console.error(err);
     //console.log(result);
@@ -768,7 +768,7 @@ app.get("/getClients", async (req, res) => {
 });
 
 app.get("/gettemps", async (req, res) => {
-  var sql = `SELECT * FROM Tiempo`;
+  let sql = `SELECT * FROM Tiempo`;
   conn.query(sql, (err, result) => {
     if (err) console.error(err);
     console.log(result);
